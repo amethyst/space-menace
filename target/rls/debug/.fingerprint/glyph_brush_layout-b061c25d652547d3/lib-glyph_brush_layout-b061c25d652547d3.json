@@ -1,1 +1,0 @@
-{"rustc":2372521676344832932,"features":"[]","target":13440220651785589629,"profile":14672114853574311971,"path":10681344654231695304,"deps":[["rusttype v0.7.6","full_rusttype",11148571252380212951],["xi-unicode v0.1.0","xi_unicode",5275572020357803516]],"local":[{"Precalculated":"0.1.6"}],"rustflags":[],"edition":"Edition2018"}
