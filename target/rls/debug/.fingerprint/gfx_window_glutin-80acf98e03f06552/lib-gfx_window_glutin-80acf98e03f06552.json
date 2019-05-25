@@ -1,0 +1,1 @@
+{"rustc":2372521676344832932,"features":"[]","target":14952725459785460605,"profile":14672114853574311971,"path":11551806927293645154,"deps":[["gfx_core v0.8.3","gfx_core",5548994983684202673],["gfx_device_gl v0.15.5","gfx_device_gl",17883700843508740641],["glutin v0.19.0","glutin",13146827201088361767]],"local":[{"Precalculated":"0.27.0"}],"rustflags":[],"edition":"Edition2015"}

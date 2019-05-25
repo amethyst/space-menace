@@ -1,0 +1,1 @@
+{"rustc":2372521676344832932,"features":"[\"clang_3_9\", \"gte_clang_3_6\", \"gte_clang_3_7\", \"gte_clang_3_8\", \"gte_clang_3_9\", \"libloading\", \"runtime\"]","target":10088282520713642473,"profile":9935990280773120926,"path":9836240138239895893,"deps":[["glob v0.2.11","glob",15689858760739063526]],"local":[{"Precalculated":"0.21.2"}],"rustflags":[],"edition":"Edition2015"}

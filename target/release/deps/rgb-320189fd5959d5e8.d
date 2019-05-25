@@ -1,0 +1,13 @@
+/Users/Kumar/personal/workspace/rust/mayhem-galactica/target/release/deps/librgb-320189fd5959d5e8.rlib: /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/lib.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/rgb.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/rgba.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/pixel.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/ops.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/mod.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/array.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/tuple.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/alt.rs
+
+/Users/Kumar/personal/workspace/rust/mayhem-galactica/target/release/deps/rgb-320189fd5959d5e8.d: /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/lib.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/rgb.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/rgba.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/pixel.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/ops.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/mod.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/array.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/tuple.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/alt.rs
+
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/lib.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/rgb.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/rgba.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/pixel.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/ops.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/mod.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/array.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/internal/convert/tuple.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/rgb-0.8.13/src/alt.rs:

@@ -1,0 +1,11 @@
+/Users/Kumar/personal/workspace/rust/mayhem-galactica/target/rls/debug/deps/amethyst_network-27828ffb9ff0c940.rmeta: /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/lib.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/bundle.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/connection.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/filter.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/net_event.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/network_socket.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/test.rs
+
+/Users/Kumar/personal/workspace/rust/mayhem-galactica/target/rls/debug/deps/amethyst_network-27828ffb9ff0c940.d: /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/lib.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/bundle.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/connection.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/filter.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/net_event.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/network_socket.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/test.rs
+
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/lib.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/bundle.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/connection.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/filter.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/net_event.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/network_socket.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/amethyst_network-0.3.0/src/test.rs:

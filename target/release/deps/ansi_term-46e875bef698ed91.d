@@ -1,0 +1,12 @@
+/Users/Kumar/personal/workspace/rust/mayhem-galactica/target/release/deps/libansi_term-46e875bef698ed91.rlib: /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/lib.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/ansi.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/style.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/difference.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/display.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/write.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/windows.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/debug.rs
+
+/Users/Kumar/personal/workspace/rust/mayhem-galactica/target/release/deps/ansi_term-46e875bef698ed91.d: /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/lib.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/ansi.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/style.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/difference.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/display.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/write.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/windows.rs /Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/debug.rs
+
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/lib.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/ansi.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/style.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/difference.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/display.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/write.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/windows.rs:
+/Users/Kumar/.cargo/registry/src/github.com-1ecc6299db9ec823/ansi_term-0.11.0/src/debug.rs:

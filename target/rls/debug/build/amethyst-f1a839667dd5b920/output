@@ -1,0 +1,8 @@
+cargo:rustc-env=VERGEN_SEMVER=0.10.0
+cargo:rustc-env=VERGEN_SHA_SHORT=
+cargo:rustc-env=VERGEN_COMMIT_DATE=
+cargo:rustc-env=VERGEN_TARGET_TRIPLE=x86_64-apple-darwin
+cargo:rustc-env=VERGEN_SEMVER_LIGHTWEIGHT=0.10.0
+cargo:rustc-env=VERGEN_SHA=
+cargo:rustc-env=VERGEN_BUILD_DATE=2019-05-25
+cargo:rustc-env=VERGEN_BUILD_TIMESTAMP=2019-05-25T21:11:43.244295+00:00

@@ -1,0 +1,1 @@
+{"rustc":2372521676344832932,"features":"[]","target":2644534156622798652,"profile":2574335274271406459,"path":1980588683419258476,"deps":[["khronos_api v3.1.0","khronos_api",10918319094755543599],["log v0.4.6","log",2025361089860509965],["xml-rs v0.8.0","xml",10897898645398220716]],"local":[{"Precalculated":"0.11.0"}],"rustflags":[],"edition":"Edition2015"}

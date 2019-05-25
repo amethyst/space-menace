@@ -1,0 +1,2 @@
+cargo:rustc-link-lib=framework=AudioUnit
+cargo:rustc-link-lib=framework=CoreAudio
