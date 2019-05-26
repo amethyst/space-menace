@@ -1,7 +1,7 @@
 use amethyst::{
-    assets::{AssetStorage, Loader},
-    core::{Transform},
-    ecs::{Entity},
+    assets::{ AssetStorage, Loader },
+    core::{ Parent, Transform },
+    ecs::{ Entity },
     prelude::*,
     renderer::{
         Camera, PngFormat, Projection, ScreenDimensions, Sprite, SpriteRender, SpriteSheet,
@@ -18,9 +18,10 @@ use crate::{
     BG_TILE_HEIGHT,
     BG_TILE_WIDTH,
     BG_Z_TRANSFORM,
+    MARINE_SCALE,
     PLATFORM_SCALE,
     PLATFORM_Z_TRANSFORM,
-    components::{Player, TwoDimObject}
+    components::{ Player, TwoDimObject, CameraSubject }
 };
 
 pub struct PlayState;
@@ -28,6 +29,13 @@ pub struct PlayState;
 impl SimpleState for PlayState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
+
+        world.register::<Player>();
+        let sprite_sheet_handle = load_player_sprite_sheet(world);
+        init_player(world, &sprite_sheet_handle);
+
+        world.register::<CameraSubject>();
+        let camera_subject = init_camera_subject(world);
 
         let bg_sprite_sheet_handle =
             load_sprite_sheet(world, "sprites/bg_tile.png", "prefabs/bg_tile.ron");
@@ -41,31 +49,48 @@ impl SimpleState for PlayState {
             load_platform_tileset_sprite_sheet(world);
         init_platforms(world, &platform_tileset_sprite_sheet_handle);
 
-        world.register::<Player>();
-        let sprite_sheet_handle = load_player_sprite_sheet(world);
-        init_player(world, &sprite_sheet_handle);
 
-        init_camera(world);
+        init_camera(world, camera_subject);
     }
 }
 
-fn init_camera(world: &mut World) {
+fn init_camera_subject (world: &mut World) -> Entity {
+    let mut transform = Transform::default();
+
+    let mut two_dim_object = TwoDimObject::new(0., 0.);
+    two_dim_object.set_position(384., 176.);
+    two_dim_object.update_transform_position(&mut transform);
+
+    world
+        .create_entity()
+        .with(transform)
+        .with(CameraSubject::new(two_dim_object))
+        .with(Transparent)
+        .build()
+}
+
+fn init_camera(world: &mut World, camera_subject: Entity) {
     let (width, height) = {
         let dim = world.read_resource::<ScreenDimensions>();
         (dim.width(), dim.height())
     };
     let mut transform = Transform::default();
     transform.set_xyz(0.0, 0.0, 1.0);
+    println!("width = {}, height = {}", width, height);
 
     world
         .create_entity()
         .with(Camera::from(Projection::orthographic(
-            0.0,
-            width, // todo set this by screen size?
-            0.0,
-            // (176 * 4) as f32,
-            height,
+            -1. * width / 2.,
+            width / 2.,
+            -1. * height / 2.,
+            height / 2.,
+            // 0.,
+            // width,
+            // 0.,
+            // height,
         )))
+        .with(Parent { entity: camera_subject })
         .with(transform)
         .build();
 }
@@ -83,7 +108,7 @@ fn init_platforms(world: &mut World, sprite_sheet_handle: &SpriteSheetHandle) {
             0 => {
                 sprite_number = 4;
                 tile_w = 96.;
-                tile_h = 39.;
+                tile_h = 40.;
                 tile_left = 0.;
             },
             4 => {
@@ -95,7 +120,7 @@ fn init_platforms(world: &mut World, sprite_sheet_handle: &SpriteSheetHandle) {
             _ => {
                 sprite_number = 4;
                 tile_w = 96.;
-                tile_h = 39.; // NOTE: 55 - 16
+                tile_h = 40.; // NOTE: 55 - 16
                 tile_left = i as f32 * tile_w * PLATFORM_SCALE;
             }
         }
@@ -119,7 +144,7 @@ fn init_platforms(world: &mut World, sprite_sheet_handle: &SpriteSheetHandle) {
 }
 
 fn init_player(world: &mut World, sprite_sheet_handle: &SpriteSheetHandle) {
-    let scale = 2.0;
+    let scale = MARINE_SCALE;
 
     let mut transform = Transform::default();
     transform.set_scale(scale, scale, scale);
@@ -129,7 +154,7 @@ fn init_player(world: &mut World, sprite_sheet_handle: &SpriteSheetHandle) {
         sprite_number: 4, // paddle is the first sprite in the sprite_sheet
     };
 
-    let mut two_dim_object = TwoDimObject::new((48 * 2) as f32, (48 * 2) as f32);
+    let mut two_dim_object = TwoDimObject::new(48. * MARINE_SCALE, 48. * MARINE_SCALE);
     two_dim_object.set_position(384., 176.);
     two_dim_object.update_transform_position(&mut transform);
 

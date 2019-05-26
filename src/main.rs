@@ -21,6 +21,7 @@ mod components;
 mod animation;
 mod physics;
 mod control;
+mod camera_motion_system;
 
 pub const BG_SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
@@ -31,8 +32,9 @@ pub const BG_STRUCTURES_Z_TRANSFORM: f32 = -20.;
 pub const BG_STRUCTURES_TILE_WIDTH: f32 = 416.;
 pub const BG_STRUCTURES_TILE_HEIGHT: f32 = 176.;
 pub const PLATFORM_SCALE: f32 = 2.;
-pub const PLATFORM_Z_TRANSFORM: f32 = -20.;
+pub const PLATFORM_Z_TRANSFORM: f32 = -10.;
 
+pub const MARINE_SCALE: f32 = 2.;
 pub const MARINE_MAX_VELOCITY: f32 = 3.;
 
 fn main() -> amethyst::Result<()> {
@@ -67,7 +69,8 @@ fn main() -> amethyst::Result<()> {
         )?
         .with(control::ControlSystem, "control_system", &[])
         .with(physics::PhysicsSystem, "physics_system", &["control_system"])
-        .with(animation::AnimationSystem, "animation_system", &["physics_system"]);
+        .with(animation::AnimationSystem, "animation_system", &["physics_system"])
+        .with(camera_motion_system::CameraMotionSystem, "camera_motion_system", &["physics_system"]);
     let mut game = Application::new(assets_path, states::PlayState, game_data)?;
 
     game.run();

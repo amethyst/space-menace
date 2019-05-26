@@ -120,3 +120,17 @@ impl Player {
         }
     }
 }
+
+#[derive(Component)]
+#[storage(VecStorage)]
+pub struct CameraSubject {
+    pub two_dim: TwoDimObject,
+}
+
+impl CameraSubject {
+    pub fn new(two_dim: TwoDimObject) -> Self {
+        CameraSubject {
+            two_dim,
+        }
+    }
+}

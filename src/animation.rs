@@ -52,7 +52,7 @@ impl<'s> System<'s> for AnimationSystem {
                 PlayerState::Dying => (0, 4, 32),
                 PlayerState::Idle => (4, 4, 32),
                 PlayerState::Running => (14, 11, 8),
-                PlayerState::Jumping => (8, 6, 32),
+                PlayerState::Jumping => (8, 6, 16),
             };
             sprite.sprite_number = (player.ticks / game_frames_per_animation_frame) % num_sprites + sprite_initial_index;
 
