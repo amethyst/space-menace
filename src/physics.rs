@@ -1,8 +1,8 @@
 use amethyst::{
-    ecs::{Join, ReadStorage, System, WriteStorage},
+    ecs::{ Join, ReadStorage, System, WriteStorage },
 };
 use crate::{
-    components::{Player, TwoDimObject}
+    components::{ Player, TwoDimObject }
 };
 
 pub struct PhysicsSystem;
@@ -102,7 +102,7 @@ impl<'s> System<'s> for PhysicsSystem {
             if player_on_ground {
                 player.two_dim.velocity.y = 0.;
             } else {
-                player.two_dim.velocity.y -= 0.7;
+                player.two_dim.velocity.y -= 0.2;
             }
         }
     }
