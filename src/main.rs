@@ -1,8 +1,8 @@
 extern crate amethyst;
 
 use amethyst::{
-    core::{ TransformBundle },
-    input::{ InputBundle },
+    core::{TransformBundle},
+    input::{InputBundle},
     prelude::*,
     renderer::{
         ALPHA,
@@ -16,25 +16,24 @@ use amethyst::{
     utils::application_root_dir,
 };
 
+mod entities;
 mod states;
 mod components;
+mod components_new;
 mod animation;
 mod physics;
 mod control;
 mod camera_motion_system;
 
-pub const BG_SCALE: f32 = 2.;
+pub const SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
-pub const BG_TILE_WIDTH: f32 = 192.;
-pub const BG_TILE_HEIGHT: f32 = 176.;
-pub const BG_STRUCTURES_SCALE: f32 = 2.;
-pub const BG_STRUCTURES_Z_TRANSFORM: f32 = -20.;
-pub const BG_STRUCTURES_TILE_WIDTH: f32 = 416.;
-pub const BG_STRUCTURES_TILE_HEIGHT: f32 = 176.;
-pub const PLATFORM_SCALE: f32 = 2.;
+pub const BG_WIDTH: f32 = 192.;
+pub const BG_HEIGHT: f32 = 176.;
+pub const TRUSS_Z_TRANSFORM: f32 = -20.;
+pub const TRUSS_WIDTH: f32 = 416.;
+pub const TRUSS_HEIGHT: f32 = 176.;
 pub const PLATFORM_Z_TRANSFORM: f32 = -10.;
 
-pub const MARINE_SCALE: f32 = 2.;
 pub const MARINE_MAX_VELOCITY: f32 = 3.;
 
 fn main() -> amethyst::Result<()> {

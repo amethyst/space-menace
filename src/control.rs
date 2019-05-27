@@ -7,11 +7,11 @@ use amethyst::{
         System,
         WriteStorage
     },
-    input::{ InputHandler },
+    input::{InputHandler},
 };
 use crate::{
     MARINE_MAX_VELOCITY,
-    components::{ Player, TwoDimObject }
+    components::{Player, TwoDimObject}
 };
 
 pub struct ControlSystem;

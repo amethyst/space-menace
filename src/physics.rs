@@ -1,8 +1,8 @@
 use amethyst::{
-    ecs::{ Join, ReadStorage, System, WriteStorage },
+    ecs::{Join, ReadStorage, System, WriteStorage},
 };
 use crate::{
-    components::{ Player, TwoDimObject }
+    components::{Player, TwoDimObject}
 };
 
 pub struct PhysicsSystem;
