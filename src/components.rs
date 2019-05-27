@@ -1,6 +1,6 @@
 use amethyst::{
     core::{Transform},
-    ecs::{Component, VecStorage},
+    ecs::{Component, VecStorage, NullStorage},
 };
 use specs_derive::Component;
 
@@ -122,15 +122,12 @@ impl Player {
 }
 
 #[derive(Component)]
-#[storage(VecStorage)]
-pub struct CameraSubject {
-    pub two_dim: TwoDimObject,
-}
+#[storage(NullStorage)]
+pub struct CameraSubject;
 
-impl CameraSubject {
-    pub fn new(two_dim: TwoDimObject) -> Self {
-        CameraSubject {
-            two_dim,
-        }
+impl Default for CameraSubject {
+    fn default() -> Self {
+        Self {}
     }
 }
+
