@@ -599,7 +599,6 @@ name = "code-name-dune"
 version = "0.1.0"
 dependencies = [
  "amethyst 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "specs-derive 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -2415,16 +2414,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "specs-derive"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)",
- "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
- "syn 0.15.34 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "specs-hierarchy"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3104,7 +3093,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum smallvec 0.6.9 (registry+https://github.com/rust-lang/crates.io-index)" = "c4488ae950c49d403731982257768f48fada354a5203fe81f9bb6f43ca9002be"
 "checksum smithay-client-toolkit 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "aa4899558362a65589b53313935099835acf999740915e134dff20cca7c6a28b"
 "checksum specs 0.14.3 (registry+https://github.com/rust-lang/crates.io-index)" = "de65613ada4338aa7ba71eca60eca24c60483433eec0077bc4f33cfc31f4bdf0"
-"checksum specs-derive 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a63549fa0d4a6f76e99e6634c328f25d0c9fa8ad6f8498aef74f6c35c0b269e5"
 "checksum specs-hierarchy 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "8c1d3351f4ce84753cd19ab0cb850843ad1153d8c2c0e2f3480117a126916250"
 "checksum stable_deref_trait 1.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "dba1a27d3efae4351c8051072d619e3ade2820635c3958d826bfea39d59b54c8"
 "checksum stb_truetype 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "69b7df505db8e81d54ff8be4693421e5b543e08214bd8d99eb761fcb4d5668ba"

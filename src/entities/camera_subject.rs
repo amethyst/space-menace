@@ -6,7 +6,7 @@ use amethyst::{
 };
 
 use crate::{
-    components_new::SubjectMarkerComponent,
+    components::SubjectTag,
 };
 
 pub fn get_entity(world: &mut World) -> Entity {
@@ -16,7 +16,7 @@ pub fn get_entity(world: &mut World) -> Entity {
     world
         .create_entity()
         .with(transform)
-        .with(SubjectMarkerComponent::default())
+        .with(SubjectTag::default())
         .with(Transparent)
         .build()
 }

@@ -1,7 +1,7 @@
 extern crate amethyst;
 
 use amethyst::{
-    core::{TransformBundle},
+    core::{frame_limiter::FrameRateLimitStrategy, TransformBundle},
     input::{InputBundle},
     prelude::*,
     renderer::{
@@ -15,15 +15,14 @@ use amethyst::{
     },
     utils::application_root_dir,
 };
+use std::time::Duration;
 
 mod entities;
 mod states;
 mod components;
-mod components_new;
-mod animation;
-mod physics;
-mod control;
-mod camera_motion_system;
+mod systems;
+
+use systems::{AnimationSystem, CameraMotionSystem, CollisionSystem, AccelerationSystem};
 
 pub const SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
@@ -66,11 +65,16 @@ fn main() -> amethyst::Result<()> {
             .with_sprite_sheet_processor()
             .with_sprite_visibility_sorting(&[])
         )?
-        .with(control::ControlSystem, "control_system", &[])
-        .with(physics::PhysicsSystem, "physics_system", &["control_system"])
-        .with(animation::AnimationSystem, "animation_system", &["physics_system"])
-        .with(camera_motion_system::CameraMotionSystem, "camera_motion_system", &["physics_system"]);
-    let mut game = Application::new(assets_path, states::PlayState, game_data)?;
+        .with(AccelerationSystem, "acceleration_system", &[])
+        .with(CollisionSystem, "collision_system", &["acceleration_system"])
+        .with(AnimationSystem, "animation_system", &["collision_system"])
+        .with(CameraMotionSystem, "camera_motion_system", &["collision_system"]);
+    let mut game = Application::build(assets_path, states::PlayState)?
+        // .with_frame_limit(
+        //     FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
+        //     120,
+        // )
+        .build(game_data)?;
 
     game.run();
 
