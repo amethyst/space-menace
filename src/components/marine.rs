@@ -8,8 +8,9 @@ use crate::components::TwoDimObject;
 pub enum MarineState {
     Dying,
     Idle,
-    Running,
     Jumping,
+    Running,
+    Shooting,
 }
 
 impl Default for MarineState {
@@ -24,6 +25,7 @@ pub struct Marine {
     pub ticks: usize,
     pub state: MarineState,
     pub two_dim: TwoDimObject,
+    pub is_shooting: bool,
 }
 
 impl Component for Marine {
@@ -36,6 +38,7 @@ impl Marine {
             ticks: 0,
             state: MarineState::Idle,
             two_dim,
+            is_shooting: false,
         }
     }
 }

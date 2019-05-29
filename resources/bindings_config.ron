@@ -1,8 +1,13 @@
 (
   axes: {
-    "run": Emulated(pos: Key(Right), neg: Key(Left)),
-  },
-  actions: {
-    "jump": [ [Key(Up)] ],
-  },
+        "run": Emulated(pos: Key(Right), neg: Key(Left)),
+    },
+    actions: {
+        "jump": [
+            [Key(Up)]
+        ],
+        "shoot": [
+            [Key(Space)]
+        ]
+    },
 )
