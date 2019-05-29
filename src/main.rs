@@ -1,7 +1,10 @@
 extern crate amethyst;
 
 use amethyst::{
-    core::{frame_limiter::FrameRateLimitStrategy, TransformBundle},
+    core::{
+        // frame_limiter::FrameRateLimitStrategy,
+        TransformBundle
+    },
     input::{InputBundle},
     prelude::*,
     renderer::{
@@ -15,14 +18,15 @@ use amethyst::{
     },
     utils::application_root_dir,
 };
-use std::time::Duration;
+// use std::time::Duration;
 
 mod entities;
 mod states;
 mod components;
+mod resources;
 mod systems;
 
-use systems::{AnimationSystem, CameraMotionSystem, CollisionSystem, AccelerationSystem};
+use systems::{AccelerationSystem, AnimationSystem, AttackSystem, CameraMotionSystem, CollisionSystem};
 
 pub const SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
@@ -66,6 +70,7 @@ fn main() -> amethyst::Result<()> {
             .with_sprite_visibility_sorting(&[])
         )?
         .with(AccelerationSystem, "acceleration_system", &[])
+        .with(AttackSystem, "attack_system", &[])
         .with(CollisionSystem, "collision_system", &["acceleration_system"])
         .with(AnimationSystem, "animation_system", &["collision_system"])
         .with(CameraMotionSystem, "camera_motion_system", &["collision_system"]);

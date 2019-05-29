@@ -38,10 +38,15 @@ impl<'s> System<'s> for AnimationSystem {
             // set marine state
             let current_state = marine.state;
             let next_state =
-                if motion.velocity.y != 0. { MarineState::Jumping }
-                // else if marine.two_dim.velocity.x.abs() > MARINE_MAX_VELOCITY * 0.7 { MarineState::Running }
-                else if motion.velocity.x.abs() > 0. { MarineState::Running }
-                else { MarineState::Idle };
+                if motion.velocity.y != 0. {
+                    MarineState::Jumping
+                } else if motion.velocity.x.abs() > 0. {
+                    MarineState::Running
+                } else if marine.is_shooting {
+                    MarineState::Shooting
+                } else {
+                    MarineState::Idle
+                };
 
             if current_state != next_state {
                 marine.state = next_state;
@@ -52,8 +57,9 @@ impl<'s> System<'s> for AnimationSystem {
             let (sprite_initial_index, num_sprites, game_frames_per_animation_frame) = match marine.state {
                 MarineState::Dying => (0, 4, 32),
                 MarineState::Idle => (4, 4, 32),
-                MarineState::Running => (14, 11, 8),
                 MarineState::Jumping => (8, 6, 16),
+                MarineState::Running => (14, 11, 8),
+                MarineState::Shooting => (25, 2, 8),
             };
             sprite.sprite_number = (marine.ticks / game_frames_per_animation_frame) % num_sprites + sprite_initial_index;
 
