@@ -7,7 +7,8 @@ use amethyst::{
 
 use crate::{
     SCALE,
-    components::{Player, TwoDimObject},
+    components::Marine,
+    components::{TwoDimObject, Motion},
 };
 use super::load_sprite_sheet;
 
@@ -18,7 +19,7 @@ pub fn init(world: &mut World) {
     let sprite_sheet = load_sprite_sheet(world, "sprites/marine.png", "prefabs/marine.ron");
 
     let sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet.clone(),
+        sprite_sheet: sprite_sheet,
         sprite_number: 4, // paddle is the first sprite in the sprite_sheet
     };
 
@@ -29,7 +30,8 @@ pub fn init(world: &mut World) {
     world
         .create_entity()
         .with(transform)
-        .with(Player::new(two_dim_object))
+        .with(Motion::new())
+        .with(Marine::new(two_dim_object))
         .with(sprite_render)
         .with(Transparent) // Necessary for ordered layering
         .build();

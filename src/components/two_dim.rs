@@ -1,22 +1,7 @@
 use amethyst::{
     core::{Transform},
-    ecs::{Component, VecStorage, NullStorage},
+    ecs::{Component, DenseVecStorage},
 };
-use specs_derive::Component;
-
-#[derive(Eq, Hash, PartialEq, Clone, Copy)]
-pub enum PlayerState {
-    Dying,
-    Idle,
-    Running,
-    Jumping,
-}
-
-impl Default for PlayerState {
-    fn default() -> Self {
-        PlayerState::Idle
-    }
-}
 
 pub struct TwoDimVector<T> {
     pub x: T,
@@ -32,12 +17,14 @@ impl Default for TwoDimVector<f32> {
     }
 }
 
-#[derive(Component)]
-#[storage(VecStorage)]
 pub struct TwoDimObject {
     pub size: TwoDimVector<f32>,
     pub position: TwoDimVector<f32>,
-    pub velocity: TwoDimVector<f32>,
+    // pub velocity: TwoDimVector<f32>,
+}
+
+impl Component for TwoDimObject {
+    type Storage = DenseVecStorage<Self>;
 }
 
 impl TwoDimObject {
@@ -45,7 +32,7 @@ impl TwoDimObject {
         TwoDimObject {
             size: TwoDimVector { x: width, y: height },
             position: TwoDimVector { x: 0., y: 0. },
-            velocity: TwoDimVector { x: 0., y: 0. },
+            // velocity: TwoDimVector { x: 0., y: 0. },
         }
     }
 
@@ -53,9 +40,9 @@ impl TwoDimObject {
         self.position = TwoDimVector { x, y };
     }
 
-    pub fn set_velocity(&mut self, x: f32, y: f32) {
-        self.velocity = TwoDimVector { x, y };
-    }
+    // pub fn set_velocity(&mut self, x: f32, y: f32) {
+    //     self.velocity = TwoDimVector { x, y };
+    // }
 
     pub fn update_transform_position(&self, transform: &mut Transform) {
         transform.set_x(self.position.x);
@@ -102,32 +89,3 @@ impl TwoDimObject {
         self.bottom() < other.top() && other.bottom() < self.top()
     }
 }
-
-#[derive(Component)]
-#[storage(VecStorage)]
-pub struct Player {
-    pub ticks: usize,
-    pub state: PlayerState,
-    pub two_dim: TwoDimObject,
-}
-
-impl Player {
-    pub fn new(two_dim: TwoDimObject) -> Self {
-        Player {
-            ticks: 0,
-            state: PlayerState::Idle,
-            two_dim,
-        }
-    }
-}
-
-#[derive(Component)]
-#[storage(NullStorage)]
-pub struct CameraSubject;
-
-impl Default for CameraSubject {
-    fn default() -> Self {
-        Self {}
-    }
-}
-

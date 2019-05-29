@@ -11,21 +11,21 @@ use amethyst::{
     },
 };
 
-pub mod camera_subject_entity;
-pub mod camera_entity;
-pub mod marine_entity;
-pub mod background_entity;
-pub mod truss_entity;
-pub mod platform_entity;
+pub mod camera_subject;
+pub mod camera;
+pub mod marine;
+pub mod background;
+pub mod truss;
+pub mod platform;
 
 pub fn initialise_entities(world: &mut World) {
-    let camera_subject = camera_subject_entity::get_entity(world);
+    let camera_subject = camera_subject::get_entity(world);
 
-    camera_entity::init(world, camera_subject);
-    marine_entity::init(world);
-    background_entity::init(world);
-    truss_entity::init(world);
-    platform_entity::init(world);
+    camera::init(world, camera_subject);
+    marine::init(world);
+    background::init(world);
+    truss::init(world);
+    platform::init(world);
 }
 
 fn load_sprite_sheet(world: &mut World, png_path: &str, ron_path: &str) -> SpriteSheetHandle {

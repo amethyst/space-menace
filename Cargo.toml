@@ -6,4 +6,3 @@ edition = "2018"
 
 [dependencies]
 amethyst = {version = "0.10.0", features = ["nightly"]}
-specs-derive = "0.4.0"
