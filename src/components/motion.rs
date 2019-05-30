@@ -1,10 +1,11 @@
 use amethyst::{
-    core::{nalgebra::Vector2},
+    core::nalgebra::Vector2,
     ecs::{Component, DenseVecStorage},
 };
 
 pub struct Motion {
-    pub velocity: Vector2<f32>
+    pub velocity: Vector2<f32>,
+    pub has_jumped: bool,
 }
 
 impl Component for Motion {
@@ -14,7 +15,8 @@ impl Component for Motion {
 impl Motion {
     pub fn new() -> Self {
         Motion {
-            velocity: Vector2::new(0., 0.)
+            velocity: Vector2::new(0., 0.),
+            has_jumped: false,
         }
     }
 }

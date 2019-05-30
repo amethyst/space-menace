@@ -27,15 +27,15 @@ impl<'s> System<'s> for AttackSystem {
     fn run(&mut self, (entities, two_dim_objs, mut marines, motions, mut flipped, bullet_resource, lazy_update, input): Self::SystemData) {
         let mut marine_entities_on_ground = vec![];
 
-        for (marine, marine_entity) in (&marines, &entities).join() {
+        for (marine, marine_2d_obj, marine_entity) in (&marines, &two_dim_objs, &entities).join() {
             for two_dim_obj in (&two_dim_objs).join() {
-                if marine.two_dim.bottom() == two_dim_obj.top() {
+                if marine_2d_obj.bottom() == two_dim_obj.top() {
                     marine_entities_on_ground.push(marine_entity);
                 }
             }
         }
 
-        for (mut marine, motion, marine_entity) in (&mut marines, &motions, &entities).join() {
+        for (mut marine, motion, marine_2d_obj, marine_entity) in (&mut marines, &motions, &two_dim_objs, &entities).join() {
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
@@ -43,9 +43,9 @@ impl<'s> System<'s> for AttackSystem {
 
             if marine.is_shooting {
                 let shoot_start_position = if motion.velocity.x < 0. {
-                    marine.two_dim.left()
+                    marine_2d_obj.left()
                 } else {
-                    marine.two_dim.right()
+                    marine_2d_obj.right()
                 };
 
                 spawn_bullet(&entities, &bullet_resource, shoot_start_position, motion.velocity.x, &lazy_update);

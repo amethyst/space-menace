@@ -31,7 +31,8 @@ impl<'s> System<'s> for AccelerationSystem {
 
         for (marine, marine_entity) in (&marines, &entities).join() {
             for two_dim_object in (&two_dim_objects).join() {
-                if marine.two_dim.bottom() == two_dim_object.top() {
+                if marine.two_dim.bottom() == two_dim_object.top()
+                    && marine.two_dim.overlapping_x(two_dim_object) {
                     marine_entities_on_ground.push(marine_entity);
                 }
             }
@@ -68,7 +69,8 @@ impl<'s> System<'s> for AccelerationSystem {
                     motion.velocity.x = motion.velocity.x.min(MARINE_MAX_VELOCITY).max(-1. * MARINE_MAX_VELOCITY);
                 }
 
-                if jump_input && marine_on_ground {
+                if jump_input && marine_on_ground && !motion.has_jumped {
+                    motion.has_jumped = true;
                     motion.velocity.y = 6.;
                     // high acceleration on jump depending on velocity
                     if motion.velocity.x == 0. {
@@ -78,7 +80,16 @@ impl<'s> System<'s> for AccelerationSystem {
                     } else {
                         motion.velocity.x += 0.8 * x_input as f32;
                     }
-                };
+                // }
+                } else if marine_on_ground {
+                    motion.velocity.y = 0.;
+                } else if !marine_on_ground {
+                    motion.velocity.y -= 0.2;
+                }
+
+                if !jump_input {
+                    motion.has_jumped = false;
+                }
             }
         }
     }

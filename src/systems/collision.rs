@@ -2,8 +2,7 @@ use amethyst::{
     ecs::{Join, ReadStorage, System, WriteStorage},
 };
 use crate::{
-    components::Marine,
-    components::{TwoDimObject, Motion}
+    components::{Marine, Motion, TwoDimObject}
 };
 
 pub struct CollisionSystem;
@@ -53,7 +52,7 @@ impl<'s> System<'s> for CollisionSystem {
                 marine.two_dim.set_left(new_x);
             };
 
-            let marine_on_ground = if motion.velocity.y > 0. {
+            if motion.velocity.y > 0. {
                 let old_y = marine.two_dim.top();
                 let possible_new_y = marine.two_dim.top() + motion.velocity.y;
                 let mut new_y = possible_new_y;
@@ -67,45 +66,21 @@ impl<'s> System<'s> for CollisionSystem {
                     }
                 }
                 marine.two_dim.set_top(new_y);
-
-                false
             } else if motion.velocity.y < 0. {
                 let old_y = marine.two_dim.bottom();
                 let possible_new_y = marine.two_dim.bottom() + motion.velocity.y;
                 let mut new_y = possible_new_y;
-                let mut marine_on_ground = false;
 
                 for two_dim_object in (&two_dim_objects).join() {
                     if marine.two_dim.overlapping_x(two_dim_object)
                         && old_y >= two_dim_object.top()
                         && new_y <= two_dim_object.top() {
-                        marine_on_ground = true;
                         new_y = two_dim_object.top();
                         motion.velocity.y = 0.;
                     }
                 }
                 marine.two_dim.set_bottom(new_y);
-
-                marine_on_ground
-            } else {
-                let mut marine_on_ground = false;
-
-                for two_dim_object in (&two_dim_objects).join() {
-                    if marine.two_dim.overlapping_x(two_dim_object)
-                        && marine.two_dim.bottom() == two_dim_object.top() {
-                        marine_on_ground = true;
-                    }
-                }
-
-                marine_on_ground
             };
-
-            // gravity
-            if marine_on_ground {
-                motion.velocity.y = 0.;
-            } else {
-                motion.velocity.y -= 0.2;
-            }
         }
     }
 }
