@@ -26,19 +26,19 @@ pub fn init(world: &mut World) {
             0 => {
                 sprite_number = 4;
                 tile_w = 96.;
-                tile_h = 40.;
+                tile_h = 40.; // NOTE: 56 - 16 (subtrating half of the top face of ramp to make the marine stand at the middle of the ramp)
                 tile_left = 0.;
             },
             4 => {
                 sprite_number = 2;
                 tile_w = 96.;
-                tile_h = 64.;
+                tile_h = 48.; // 64 - 16
                 tile_left = i as f32 * tile_w * SCALE;
             },
             _ => {
                 sprite_number = 4;
                 tile_w = 96.;
-                tile_h = 40.; // NOTE: 56 - 16
+                tile_h = 40.; // NOTE: 56 - 16 (subtrating half of the top face of ramp to make the marine stand at the middle of the ramp)
                 tile_left = i as f32 * tile_w * SCALE;
             }
         }
