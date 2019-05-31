@@ -14,9 +14,9 @@ use crate::{
     components::{Marine, MarineState, Motion, TwoDimObject},
 };
 
-pub struct AccelerationSystem;
+pub struct MarineAccelerationSystem;
 
-impl<'s> System<'s> for AccelerationSystem {
+impl<'s> System<'s> for MarineAccelerationSystem {
     type SystemData = (
         Entities<'s>,
         ReadStorage<'s, Marine>,
@@ -25,14 +25,14 @@ impl<'s> System<'s> for AccelerationSystem {
         Read<'s, InputHandler<String, String>>,
     );
 
-    fn run(&mut self, (entities, marines, two_dim_objects, mut motions, input): Self::SystemData) {
+    fn run(&mut self, (entities, marines, two_dim_objs, mut motions, input): Self::SystemData) {
         // calculate this so we know if the character should be able to jump
         let mut marine_entities_on_ground = vec![];
 
         for (marine, marine_entity) in (&marines, &entities).join() {
-            for two_dim_object in (&two_dim_objects).join() {
-                if marine.two_dim.bottom() == two_dim_object.top()
-                    && marine.two_dim.overlapping_x(two_dim_object) {
+            for two_dim_obj in (&two_dim_objs).join() {
+                if marine.two_dim.bottom() == two_dim_obj.top()
+                    && marine.two_dim.overlapping_x(two_dim_obj) {
                     marine_entities_on_ground.push(marine_entity);
                 }
             }
