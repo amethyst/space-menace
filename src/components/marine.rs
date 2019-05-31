@@ -26,6 +26,7 @@ pub struct Marine {
     pub state: MarineState,
     pub two_dim: TwoDimObject,
     pub is_shooting: bool,
+    pub has_shot: bool,
 }
 
 impl Component for Marine {
@@ -39,6 +40,7 @@ impl Marine {
             state: MarineState::Idle,
             two_dim,
             is_shooting: false,
+            has_shot: false,
         }
     }
 }

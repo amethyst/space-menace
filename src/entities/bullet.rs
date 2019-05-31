@@ -6,7 +6,7 @@ use amethyst::{
 
 use crate::{
     SCALE,
-    components::{ Motion, TwoDimObject},
+    components::{Bullet, Motion, TwoDimObject},
     resources::BulletResource,
 };
 use super::load_sprite_sheet;
@@ -28,7 +28,7 @@ pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletReso
     transform.set_scale(SCALE, SCALE, SCALE);
 
     let mut two_dim_object = TwoDimObject::new(22. * SCALE, 22. * SCALE);
-    two_dim_object.set_position(shoot_start_position, 80.);
+    two_dim_object.set_position(shoot_start_position, 128.);
     two_dim_object.update_transform_position(&mut transform);
 
     let sprite_render = SpriteRender {
@@ -38,8 +38,8 @@ pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletReso
     let mut motion = Motion::new();
     motion.velocity.x = 10.;
 
+    lazy_update.insert(bullet_entity, Bullet::new(two_dim_object));
     lazy_update.insert(bullet_entity, sprite_render);
-    lazy_update.insert(bullet_entity, two_dim_object);
     lazy_update.insert(bullet_entity, motion);
     lazy_update.insert(bullet_entity, transform);
     lazy_update.insert(bullet_entity, Transparent);

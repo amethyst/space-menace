@@ -26,7 +26,15 @@ mod components;
 mod resources;
 mod systems;
 
-use systems::{AccelerationSystem, AnimationSystem, AttackSystem, CameraMotionSystem, CollisionSystem};
+use systems::{
+    MarineAccelerationSystem,
+    MarineAnimationSystem,
+    AttackSystem,
+    BulletAnimationSystem,
+    BulletCollisionSystem,
+    CameraMotionSystem,
+    MarineCollisionSystem
+};
 
 pub const SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
@@ -69,11 +77,13 @@ fn main() -> amethyst::Result<()> {
             .with_sprite_sheet_processor()
             .with_sprite_visibility_sorting(&[])
         )?
-        .with(AccelerationSystem, "acceleration_system", &[])
+        .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
         .with(AttackSystem, "attack_system", &[])
-        .with(CollisionSystem, "collision_system", &["acceleration_system"])
-        .with(AnimationSystem, "animation_system", &["collision_system"])
-        .with(CameraMotionSystem, "camera_motion_system", &["collision_system"]);
+        .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
+        .with(BulletAnimationSystem, "bullet_animation_system", &["bullet_collision_system"])
+        .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
+        .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
+        .with(CameraMotionSystem, "camera_motion_system", &["marine_collision_system"]);
     let mut game = Application::build(assets_path, states::PlayState)?
         // .with_frame_limit(
         //     FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),

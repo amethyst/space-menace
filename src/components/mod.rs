@@ -1,8 +1,10 @@
+mod bullet;
 mod marine;
 mod motion;
 mod subject_tag;
 mod two_dim;
 
+pub use self::bullet::Bullet;
 pub use self::marine::Marine;
 pub use self::marine::MarineState;
 pub use self::motion::Motion;
