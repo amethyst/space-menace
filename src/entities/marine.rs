@@ -7,7 +7,7 @@ use amethyst::{
 
 use crate::{
     SCALE,
-    components::Marine,
+    components::{Marine, Direction, Directions},
     components::{TwoDimObject, Motion},
 };
 use super::load_sprite_sheet;
@@ -29,9 +29,10 @@ pub fn init(world: &mut World) {
 
     world
         .create_entity()
+        .with(Marine::new(two_dim_object))
         .with(transform)
         .with(Motion::new())
-        .with(Marine::new(two_dim_object))
+        .with(Direction::new(Directions::Right, Directions::Neutral))
         .with(sprite_render)
         .with(Transparent) // Necessary for ordered layering
         .build();

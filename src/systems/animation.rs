@@ -22,14 +22,14 @@ impl<'s> System<'s> for MarineAnimationSystem {
     fn run(&mut self, (entities, mut marines, mut motions, mut sprites, mut flipped, mut transforms): Self::SystemData) {
 
         // iterating over entities having marine, sprite and transform components
-        for (marine_entity, mut marine, motion, mut sprite, mut transform) in
+        for (marine_entity, mut marine, marine_motion, mut sprite, mut transform) in
             (&entities, &mut marines, &mut motions, &mut sprites, &mut transforms).join() {
-
+            let marine_velocity = marine_motion.velocity;
             // set sprite direction
-            if motion.velocity.x > 0. {
+            if marine_velocity.x > 0. {
                 // face right
                 flipped.remove(marine_entity);
-            } else if motion.velocity.x < 0. {
+            } else if marine_velocity.x < 0. {
                 // face left
                 flipped.insert(marine_entity, Flipped::Horizontal)
                     .expect("Failed to flip");
@@ -37,25 +37,19 @@ impl<'s> System<'s> for MarineAnimationSystem {
 
             // set marine state
             let current_state = marine.state;
-            println!("animation marine.is_shooting = {}", marine.is_shooting);
             let next_state =
-                if motion.velocity.y != 0. {
+                if marine_velocity.y != 0. {
                     MarineState::Jumping
-                } else if motion.velocity.x.abs() > 0. {
+                } else if marine_velocity.x.abs() > 0. {
                     MarineState::Running
                 } else if marine.has_shot {
-                    println!("next_state = Shooting");
                     MarineState::Shooting
                 } else {
-                    println!("next_state = Idle");
                     MarineState::Idle
                 };
 
 
             if current_state != next_state {
-                if current_state == MarineState::Shooting && next_state == MarineState::Idle {
-                    println!("next_state inside state change");
-                }
                 marine.state = next_state;
                 // resetting animation if marine state changed
                 marine.ticks = 0;
@@ -69,13 +63,12 @@ impl<'s> System<'s> for MarineAnimationSystem {
                 MarineState::Shooting => (25, 2, 8),
             };
             sprite.sprite_number = (marine.ticks / game_frames_per_animation_frame) % num_sprites + sprite_initial_index;
+
             if sprite.sprite_number == 26 {
                 marine.has_shot = false;
             }
-            println!("sprite.sprite_number = {}", sprite.sprite_number);
 
             marine.ticks = marine.ticks.wrapping_add(1);
-            println!("marine.ticks = {}", marine.ticks);
 
             // moving the marine
             marine.two_dim.update_transform_position(&mut transform);

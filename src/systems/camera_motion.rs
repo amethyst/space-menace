@@ -25,7 +25,7 @@ impl<'s> System<'s> for CameraMotionSystem {
         }
 
         for (_subject_tag, transform) in (&subject_tags, &mut transforms).join() {
-            if marine_x >= 384. && marine_x <= 1000. {
+            if marine_x >= 384. && marine_x <= 900. {
                 transform.set_x(marine_x);            
             }
         }

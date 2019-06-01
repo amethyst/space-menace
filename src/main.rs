@@ -78,7 +78,7 @@ fn main() -> amethyst::Result<()> {
             .with_sprite_visibility_sorting(&[])
         )?
         .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
-        .with(AttackSystem, "attack_system", &[])
+        .with(AttackSystem, "attack_system", &["marine_acceleration_system"])
         .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
         .with(BulletAnimationSystem, "bullet_animation_system", &["bullet_collision_system"])
         .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
