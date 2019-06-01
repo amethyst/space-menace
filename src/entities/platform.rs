@@ -32,8 +32,8 @@ pub fn init(world: &mut World) {
             4 => {
                 sprite_number = 2;
                 tile_w = 96.;
-                tile_h = 48.; // 64 - 16
-                tile_left = i as f32 * tile_w * SCALE;
+                tile_h = 36.; // 64 - 16 - 12 ??
+                tile_left = i as f32 * tile_w * SCALE + 150.;
             },
             _ => {
                 sprite_number = 4;
@@ -49,7 +49,12 @@ pub fn init(world: &mut World) {
 
         let mut two_dim_object = TwoDimObject::new(tile_w * SCALE, tile_h * SCALE);
         two_dim_object.set_left(tile_left);
-        two_dim_object.set_bottom(0.);
+        if i != 4 {
+            two_dim_object.set_bottom(8. * SCALE);
+        } else {
+            // two_dim_object.set_bottom(16. * SCALE);
+            two_dim_object.set_bottom(22. * SCALE);
+        }
         two_dim_object.update_transform_position(&mut transform);
 
         world.create_entity()

@@ -11,7 +11,7 @@ use amethyst::{
 };
 use crate::{
     MARINE_MAX_VELOCITY,
-    components::{Marine, MarineState, Motion, TwoDimObject},
+    components::{Direction, Directions, Marine, MarineState, Motion, TwoDimObject},
 };
 
 pub struct MarineAccelerationSystem;
@@ -22,10 +22,11 @@ impl<'s> System<'s> for MarineAccelerationSystem {
         ReadStorage<'s, Marine>,
         ReadStorage<'s, TwoDimObject>,
         WriteStorage<'s, Motion>,
+        WriteStorage<'s, Direction>,
         Read<'s, InputHandler<String, String>>,
     );
 
-    fn run(&mut self, (entities, marines, two_dim_objs, mut motions, input): Self::SystemData) {
+    fn run(&mut self, (entities, marines, two_dim_objs, mut motions, mut directions, input): Self::SystemData) {
         // calculate this so we know if the character should be able to jump
         let mut marine_entities_on_ground = vec![];
 
@@ -38,7 +39,7 @@ impl<'s> System<'s> for MarineAccelerationSystem {
             }
         }
 
-        for (marine, motion, marine_entity) in (&marines, &mut motions, &entities).join() {
+        for (marine, motion, mut marine_dir, marine_entity) in (&marines, &mut motions, &mut directions, &entities).join() {
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
 
             let x_input = input.axis_value("run").expect("horizontal axis exists");
@@ -67,6 +68,12 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                     // accelerate till velocity reaches a max threshold
                     motion.velocity.x += 0.1 * x_input as f32;
                     motion.velocity.x = motion.velocity.x.min(MARINE_MAX_VELOCITY).max(-1. * MARINE_MAX_VELOCITY);
+                }
+                
+                if x_input < 0. {
+                    marine_dir.x = Directions::Left;
+                } else if x_input > 0. {
+                    marine_dir.x = Directions::Right;
                 }
 
                 if jump_input && marine_on_ground && !motion.has_jumped {

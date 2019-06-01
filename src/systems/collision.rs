@@ -26,7 +26,7 @@ impl<'s> System<'s> for MarineCollisionSystem {
                     possible_new_x = marine.two_dim.get_next_right(two_dim_object, old_x, possible_new_x);
                 }
                 // ensure marine stays inside "walls" of display
-                let new_x = possible_new_x.min(1000.).max(48 as f32);
+                let new_x = possible_new_x.min(1150.).max(48 as f32);
                 marine.two_dim.set_right(new_x);
             } else if marine_velocity.x < 0. {
                 // marine moving left
@@ -37,9 +37,9 @@ impl<'s> System<'s> for MarineCollisionSystem {
                     possible_new_x = marine.two_dim.get_next_left(two_dim_object, old_x, possible_new_x);
                 }
                 // ensure marine stays inside "walls" of display
-                let new_x = possible_new_x.min(1000.- 48 as f32).max(0.);
+                let new_x = possible_new_x.min(1150.- 48 as f32).max(0.);
                 marine.two_dim.set_left(new_x);
-            };
+            }
 
             if marine_velocity.y > 0. {
                 // marine moving up
@@ -61,7 +61,7 @@ impl<'s> System<'s> for MarineCollisionSystem {
                 }
                 let new_y = possible_new_y;
                 marine.two_dim.set_bottom(new_y);
-            };
+            }
         }
     }
 }
@@ -98,7 +98,7 @@ impl<'s> System<'s> for BulletCollisionSystem {
                 }
                 let new_x = possible_new_x;
                 bullet.two_dim.set_left(new_x);
-            };
+            }
 
             // if bullet_velocity.y > 0. {
             //     // bullet moving up
@@ -120,7 +120,7 @@ impl<'s> System<'s> for BulletCollisionSystem {
             //     }
             //     let new_y = possible_new_y;
             //     bullet.two_dim.set_bottom(new_y);
-            // };
+            // }
         }
     }
 }
