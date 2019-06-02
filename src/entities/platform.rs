@@ -14,6 +14,7 @@ use super::load_sprite_sheet;
 pub fn init(world: &mut World) {
     let sprite_sheet = load_sprite_sheet(world, "sprites/platform.png", "prefabs/platform.ron");
 
+    // TODO: replace this temporary logic with logic to render a tilemap
     for i in 0..5 {
         let mut transform = Transform::default();
         let sprite_number;
@@ -53,7 +54,7 @@ pub fn init(world: &mut World) {
             two_dim_object.set_bottom(8. * SCALE);
         } else {
             // two_dim_object.set_bottom(16. * SCALE);
-            two_dim_object.set_bottom(22. * SCALE);
+            two_dim_object.set_bottom(36. * SCALE);
         }
         two_dim_object.update_transform_position(&mut transform);
 

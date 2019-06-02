@@ -21,11 +21,13 @@ pub mod platform;
 mod bullet;
 
 pub use self::bullet::spawn_bullet;
+pub use self::bullet::show_bullet_impact;
 
 pub fn initialise_entities(world: &mut World) {
     let camera_subject = camera_subject::get_entity(world);
 
-    bullet::init(world);
+    bullet::init_bullet_impact(world);
+    bullet::init_bullet(world);
     camera::init(world, camera_subject);
     marine::init(world);
     background::init(world);

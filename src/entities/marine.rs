@@ -23,7 +23,7 @@ pub fn init(world: &mut World) {
         sprite_number: 4, // paddle is the first sprite in the sprite_sheet
     };
 
-    let mut two_dim_object = TwoDimObject::new(48. * SCALE, 48. * SCALE);
+    let mut two_dim_object = TwoDimObject::new(32. * SCALE, 48. * SCALE);
     two_dim_object.set_position(384., 176.);
     two_dim_object.update_transform_position(&mut transform);
 

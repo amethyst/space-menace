@@ -45,7 +45,7 @@ impl<'s> System<'s> for MarineAccelerationSystem {
             let x_input = input.axis_value("run").expect("horizontal axis exists");
             let jump_input = input.action_is_down("jump").expect("jump action exists");
 
-            if marine.state != MarineState::Shooting {
+            if marine.state != MarineState::Shooting && marine.state != MarineState::Dying {
                 if x_input == 0. && marine_on_ground {
                     // decelerate till velocity reaches 0
                     if motion.velocity.x < 0. {

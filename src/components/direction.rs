@@ -2,7 +2,7 @@ use amethyst::{
     ecs::{Component, DenseVecStorage},
 };
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum Directions {
     Right,
     Left,

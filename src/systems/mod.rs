@@ -10,4 +10,5 @@ pub use self::animation::MarineAnimationSystem;
 pub use self::camera_motion::CameraMotionSystem;
 pub use self::collision::BulletCollisionSystem;
 pub use self::animation::BulletAnimationSystem;
+pub use self::animation::BulletImpactAnimationSystem;
 pub use self::collision::MarineCollisionSystem;
