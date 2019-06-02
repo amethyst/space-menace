@@ -6,6 +6,7 @@ mod subject_tag;
 mod two_dim;
 
 pub use self::bullet::Bullet;
+pub use self::bullet::BulletImpact;
 pub use self::direction::Direction;
 pub use self::direction::Directions;
 pub use self::marine::Marine;

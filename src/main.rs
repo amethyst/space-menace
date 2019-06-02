@@ -30,6 +30,7 @@ use systems::{
     MarineAccelerationSystem,
     MarineAnimationSystem,
     AttackSystem,
+    BulletImpactAnimationSystem,
     BulletAnimationSystem,
     BulletCollisionSystem,
     CameraMotionSystem,
@@ -81,6 +82,7 @@ fn main() -> amethyst::Result<()> {
         .with(AttackSystem, "attack_system", &["marine_acceleration_system"])
         .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
         .with(BulletAnimationSystem, "bullet_animation_system", &["bullet_collision_system"])
+        .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
         .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
         .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
         .with(CameraMotionSystem, "camera_motion_system", &["marine_collision_system"]);
