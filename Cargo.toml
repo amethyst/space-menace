@@ -6,3 +6,4 @@ edition = "2018"
 
 [dependencies]
 amethyst = {version = "0.10.0", features = ["nightly"]}
+tiled = "0.8.0"
