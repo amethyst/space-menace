@@ -1,4 +1,5 @@
 extern crate amethyst;
+extern crate tiled;
 
 use amethyst::{
     core::{
