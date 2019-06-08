@@ -40,11 +40,6 @@ use systems::{
 
 pub const SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
-pub const BG_WIDTH: f32 = 192.;
-pub const BG_HEIGHT: f32 = 176.;
-pub const TRUSS_Z_TRANSFORM: f32 = -20.;
-pub const TRUSS_WIDTH: f32 = 416.;
-pub const TRUSS_HEIGHT: f32 = 176.;
 pub const PLATFORM_Z_TRANSFORM: f32 = -10.;
 
 pub const MARINE_MAX_VELOCITY: f32 = 3.;

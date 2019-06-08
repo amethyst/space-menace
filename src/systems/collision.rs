@@ -2,7 +2,7 @@ use amethyst::{
     ecs::{Entities, Join, LazyUpdate, ReadExpect, ReadStorage, System, WriteStorage},
 };
 use crate::{
-    components::{Bullet, Direction, Directions, Marine, Motion, TwoDimObject},
+    components::{Bullet, Marine, Motion, TwoDimObject},
     entities::show_bullet_impact,
     resources::BulletImpactResource,
 };
