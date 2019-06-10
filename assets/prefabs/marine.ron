@@ -1,6 +1,6 @@
 (
-    spritesheet_width: 1384,
-    spritesheet_height: 48,
+    texture_width: 1384,
+    texture_height: 48,
     sprites: [
         // Die
         (x: 0, y: 0, width: 80, height: 48), // 1

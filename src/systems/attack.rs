@@ -1,6 +1,6 @@
 use amethyst::{
     ecs::{Entities, Join, LazyUpdate, Read, ReadExpect, ReadStorage, System, WriteStorage},
-    input::InputHandler,
+    input::{InputHandler, StringBindings},
 };
 
 use crate::{
@@ -19,7 +19,7 @@ impl<'s> System<'s> for AttackSystem {
         ReadStorage<'s, Direction>,
         ReadExpect<'s, BulletResource>,
         ReadExpect<'s, LazyUpdate>,
-        Read<'s, InputHandler<String, String>>,
+        Read<'s, InputHandler<StringBindings>>,
     );
 
     fn run(&mut self, (entities, two_dim_objs, mut marines, directions, bullet_resource, lazy_update, input): Self::SystemData) {

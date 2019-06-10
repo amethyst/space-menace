@@ -1,8 +1,12 @@
 use amethyst::{
-    core::{Transform},
+    core::{math::Vector3, Transform},
     ecs::prelude::World,
     prelude::Builder,
-    renderer::{SpriteRender, Transparent},
+    renderer::{
+        sprite::SpriteSheetHandle,
+        SpriteRender,
+        transparent::Transparent,
+    },
 };
 
 use crate::{
@@ -10,16 +14,14 @@ use crate::{
     components::{Marine, Direction, Directions},
     components::{TwoDimObject, Motion},
 };
-use super::load_sprite_sheet;
 
-pub fn init(world: &mut World) {
+pub fn load_marine(world: &mut World, sprite_sheet_handle: SpriteSheetHandle) {
     let mut transform = Transform::default();
-    transform.set_scale(SCALE, SCALE, SCALE);
+    transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
 
-    let sprite_sheet = load_sprite_sheet(world, "sprites/marine.png", "prefabs/marine.ron");
 
     let sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet,
+        sprite_sheet: sprite_sheet_handle,
         sprite_number: 4, // paddle is the first sprite in the sprite_sheet
     };
 
