@@ -11,7 +11,7 @@ use crate::{
     components::TwoDimObject,
 };
 
-pub fn init(world: &mut World, map: &Map, screen_height: f32) {
+pub fn load_collider(world: &mut World, map: &Map, screen_height: f32) {
     let collision_objects = &map.object_groups[0].objects;
     let mut obj_width = 0.;
     let mut obj_height = 0.;
@@ -25,7 +25,7 @@ pub fn init(world: &mut World, map: &Map, screen_height: f32) {
             _ => {}
         }
         let mut transform = Transform::default();
-        transform.set_z(PLATFORM_Z_TRANSFORM);
+        transform.set_translation_z(PLATFORM_Z_TRANSFORM);
 
         let mut two_dim_object = TwoDimObject::new(obj_width * SCALE, obj_height * SCALE);
         two_dim_object.set_left(obj.x * SCALE);

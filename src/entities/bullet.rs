@@ -1,7 +1,11 @@
 use amethyst::{
-    core::{Transform},
+    core::{math::Vector3, Transform},
     ecs::{Entities, Entity, LazyUpdate, ReadExpect, World},
-    renderer::{SpriteRender, Transparent},
+    renderer::{
+        SpriteRender,
+        sprite::SpriteSheetHandle,
+        transparent::Transparent,
+    },
 };
 
 use crate::{
@@ -9,13 +13,10 @@ use crate::{
     components::{Bullet, BulletImpact, Direction, Directions, Motion, TwoDimObject},
     resources::{BulletImpactResource, BulletResource},
 };
-use super::load_sprite_sheet;
 
-pub fn init_bullet(world: &mut World) {
-    let sprite_sheet = load_sprite_sheet(world, "sprites/bullet.png", "prefabs/bullet.ron");
-
+pub fn load_bullet(world: &mut World, sprite_sheet_handle: SpriteSheetHandle) {
     let bullet_resource = BulletResource {
-        sprite_sheet: sprite_sheet,
+        sprite_sheet: sprite_sheet_handle,
     };
 
     world.add_resource(bullet_resource.clone());
@@ -25,7 +26,7 @@ pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletReso
     let bullet_entity: Entity = entities.create();
 
     let mut transform = Transform::default();
-    transform.set_scale(SCALE, SCALE, SCALE);
+    transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
 
     let mut two_dim_object = TwoDimObject::new(22. * SCALE, 4. * SCALE);
     two_dim_object.set_position(shoot_start_position, marine_bottom + 48.);
@@ -37,9 +38,9 @@ pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletReso
     };
     let mut motion = Motion::new();
     if marine_dir.x == Directions::Right {
-        motion.velocity.x = 10.
+        motion.velocity.x = 20.
     } else if marine_dir.x == Directions::Left {
-        motion.velocity.x = -10.;
+        motion.velocity.x = -20.;
     }
 
     lazy_update.insert(bullet_entity, Bullet::new(two_dim_object));
@@ -49,11 +50,9 @@ pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletReso
     lazy_update.insert(bullet_entity, Transparent);
 }
 
-pub fn init_bullet_impact(world: &mut World) {
-    let sprite_sheet = load_sprite_sheet(world, "sprites/bullet_impact.png", "prefabs/bullet_impact.ron");
-
+pub fn load_bullet_impact(world: &mut World, sprite_sheet_handle: SpriteSheetHandle) {
     let bullet_impact_resource = BulletImpactResource {
-        sprite_sheet: sprite_sheet,
+        sprite_sheet: sprite_sheet_handle,
     };
 
     world.add_resource(bullet_impact_resource.clone());
@@ -63,7 +62,7 @@ pub fn show_bullet_impact(entities: &Entities, bullet_impact_resource: &ReadExpe
     let bullet_impact_entity: Entity = entities.create();
 
     let mut transform = Transform::default();
-    transform.set_scale(SCALE, SCALE, SCALE);
+    transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
 
     let mut two_dim_object = TwoDimObject::new(16. * SCALE, 24. * SCALE);
     two_dim_object.set_position(impact_position - (8. * SCALE), bullet_bottom + 2.);

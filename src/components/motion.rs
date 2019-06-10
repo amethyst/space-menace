@@ -1,7 +1,8 @@
 use amethyst::{
-    core::nalgebra::Vector2,
+    core::math::Vector2,
     ecs::{Component, DenseVecStorage},
 };
+// use nalgebra::Vector2;
 
 pub struct Motion {
     pub velocity: Vector2<f32>,
