@@ -3,6 +3,9 @@ use amethyst::{
     ecs::{Entities, Join, ReadStorage, System, WriteStorage},
     renderer::{SpriteRender},
 };
+
+use std::f32::consts::PI;
+
 use crate::{
     components::{Bullet, BulletImpact, Direction, Directions, Marine, MarineState, Motion},
 };
@@ -34,6 +37,14 @@ impl<'s> System<'s> for MarineAnimationSystem {
             //     flipped.insert(marine_entity, Flipped::Horizontal)
             //         .expect("Failed to flip");
             // }
+            // // set sprite direction
+            if marine_velocity.x > 0. {
+                // face right
+                transform.set_rotation_y_axis(0.);
+            } else if marine_velocity.x < 0. {
+                // face left
+                transform.set_rotation_y_axis(PI);
+            }
 
             // set marine state
             let current_state = marine.state;
@@ -56,11 +67,11 @@ impl<'s> System<'s> for MarineAnimationSystem {
             }
 
             let (sprite_initial_index, num_sprites, game_frames_per_animation_frame) = match marine.state {
-                MarineState::Dying => (0, 4, 32),
+                MarineState::Dying => (0, 4, 16),
                 MarineState::Idle => (4, 4, 12),
                 MarineState::Jumping => (8, 6, 10),
                 MarineState::Running => (15, 10, 4),
-                MarineState::Shooting => (25, 2, 8),
+                MarineState::Shooting => (25, 2, 4),
             };
             sprite.sprite_number = (marine.ticks / game_frames_per_animation_frame) % num_sprites + sprite_initial_index;
 
@@ -94,15 +105,14 @@ impl<'s> System<'s> for BulletAnimationSystem {
             (&entities, &bullets, &mut motions, &mut transforms).join() {
             let bullet_velocity = bullet_motion.velocity;
 
-            // // set sprite direction
-            // if bullet_velocity.x > 0. {
-            //     // face right
-            //     flipped.remove(bullet_entity);
-            // } else if bullet_velocity.x < 0. {
-            //     // face left
-            //     flipped.insert(bullet_entity, Flipped::Horizontal)
-            //         .expect("Failed to flip");
-            // }
+            // set sprite direction
+            if bullet_velocity.x > 0. {
+                // fire right
+                transform.set_rotation_y_axis(0.);
+            } else if bullet_velocity.x < 0. {
+                // fire left 
+                transform.set_rotation_y_axis(PI);
+            }
 
             // moving the marine
             bullet.two_dim.update_transform_position(&mut transform);
@@ -119,17 +129,17 @@ impl<'s> System<'s> for BulletImpactAnimationSystem {
         WriteStorage<'s, SpriteRender>,
         // WriteStorage<'s, Flipped>,
         ReadStorage<'s, Direction>,
+        WriteStorage<'s, Transform>,
     );
 
-    fn run(&mut self, (entities, mut bullet_impacts, mut sprites, directions): Self::SystemData) {    
-        for (bullet_impact_entity, mut bullet_impact, mut sprite, bullet_impact_dir) in
-            (&entities, &mut bullet_impacts, &mut sprites, &directions).join() {
-            // if bullet_impact_dir.x == Directions::Right {
-            //     flipped.remove(bullet_impact_entity);
-            // } else if bullet_impact_dir.x == Directions::Left {
-            //     flipped.insert(bullet_impact_entity, Flipped::Horizontal)
-            //         .expect("Failed to flip");
-            // }
+    fn run(&mut self, (entities, mut bullet_impacts, mut sprites, directions, mut transforms): Self::SystemData) {    
+        for (bullet_impact_entity, mut bullet_impact, mut sprite, bullet_impact_dir, bullet_transform) in
+            (&entities, &mut bullet_impacts, &mut sprites, &directions, &mut transforms).join() {
+            if bullet_impact_dir.x == Directions::Right {
+                bullet_transform.set_rotation_y_axis(0.);
+            } else if bullet_impact_dir.x == Directions::Left {
+                bullet_transform.set_rotation_y_axis(PI);
+            }
             sprite.sprite_number = (bullet_impact.ticks / 8) % 2 + 0;
 
             bullet_impact.ticks = bullet_impact.ticks.wrapping_add(1);
