@@ -1,18 +1,15 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader},
-    core::Transform,
+    core::{math::Vector3, Transform},
     ecs::prelude::World,
     prelude::Builder,
     renderer::{
-        PngFormat,
+        sprite::{SpriteSheetHandle, TextureCoordinates},
         Sprite,
         SpriteRender,
         SpriteSheet,
-        SpriteSheetHandle,
         Texture,
-        TextureCoordinates,
-        TextureMetadata,
-        Transparent,
+        transparent::Transparent,
     },
 };
 
@@ -20,11 +17,7 @@ use tiled::{Map, Tileset};
 
 use crate::SCALE;
 
-pub fn init_map_layer(world: &mut World, map: &Map, tileset_id: u32, layer_index: usize, screen_height: f32) {
-    let image = &map.tilesets[tileset_id as usize - 1].images[0];
-    
-    let texture_handle = get_texture_handle(world, &image.source);
-
+pub fn load_map_layer(world: &mut World, map: &Map, tileset_id: u32, layer_index: usize, screen_width: f32, screen_height: f32, texture_handle: Handle<Texture>) {
     if let Some(map_tileset) = map.get_tileset_by_gid(tileset_id) {
         let tile_width = map_tileset.tile_width as i32;
         let tile_height = map_tileset.tile_height as i32;
@@ -54,7 +47,7 @@ pub fn init_map_layer(world: &mut World, map: &Map, tileset_id: u32, layer_index
                 // In this case, there is only one such layer, the "background" whose tilecount is 132
                 let tile = tile - prev_layers_tile_cnt - 1;
                 let tile_sprite = get_tile_sprite(tile, &sprite_sheet_handle);
-                let tile_transform = get_tile_transform(x, y, tile_width, tile_height, screen_height, z_transform);
+                let tile_transform = get_tile_transform(x, y, tile_width, tile_height, screen_width, screen_height, z_transform);
 
                 world
                     .create_entity()
@@ -68,18 +61,6 @@ pub fn init_map_layer(world: &mut World, map: &Map, tileset_id: u32, layer_index
     }
 }
 
-fn get_texture_handle(world: &World, file_path: &str) -> Handle<Texture> {
-    let loader = world.read_resource::<Loader>();
-    let texture_storage = world.read_resource::<AssetStorage<Texture>>();
-    loader.load(
-        file_path,
-        PngFormat,
-        TextureMetadata::srgb_scale(),
-        (),
-        &texture_storage
-    )
-}
-
 fn get_tileset_sprites(tileset: &Tileset, tile_width: i32, tile_height: i32) -> Vec<Sprite> {
     let tileset_width = &tileset.images[0].width;
     let tileset_height = &tileset.images[0].height;
@@ -89,6 +70,9 @@ fn get_tileset_sprites(tileset: &Tileset, tile_width: i32, tile_height: i32) -> 
 
     let tileset_sprite_rows = tileset_height / tile_height as i32;
     let tileset_sprite_offset_rows = 1.0 / tileset_sprite_rows as f32;
+
+    println!("tileset_sprite_rows = {}", tileset_sprite_rows);
+    println!("tileset_sprite_columns = {}", tileset_sprite_columns);
     
     // A place to store the tile sprites in
     let mut tileset_sprites: Vec<Sprite> = Vec::new();
@@ -101,8 +85,8 @@ fn get_tileset_sprites(tileset: &Tileset, tile_width: i32, tile_height: i32) -> 
             let tex_coords = TextureCoordinates {
                 left: y as f32 * tileset_sprite_offset_columns,
                 right: (y + 1) as f32 * tileset_sprite_offset_columns,
-                bottom: x as f32 * tileset_sprite_offset_rows,
-                top: (x + 1) as f32 * tileset_sprite_offset_rows
+                bottom: x as f32 * tileset_sprite_offset_rows * -1., // multiplying by -1 otherwise y-axis getting reversed
+                top: (x + 1) as f32 * tileset_sprite_offset_rows * -1.,
             };
 
             let sprite = Sprite {
@@ -142,23 +126,23 @@ fn get_tile_sprite(tile_id: u32, sprite_sheet_handle: &SpriteSheetHandle) -> Spr
     }
 }
 
-fn get_tile_transform(row_index: usize, col_index: usize, tile_width: i32, tile_height: i32, screen_height: f32, z_transform: f32) -> Transform {
+fn get_tile_transform(row_index: usize, col_index: usize, tile_width: i32, tile_height: i32, screen_width: f32, screen_height: f32, z_transform: f32) -> Transform {
     // Where we should draw the tile?
     let mut tile_transform = Transform::default();
     let x_coord = SCALE as usize * row_index * tile_width as usize;
     // Bottom Left is 0,0 so we flip it to Top Left with the
     // ScreenDimensions.height since tiled coordinates start from top
-    let y_coord = (screen_height) - (SCALE * col_index as f32 * tile_height as f32);
+    let y_coord = screen_height - (SCALE * col_index as f32 * tile_height as f32);
     // Offset the positions by half the tile size so they're nice and snuggly on the screen
     // Alternatively could use the Sprite offsets instead: [-32.0, 32.0]. Depends on the use case I guess.
-    let offset_x = SCALE * tile_width as f32 / 2.0;
-    let offset_y = SCALE * -tile_height as f32 / 2.0;
+    let offset_x = SCALE * (tile_width as f32) / 2.0;
+    let offset_y = SCALE * -(tile_height as f32) / 2.0;
 
-    tile_transform.set_xyz(
+    tile_transform.set_translation_xyz(
         offset_x + x_coord as f32,
         offset_y + y_coord as f32,
-        z_transform
+        z_transform,
     );
-    tile_transform.set_scale(SCALE, SCALE, SCALE);
+    tile_transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
     tile_transform
 }

@@ -45,8 +45,8 @@ impl TwoDimObject {
     // }
 
     pub fn update_transform_position(&self, transform: &mut Transform) {
-        transform.set_x(self.position.x);
-        transform.set_y(self.position.y);
+        transform.set_translation_x(self.position.x);
+        transform.set_translation_y(self.position.y);
     }
 
     pub fn top(&self) -> f32 {
