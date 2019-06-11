@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Direction, Directions, Marine, TwoDimObject},
+    components::{Direction, Directions, Marine, Motion, TwoDimObject},
     entities::spawn_bullet,
     resources::BulletResource,
 };
@@ -16,13 +16,14 @@ impl<'s> System<'s> for AttackSystem {
         Entities<'s>,
         ReadStorage<'s, TwoDimObject>,
         WriteStorage<'s, Marine>,
+        ReadStorage<'s, Motion>,
         ReadStorage<'s, Direction>,
         ReadExpect<'s, BulletResource>,
         ReadExpect<'s, LazyUpdate>,
         Read<'s, InputHandler<StringBindings>>,
     );
 
-    fn run(&mut self, (entities, two_dim_objs, mut marines, directions, bullet_resource, lazy_update, input): Self::SystemData) {
+    fn run(&mut self, (entities, two_dim_objs, mut marines, motions, directions, bullet_resource, lazy_update, input): Self::SystemData) {
         let mut marine_entities_on_ground = vec![];
 
         for (marine,  marine_entity) in (&marines, &entities).join() {
@@ -33,11 +34,12 @@ impl<'s> System<'s> for AttackSystem {
             }
         }
 
-        for (mut marine, marine_dir, marine_entity) in (&mut marines, &directions, &entities).join() {
+        for (mut marine, marine_motion, marine_dir, marine_entity) in (&mut marines, &motions, &directions, &entities).join() {
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
-            if shoot_input && marine_on_ground && !marine.is_shooting {
+            // currently shooting is possible only when matine is static
+            if shoot_input && marine_on_ground && marine_motion.velocity.x == 0. && !marine.is_shooting {
                 marine.is_shooting = true;
                 marine.has_shot = true;
 
