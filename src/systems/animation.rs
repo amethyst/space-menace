@@ -1,8 +1,11 @@
 use amethyst::{
     core::Transform,
     ecs::{Entities, Join, ReadStorage, System, WriteStorage},
-    renderer::{Flipped, SpriteRender},
+    renderer::{SpriteRender},
 };
+
+use std::f32::consts::PI;
+
 use crate::{
     components::{Bullet, BulletImpact, Direction, Directions, Marine, MarineState, Motion},
 };
@@ -15,24 +18,32 @@ impl<'s> System<'s> for MarineAnimationSystem {
         WriteStorage<'s, Marine>,
         WriteStorage<'s, Motion>,
         WriteStorage<'s, SpriteRender>,
-        WriteStorage<'s, Flipped>,
+        // WriteStorage<'s, Flipped>,
         WriteStorage<'s, Transform>,
     );
 
-    fn run(&mut self, (entities, mut marines, mut motions, mut sprites, mut flipped, mut transforms): Self::SystemData) {
+    fn run(&mut self, (entities, mut marines, mut motions, mut sprites, mut transforms): Self::SystemData) {
 
         // iterating over entities having marine, sprite and transform components
         for (marine_entity, mut marine, marine_motion, mut sprite, mut transform) in
             (&entities, &mut marines, &mut motions, &mut sprites, &mut transforms).join() {
             let marine_velocity = marine_motion.velocity;
-            // set sprite direction
+            // // set sprite direction
+            // if marine_velocity.x > 0. {
+            //     // face right
+            //     flipped.remove(marine_entity);
+            // } else if marine_velocity.x < 0. {
+            //     // face left
+            //     flipped.insert(marine_entity, Flipped::Horizontal)
+            //         .expect("Failed to flip");
+            // }
+            // // set sprite direction
             if marine_velocity.x > 0. {
                 // face right
-                flipped.remove(marine_entity);
+                transform.set_rotation_y_axis(0.);
             } else if marine_velocity.x < 0. {
                 // face left
-                flipped.insert(marine_entity, Flipped::Horizontal)
-                    .expect("Failed to flip");
+                transform.set_rotation_y_axis(PI);
             }
 
             // set marine state
@@ -56,11 +67,11 @@ impl<'s> System<'s> for MarineAnimationSystem {
             }
 
             let (sprite_initial_index, num_sprites, game_frames_per_animation_frame) = match marine.state {
-                MarineState::Dying => (0, 4, 32),
-                MarineState::Idle => (4, 4, 32),
-                MarineState::Jumping => (8, 6, 16),
-                MarineState::Running => (14, 11, 8),
-                MarineState::Shooting => (25, 2, 8),
+                MarineState::Dying => (0, 4, 16),
+                MarineState::Idle => (4, 4, 12),
+                MarineState::Jumping => (8, 6, 10),
+                MarineState::Running => (15, 10, 4),
+                MarineState::Shooting => (25, 2, 4),
             };
             sprite.sprite_number = (marine.ticks / game_frames_per_animation_frame) % num_sprites + sprite_initial_index;
 
@@ -83,11 +94,11 @@ impl<'s> System<'s> for BulletAnimationSystem {
         Entities<'s>,
         ReadStorage<'s, Bullet>,
         WriteStorage<'s, Motion>,
-        WriteStorage<'s, Flipped>,
+        // WriteStorage<'s, Flipped>,
         WriteStorage<'s, Transform>,
     );
 
-    fn run(&mut self, (entities, bullets, mut motions, mut flipped, mut transforms): Self::SystemData) {
+    fn run(&mut self, (entities, bullets, mut motions, mut transforms): Self::SystemData) {
 
         // iterating over entities having bullet, sprite and transform components
         for (bullet_entity, bullet, bullet_motion, mut transform) in
@@ -96,12 +107,11 @@ impl<'s> System<'s> for BulletAnimationSystem {
 
             // set sprite direction
             if bullet_velocity.x > 0. {
-                // face right
-                flipped.remove(bullet_entity);
+                // fire right
+                transform.set_rotation_y_axis(0.);
             } else if bullet_velocity.x < 0. {
-                // face left
-                flipped.insert(bullet_entity, Flipped::Horizontal)
-                    .expect("Failed to flip");
+                // fire left 
+                transform.set_rotation_y_axis(PI);
             }
 
             // moving the marine
@@ -117,18 +127,18 @@ impl<'s> System<'s> for BulletImpactAnimationSystem {
         Entities<'s>,
         WriteStorage<'s, BulletImpact>,
         WriteStorage<'s, SpriteRender>,
-        WriteStorage<'s, Flipped>,
+        // WriteStorage<'s, Flipped>,
         ReadStorage<'s, Direction>,
+        WriteStorage<'s, Transform>,
     );
 
-    fn run(&mut self, (entities, mut bullet_impacts, mut sprites, mut flipped, directions): Self::SystemData) {    
-        for (bullet_impact_entity, mut bullet_impact, mut sprite, bullet_impact_dir) in
-            (&entities, &mut bullet_impacts, &mut sprites, &directions).join() {
+    fn run(&mut self, (entities, mut bullet_impacts, mut sprites, directions, mut transforms): Self::SystemData) {    
+        for (bullet_impact_entity, mut bullet_impact, mut sprite, bullet_impact_dir, bullet_transform) in
+            (&entities, &mut bullet_impacts, &mut sprites, &directions, &mut transforms).join() {
             if bullet_impact_dir.x == Directions::Right {
-                flipped.remove(bullet_impact_entity);
+                bullet_transform.set_rotation_y_axis(0.);
             } else if bullet_impact_dir.x == Directions::Left {
-                flipped.insert(bullet_impact_entity, Flipped::Horizontal)
-                    .expect("Failed to flip");
+                bullet_transform.set_rotation_y_axis(PI);
             }
             sprite.sprite_number = (bullet_impact.ticks / 8) % 2 + 0;
 

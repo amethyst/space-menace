@@ -21,12 +21,12 @@ impl<'s> System<'s> for CameraMotionSystem {
         let mut marine_x = 0.;
 
         for (_marine, transform) in (&marines, &transforms).join() {
-            marine_x = transform.translation().x;
+            marine_x = transform.translation().x.as_f32();
         }
 
         for (_subject_tag, transform) in (&subject_tags, &mut transforms).join() {
             if marine_x >= 384. && marine_x <= 900. {
-                transform.set_x(marine_x);            
+                transform.set_translation_x(marine_x);            
             }
         }
     }
