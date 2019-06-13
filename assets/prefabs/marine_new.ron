@@ -1,0 +1,192 @@
+#![enable(implicit_some)]
+Prefab(
+    entities: [
+        // Marine
+        PrefabEntity(
+            data: AnimationPrefabData(
+                // SpriteScenePrefab
+                sprite_scene: (
+                    // SpriteSheetPrefab with index 0
+                    sheet: Sheet(
+                        // TexturePrefab
+                        texture: File("textures/marine.png", (
+                            "IMAGE", (
+                                sampler_info: (
+                                    min_filter: Nearest,
+                                    mag_filter: Nearest,
+                                    mip_filter: Nearest,
+                                    wrap_mode: (Tile, Tile, Tile),
+                                    lod_bias: (0),
+                                    lod_range: (
+                                        start: ( 0 ),
+                                        end: ( 8000 ),
+                                    ),
+                                    comparison: None,
+                                    border: (0),
+                                    anisotropic: Off,
+                                ),
+                            ),
+                        )),
+                        sprites: [
+                            List((
+                                texture_width: 1384,
+                                texture_height: 48,
+                                sprites: [
+                                    // Die
+                                    (x: 0, y: 0, width: 80, height: 48), // 1
+                                    (x: 80, y: 0, width: 80, height: 48), // 2
+                                    (x: 160, y: 0, width: 80, height: 48), // 3
+                                    (x: 240, y: 0, width: 80, height: 48), // 4
+                                    // Idle
+                                    (x: 320, y: 0, width: 48, height: 48), // 5
+                                    (x: 368, y: 0, width: 48, height: 48), // 6
+                                    (x: 416, y: 0, width: 48, height: 48), // 7
+                                    (x: 464, y: 0, width: 48, height: 48), // 8
+                                    // Jump
+                                    (x: 512, y: 0, width: 36, height: 48), // 9
+                                    (x: 548, y: 0, width: 36, height: 48), // 10
+                                    (x: 584, y: 0, width: 36, height: 48), // 11
+                                    (x: 620, y: 0, width: 36, height: 48), // 12
+                                    (x: 656, y: 0, width: 36, height: 48), // 13
+                                    (x: 692, y: 0, width: 36, height: 48), // 14
+                                    // Run
+                                    (x: 728, y: 0, width: 48, height: 48), // 15
+                                    (x: 776, y: 0, width: 48, height: 48), // 16
+                                    (x: 824, y: 0, width: 48, height: 48), // 17
+                                    (x: 872, y: 0, width: 48, height: 48), // 18
+                                    (x: 920, y: 0, width: 48, height: 48), // 19
+                                    (x: 968, y: 0, width: 48, height: 48), // 20
+                                    (x: 1016, y: 0, width: 48, height: 48), // 21
+                                    (x: 1064, y: 0, width: 48, height: 48), // 22
+                                    (x: 1112, y: 0, width: 48, height: 48), // 23
+                                    (x: 1160, y: 0, width: 48, height: 48), // 24
+                                    (x: 1208, y: 0, width: 48, height: 48), // 25
+                                    // Shoot
+                                    (x: 1256, y: 0, width: 64, height: 48), // 26
+                                    (x: 1320, y: 0, width: 64, height: 48), // 27
+                                ],
+                            )),
+                        ],
+                        // optional
+                        name: "marine",
+                    ),
+                    // SpriteRenderPrefab
+                    render: (
+                        sheet: "marine",
+                        sprite_number: 0,
+                    ),
+                ),
+                // AnimationSetPrefab
+                animation_set: (
+                    animations: [
+                        (
+                            // AnimationId
+                            Die,
+                            (
+                                samplers: [
+                                    (
+                                        0,
+                                        // Only SpriteIndex channel allowed for SpriteRender in AnimationSetPrefab
+                                        SpriteIndex,
+                                        (
+                                            // Time of key frames
+                                            input: [0.0, 0.1, 0.2, 0.3],
+                                            // Sprite indexes from SpriteSheet for key frames
+                                            output: [0, 1, 2, 3],
+                                            // Sprites can only ever be animated with Step
+                                            function: Step,
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                        (
+                            // AnimationId
+                            Idle,
+                            (
+                                samplers: [
+                                    (
+                                        0,
+                                        // Only SpriteIndex channel allowed for SpriteRender in AnimationSetPrefab
+                                        SpriteIndex,
+                                        (
+                                            // Time of key frames
+                                            input: [0.0, 0.1, 0.2, 0.3],
+                                            // Sprite indexes from SpriteSheet for key frames
+                                            output: [4, 5, 6, 7],
+                                            // Sprites can only ever be animated with Step
+                                            function: Step,
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                        (
+                            // AnimationId
+                            Jump,
+                            (
+                                samplers: [
+                                    (
+                                        0,
+                                        // Only SpriteIndex channel allowed for SpriteRender in AnimationSetPrefab
+                                        SpriteIndex,
+                                        (
+                                            // Time of key frames
+                                            input: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
+                                            // Sprite indexes from SpriteSheet for key frames
+                                            output: [8, 9, 10, 11, 12, 13],
+                                            // Sprites can only ever be animated with Step
+                                            function: Step,
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                        (
+                            // AnimationId
+                            Move,
+                            (
+                                samplers: [
+                                    (
+                                        0,
+                                        // Only SpriteIndex channel allowed for SpriteRender in AnimationSetPrefab
+                                        SpriteIndex,
+                                        (
+                                            // Time of key frames
+                                            input: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+                                            // Sprite indexes from SpriteSheet for key frames
+                                            output: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+                                            // Sprites can only ever be animated with Step
+                                            function: Step,
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                        (
+                            // AnimationId
+                            Shoot,
+                            (
+                                samplers: [
+                                    (
+                                        0,
+                                        // Only SpriteIndex channel allowed for SpriteRender in AnimationSetPrefab
+                                        SpriteIndex,
+                                        (
+                                            // Time of key frames
+                                            input: [0.0, 0.1],
+                                            // Sprite indexes from SpriteSheet for key frames
+                                            output: [25, 26],
+                                            // Sprites can only ever be animated with Step
+                                            function: Step,
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        ),
+    ],
+)

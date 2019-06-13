@@ -13,7 +13,7 @@ use crate::{
     SCALE, BG_Z_TRANSFORM,
 };
 
-pub fn load_background(world: &mut World, map_width: u32, tile_width: u32, image_width: i32, image_height: i32, sprite_sheet_handle: SpriteSheetHandle) {
+pub fn load_background(world: &mut World, map_width: u32, tile_width: u32, image_width: i32, image_height: i32, sprite_sheet: SpriteSheetHandle) {
     let tile_count = (map_width * tile_width) as i32 / image_width;
     println!("tile count = {}", tile_count);
 
@@ -21,7 +21,7 @@ pub fn load_background(world: &mut World, map_width: u32, tile_width: u32, image
         let mut transform = Transform::default();
         transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
         let sprite = SpriteRender {
-            sprite_sheet: sprite_sheet_handle.clone(),
+            sprite_sheet: sprite_sheet.clone(),
             sprite_number: 0,
         };
 

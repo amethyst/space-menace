@@ -6,6 +6,7 @@ mod collision;
 
 pub use self::acceleration::MarineAccelerationSystem;
 pub use self::attack::AttackSystem;
+pub use self::animation::AnimationControlSystem;
 pub use self::animation::MarineAnimationSystem;
 pub use self::camera_motion::CameraMotionSystem;
 pub use self::collision::BulletCollisionSystem;

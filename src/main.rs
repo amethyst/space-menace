@@ -1,8 +1,14 @@
 extern crate amethyst;
 extern crate tiled;
 
+#[macro_use]
+extern crate log;
+#[macro_use]
+extern crate specs_derive;
+
 use amethyst::{
-    assets::Processor,
+    animation::AnimationBundle,
+    assets::{PrefabLoaderSystem, Processor},
     core::{frame_limiter::FrameRateLimitStrategy, transform::{TransformBundle}},
     ecs::{ReadExpect, Resources, SystemData},
     // error::Error,
@@ -19,7 +25,7 @@ use amethyst::{
             },
             hal::{format::Format, image},
         },
-        sprite::{SpriteSheet},
+        sprite::{SpriteRender, SpriteSheet},
         types::DefaultBackend,
         GraphCreator, RenderingSystem,
     },
@@ -39,6 +45,7 @@ mod resources;
 mod systems;
 
 use systems::{
+    AnimationControlSystem,
     MarineAccelerationSystem,
     MarineAnimationSystem,
     AttackSystem,
@@ -48,6 +55,8 @@ use systems::{
     CameraMotionSystem,
     MarineCollisionSystem
 };
+
+use components::{AnimationId, AnimationPrefabData};
 
 pub const SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
@@ -77,7 +86,19 @@ fn main() -> amethyst::Result<()> {
 
     let game_data = GameDataBuilder::default()
         .with_bundle(WindowBundle::from_config_path(display_config_path))?
-        .with_bundle(TransformBundle::new())?
+        .with(
+            PrefabLoaderSystem::<AnimationPrefabData>::default(),
+            "scene_loader",
+            &[],
+        )
+        .with_bundle(AnimationBundle::<AnimationId, SpriteRender>::new(
+            "sprite_animation_control",
+            "sprite_sampler_interpolation",
+        ))?
+        .with_bundle(
+            TransformBundle::new()
+                .with_dep(&["sprite_animation_control", "sprite_sampler_interpolation"]),
+)?
         .with_bundle(input_bundle)?
         // .with_bundle(RenderBundle::new(pipe, Some(config))
             // .with_sprite_sheet_processor()
@@ -95,11 +116,12 @@ fn main() -> amethyst::Result<()> {
         .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
         .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
         .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
+        .with(AnimationControlSystem, "animation_control_system", &[])
         .with(CameraMotionSystem, "camera_motion_system", &["marine_collision_system"])
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             ExampleGraph::default(),
         ));
-    let mut game = Application::build(assets_path, states::PlayState::default())?
+    let mut game = Application::build(assets_path, states::LoadingState::default())?
         // .with_frame_limit(
         //     FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
         //     144,

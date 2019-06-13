@@ -14,9 +14,9 @@ use crate::{
     resources::{BulletImpactResource, BulletResource},
 };
 
-pub fn load_bullet(world: &mut World, sprite_sheet_handle: SpriteSheetHandle) {
+pub fn load_bullet(world: &mut World, sprite_sheet: SpriteSheetHandle) {
     let bullet_resource = BulletResource {
-        sprite_sheet: sprite_sheet_handle,
+        sprite_sheet: sprite_sheet,
     };
 
     world.add_resource(bullet_resource.clone());
@@ -50,9 +50,9 @@ pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletReso
     lazy_update.insert(bullet_entity, Transparent);
 }
 
-pub fn load_bullet_impact(world: &mut World, sprite_sheet_handle: SpriteSheetHandle) {
+pub fn load_bullet_impact(world: &mut World, sprite_sheet: SpriteSheetHandle) {
     let bullet_impact_resource = BulletImpactResource {
-        sprite_sheet: sprite_sheet_handle,
+        sprite_sheet: sprite_sheet,
     };
 
     world.add_resource(bullet_impact_resource.clone());
