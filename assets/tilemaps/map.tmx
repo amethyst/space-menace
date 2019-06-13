@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="36" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="25">
  <tileset firstgid="1" name="background" tilewidth="16" tileheight="16" tilecount="132" columns="12">
-  <image source="sprites/background.png" width="192" height="176"/>
+  <image source="textures/background.png" width="192" height="176"/>
  </tileset>
  <tileset firstgid="2" name="truss" tilewidth="16" tileheight="16" tilecount="286" columns="26">
-  <image source="sprites/truss.png" width="416" height="176"/>
+  <image source="textures/truss.png" width="416" height="176"/>
  </tileset>
  <tileset firstgid="3" name="platform" tilewidth="16" tileheight="16" tilecount="168" columns="14">
-  <image source="sprites/platform.png" width="224" height="192"/>
+  <image source="textures/platform.png" width="224" height="192"/>
  </tileset>
  <layer id="1" name="background" width="36" height="11">
   <data encoding="base64" compression="zlib">

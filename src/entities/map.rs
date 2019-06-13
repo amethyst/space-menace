@@ -22,7 +22,7 @@ pub fn load_map_layer(world: &mut World, map: &Map, tileset_id: u32, layer_index
         let tile_width = map_tileset.tile_width as i32;
         let tile_height = map_tileset.tile_height as i32;
         let tileset_sprites = get_tileset_sprites(map_tileset, tile_width, tile_height);
-        let sprite_sheet_handle = get_tileset_sprite_sheet_handle(world, texture_handle, tileset_sprites);
+        let sprite_sheet = get_tileset_sprite_sheet(world, texture_handle, tileset_sprites);
 
         // Now that all the tile sprites/textures are loaded in
         // we can start drawing the tiles for our viewing pleasure
@@ -46,7 +46,7 @@ pub fn load_map_layer(world: &mut World, map: &Map, tileset_id: u32, layer_index
                 // Also, need to subtract the tilecount of previous layers
                 // In this case, there is only one such layer, the "background" whose tilecount is 132
                 let tile = tile - prev_layers_tile_cnt - 1;
-                let tile_sprite = get_tile_sprite(tile, &sprite_sheet_handle);
+                let tile_sprite = get_tile_sprite(tile, &sprite_sheet);
                 let tile_transform = get_tile_transform(x, y, tile_width, tile_height, screen_width, screen_height, z_transform);
 
                 world
@@ -103,7 +103,7 @@ fn get_tileset_sprites(tileset: &Tileset, tile_width: i32, tile_height: i32) -> 
     tileset_sprites
 }
 
-fn get_tileset_sprite_sheet_handle(world: &World, texture_handle: Handle<Texture>, sprites: Vec<Sprite>) -> SpriteSheetHandle {
+fn get_tileset_sprite_sheet(world: &World, texture_handle: Handle<Texture>, sprites: Vec<Sprite>) -> SpriteSheetHandle {
     // A sheet of sprites.. so all the tile sprites
     let sprite_sheet = SpriteSheet {
         texture: texture_handle,
@@ -118,10 +118,10 @@ fn get_tileset_sprite_sheet_handle(world: &World, texture_handle: Handle<Texture
     loader.load_from_data(sprite_sheet, (), &sprite_sheet_storage)
 }
 
-fn get_tile_sprite(tile_id: u32, sprite_sheet_handle: &SpriteSheetHandle) -> SpriteRender {
+fn get_tile_sprite(tile_id: u32, sprite_sheet: &SpriteSheetHandle) -> SpriteRender {
     // Sprite for the tile
     SpriteRender {
-        sprite_sheet: sprite_sheet_handle.clone(),
+        sprite_sheet: sprite_sheet.clone(),
         sprite_number: tile_id as usize,
     }
 }
