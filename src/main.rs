@@ -1,5 +1,5 @@
 extern crate amethyst;
-extern crate tiled;
+// extern crate tiled;
 
 #[macro_use]
 extern crate log;
@@ -35,6 +35,8 @@ use amethyst::{
     GameDataBuilder, 
 };
 
+// use tiled::Map;
+
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -43,6 +45,8 @@ mod states;
 mod components;
 mod resources;
 mod systems;
+
+use resources::Map;
 
 use systems::{
     AnimationControlSystem,
@@ -109,11 +113,14 @@ fn main() -> amethyst::Result<()> {
             "sprite_sheet_processor",
             &[],
         )
+        .with(Processor::<Map>::new(), "map_processor", &[])
+        // .with(Processor::<Map>::new(), "map_processor", &[])
         .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
         .with(AttackSystem, "attack_system", &["marine_acceleration_system"])
-        .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
-        .with(BulletAnimationSystem, "bullet_animation_system", &["bullet_collision_system"])
-        .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
+        // .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
+        // .with(BulletAnimationSystem, "bullet_animation_system", &["bullet_collision_system"])
+        .with(BulletAnimationSystem, "bullet_animation_system", &[])
+        // .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
         .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
         .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
         .with(AnimationControlSystem, "animation_control_system", &[])
@@ -121,7 +128,7 @@ fn main() -> amethyst::Result<()> {
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             ExampleGraph::default(),
         ));
-    let mut game = Application::build(assets_path, states::LoadingState::default())?
+    let mut game = Application::build(assets_path, states::LoadState::default())?
         // .with_frame_limit(
         //     FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
         //     144,
@@ -165,7 +172,7 @@ impl GraphCreator<DefaultBackend> for ExampleGraph {
 
         self.dirty = false;
 
-        let window = <ReadExpect<'_, Arc<Window>>>::fetch(res);
+        let window = <ReadExpect<'_, Window>>::fetch(res);
         let surface = factory.create_surface(&window);
         // cache surface format to speed things up
         let surface_format = *self

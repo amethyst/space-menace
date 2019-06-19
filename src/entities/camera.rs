@@ -16,19 +16,19 @@ pub fn load_camera(world: &mut World, camera_subject: Entity) {
 
     world
         .create_entity()
-        // .with(Camera::standard_2d(width / 2., height / 2.))
-        .with(Camera::from(Projection::orthographic(
-            -1. * width / 2.,
-            width / 2.,
-            -1. * height / 2.,
-            height / 2.,
-            0.1,
-            2000.0,
-            // 0.,
-            // width,
-            // 0.,
-            // height,
-        )))
+        .with(Camera::standard_2d(width, height))
+        // .with(Camera::from(Projection::orthographic(
+        //     -1. * width / 2.,
+        //     width / 2.,
+        //     -1. * height / 2.,
+        //     height / 2.,
+        //     0.1,
+        //     2000.0,
+        //     // 0.,
+        //     // width,
+        //     // 0.,
+        //     // height,
+        // )))
         .with(Parent { entity: camera_subject })
         .with(transform)
         .build();

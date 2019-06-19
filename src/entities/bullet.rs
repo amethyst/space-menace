@@ -14,14 +14,6 @@ use crate::{
     resources::{BulletImpactResource, BulletResource},
 };
 
-pub fn load_bullet(world: &mut World, sprite_sheet: SpriteSheetHandle) {
-    let bullet_resource = BulletResource {
-        sprite_sheet: sprite_sheet,
-    };
-
-    world.add_resource(bullet_resource.clone());
-}
-
 pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletResource>, shoot_start_position: f32, marine_dir: &Direction, marine_bottom: f32, lazy_update: &ReadExpect<LazyUpdate>) {
     let bullet_entity: Entity = entities.create();
 
@@ -48,14 +40,6 @@ pub fn spawn_bullet(entities: &Entities, bullet_resource: &ReadExpect<BulletReso
     lazy_update.insert(bullet_entity, motion);
     lazy_update.insert(bullet_entity, transform);
     lazy_update.insert(bullet_entity, Transparent);
-}
-
-pub fn load_bullet_impact(world: &mut World, sprite_sheet: SpriteSheetHandle) {
-    let bullet_impact_resource = BulletImpactResource {
-        sprite_sheet: sprite_sheet,
-    };
-
-    world.add_resource(bullet_impact_resource.clone());
 }
 
 pub fn show_bullet_impact(entities: &Entities, bullet_impact_resource: &ReadExpect<BulletImpactResource>, impact_position: f32, bullet_bottom: f32, bullet_velocity: f32, lazy_update: &ReadExpect<LazyUpdate>) {

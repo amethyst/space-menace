@@ -207,13 +207,14 @@ impl<'s> System<'s> for MarineAnimationSystem {
         ReadStorage<'s, Motion>,
         WriteStorage<'s, Animation>,
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
+        WriteStorage<'s, Transform>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, marines, motions, mut animations, mut animation_control_sets) = data;
+        let (entities, marines, motions, mut animations, mut animation_control_sets, mut transforms) = data;
         
-        for (entity, marine, motion, mut animation, animation_control_set) in
-            (&entities, &marines, &motions, &mut animations, &mut animation_control_sets).join() {
+        for (entity, marine, motion, mut animation, animation_control_set, mut transform) in
+            (&entities, &marines, &motions, &mut animations, &mut animation_control_sets, &mut transforms).join() {
             let marine_velocity = motion.velocity;
 
             let new_animation_id = 
@@ -242,6 +243,8 @@ impl<'s> System<'s> for MarineAnimationSystem {
 
                 animation.current = new_animation_id;
             }
+
+            marine.two_dim.update_transform_position(&mut transform);
         }
     }
 }
