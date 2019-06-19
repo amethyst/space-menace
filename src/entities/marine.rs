@@ -15,15 +15,16 @@ use crate::{
     components::{Animation, AnimationId, AnimationPrefabData, Direction, Directions, Marine, Motion, TwoDimObject},
 };
 
-pub fn load_marine(world: &mut World, sprite_sheet: SpriteSheetHandle, animation_handle: Handle<Prefab<AnimationPrefabData>>) {
+// pub fn load_marine(world: &mut World, sprite_sheet: SpriteSheetHandle, prefab: Handle<Prefab<AnimationPrefabData>>) {
+pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>) {
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
 
 
-    let sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet,
-        sprite_number: 4, // paddle is the first sprite in the sprite_sheet
-    };
+    // let sprite_render = SpriteRender {
+    //     sprite_sheet: sprite_sheet,
+    //     sprite_number: 4, // paddle is the first sprite in the sprite_sheet
+    // };
 
     let mut two_dim_object = TwoDimObject::new(32. * SCALE, 48. * SCALE);
     two_dim_object.set_position(384., 176.);
@@ -44,7 +45,7 @@ pub fn load_marine(world: &mut World, sprite_sheet: SpriteSheetHandle, animation
                 AnimationId::Shoot,
             ],
         })
-        .with(animation_handle)
+        .with(prefab)
         .with(Direction::new(Directions::Right, Directions::Neutral))
         // .with(sprite_render)
         .with(Transparent) // Necessary for ordered layering
