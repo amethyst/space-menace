@@ -1,10 +1,23 @@
 use amethyst:: {
-    assets::{Handle, Asset, ProcessingState},
-    ecs::VecStorage,
+    assets::{Asset, Handle, ProcessingState},
+    core::Transform,
+    ecs::{prelude::World, VecStorage},
     error::Error,
+    prelude::Builder,
+    renderer::{
+        sprite::{SpriteRender, SpriteSheetFormat, SpriteSheetHandle},
+        transparent::Transparent,
+    },
 };
 
 use serde::{Deserialize, Serialize};
+
+use specs_physics::{math::Vector3};
+
+use crate::{
+    SCALE,
+    resources::{AssetType, SpriteSheetList},
+};
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct Tileset {
@@ -64,4 +77,66 @@ impl From<Map> for Result<ProcessingState<Map>, Error> {
         -> Result<ProcessingState<Map>, Error> {
             Ok(ProcessingState::Loaded(map))
         }
+}
+
+impl Map {
+    pub fn load_non_collision_layer(
+        &self,
+        world: &mut World,
+        // map: &Map,
+        asset_type: AssetType,
+        z_transform: f32,
+        screen_height: f32
+    ) {
+        let sprite_sheet_handle: SpriteSheetHandle;
+        {
+            let sprite_sheet_list = world.read_resource::<SpriteSheetList>();
+            sprite_sheet_handle = sprite_sheet_list.get(asset_type).unwrap().clone();
+        }
+
+        let layer_name = match asset_type {
+            AssetType::Background => "background",
+            AssetType::Platform => "platform",
+            AssetType::Truss => "truss",
+        };
+
+        let layer = self.layers.iter()
+            .find(|layer| layer.name == layer_name).unwrap();
+
+        for obj in layer.objects.iter() {
+            let mut transform = Transform::default();
+
+            transform.set_translation_xyz(
+                (obj.x + obj.width / 2.) * SCALE,
+                screen_height / 2. - (obj.y + obj.height / 2.) * SCALE,
+                z_transform
+            );
+
+            transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
+
+            let sprite_index_prop = obj.properties.iter().find(
+                |prop| prop.name == "spriteindex"
+            );
+            let mut sprite = SpriteRender {
+                sprite_sheet: sprite_sheet_handle.clone(),
+                sprite_number: 0,
+            };
+
+            match sprite_index_prop {
+                Some(prop) => {
+                    sprite = SpriteRender {
+                        sprite_sheet: sprite_sheet_handle.clone(),
+                        sprite_number: prop.value,
+                    };
+                },
+                None => {},
+            }
+
+            world.create_entity()
+                .with(transform)
+                .with(sprite)
+                .with(Transparent)
+                .build();
+        }
+    }
 }
