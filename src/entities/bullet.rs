@@ -1,9 +1,8 @@
 use amethyst::{
     core::{math::Vector3, Transform},
-    ecs::{Entities, Entity, LazyUpdate, ReadExpect, World},
+    ecs::{Entities, Entity, LazyUpdate, ReadExpect},
     renderer::{
         SpriteRender,
-        sprite::SpriteSheetHandle,
         transparent::Transparent,
     },
 };

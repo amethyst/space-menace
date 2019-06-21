@@ -1,29 +1,21 @@
 use std::collections::HashMap;
 
 use amethyst::{
-    assets::{AssetStorage, Handle, Loader, JsonFormat, Prefab, PrefabLoader, ProgressCounter, RonFormat},
-    core::Transform,
+    assets::{AssetStorage, Loader, ProgressCounter},
     ecs::prelude::World,
-    prelude::Builder,
     renderer::{
         formats::texture::ImageFormat,
-        sprite::{SpriteRender, SpriteSheetFormat, SpriteSheetHandle},
+        sprite::{SpriteSheetFormat, SpriteSheetHandle},
         SpriteSheet,
         Texture,
-        transparent::Transparent,
     },
-};
-
-use specs_physics::{math::Vector3};
-
-use crate::{
-    resources::{Map, Layer},
-    SCALE,
 };
 
 #[derive(Copy, Clone, Eq, Hash, PartialEq)]
 pub enum AssetType {
     Background,
+    // Bullet,
+    // BulletImpact,
     Platform,
     Truss,
 }
@@ -47,6 +39,7 @@ impl SpriteSheetList {
     }
 }
 
+/// Loads `SpriteSheetHandle`s for all the assets in the `AssetType` list into the `world`
 pub fn load_sprite_sheets(world: &mut World, asset_type_list: Vec<AssetType>) -> ProgressCounter {
     let mut sprite_sheet_list = SpriteSheetList::default();
     let mut progress_counter = ProgressCounter::new();
@@ -56,6 +49,13 @@ pub fn load_sprite_sheets(world: &mut World, asset_type_list: Vec<AssetType>) ->
             AssetType::Background => {
                 ("textures/background.png", "prefabs/background.ron")
             },
+            // TODO: uncomment this and use this SpriteShhetHandle resource for spawning
+            // AssetType::Bullet => {
+            //     ("textures/bullet.png", "prefabs/bullet.ron")
+            // },
+            // AssetType::BulletImpact => {
+            //     ("textures/bullet_impact.png", "prefabs/bullet_impact.ron")
+            // },
             AssetType::Platform => {
                 ("textures/platform.png", "prefabs/platform.ron")
             },
@@ -63,7 +63,12 @@ pub fn load_sprite_sheets(world: &mut World, asset_type_list: Vec<AssetType>) ->
                 ("textures/truss.png", "prefabs/truss.ron")
             },
         };
-        let sprite_sheet_handle = get_sprite_sheet_handle(world, texture_path, ron_path, &mut progress_counter);
+        let sprite_sheet_handle = get_sprite_sheet_handle(
+            world,
+            texture_path,
+            ron_path,
+            &mut progress_counter,
+        );
         sprite_sheet_list.insert(asset_type, sprite_sheet_handle);
     }
     world.add_resource(sprite_sheet_list);
@@ -75,7 +80,7 @@ pub fn get_sprite_sheet_handle(
     world: &World,
     texture_path: &str,
     ron_path: &str,
-    progress_counter: &mut ProgressCounter
+    progress_counter: &mut ProgressCounter,
 ) -> SpriteSheetHandle {
     // Load the sprite sheet necessary to render the graphics.
     // The texture is the pixel data
@@ -84,11 +89,9 @@ pub fn get_sprite_sheet_handle(
     let texture_handle = {
         let loader = &world.read_resource::<Loader>();
         let texture_storage = &world.read_resource::<AssetStorage<Texture>>();
-
         loader.load(
             texture_path,
             ImageFormat::default(),
-            // progress_counter,
             (),
             &texture_storage,
         )

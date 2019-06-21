@@ -1,34 +1,21 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader, JsonFormat, Prefab, PrefabLoader, ProgressCounter, RonFormat},
-    core::Transform,
     ecs::prelude::World,
-    prelude::{Builder, GameData, SimpleState, SimpleTrans, StateData, Trans},
+    prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
     renderer::{
         formats::texture::ImageFormat,
-        sprite::{SpriteRender, SpriteSheetFormat, SpriteSheetHandle},
+        sprite::{SpriteSheetFormat, SpriteSheetHandle},
         SpriteSheet,
         Texture,
-        transparent::Transparent,
     },
-    window::ScreenDimensions,
 };
 
-use specs_physics::{physics_dispatcher, Gravity, math::Vector3};
+// use specs_physics::{physics_dispatcher, Gravity};
 
 use crate::{
-    components::{AnimationPrefabData, Coordinates},
-    entities::{
-        // Background,
-        load_camera_subject,
-        load_camera,
-        // load_collider,
-        // load_map_layer,
-        load_marine,
-        // load_background
-    },
-    resources::{AssetType, BulletImpactResource, BulletResource, Map, Layer, load_sprite_sheets, SpriteSheetList},
-    SCALE,
-    // states::RunState,
+    components::{AnimationPrefabData},
+    entities::{load_camera_subject, load_camera, load_marine},
+    resources::{AssetType, BulletImpactResource, BulletResource, Map, load_sprite_sheets},
 };
 
 #[derive(Default)]
@@ -41,9 +28,14 @@ pub struct LoadState {
 impl SimpleState for LoadState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
-
-        self.progress_counter = Some(load_sprite_sheets(world, vec![AssetType::Background, AssetType::Platform, AssetType::Truss]));
-
+        self.progress_counter = Some(load_sprite_sheets(
+            world,
+            vec![
+                AssetType::Background,
+                AssetType::Platform,
+                AssetType::Truss
+            ]
+        ));
         {
             let loader = world.read_resource::<Loader>();
             self.map_handle = Some(
@@ -56,15 +48,12 @@ impl SimpleState for LoadState {
             );
         }
 
-        // let marine_sprite_sheet = self.get_sprite_sheet_handle(world, "textures/marine.png", "prefabs/marine.ron");
         self.marine_prefab_handle = Some(self.get_animation_prefab_handle(
             world,
-            "prefabs/marine_new.ron",
+            "prefabs/marine.ron",
         ));
-
         let camera_subject = load_camera_subject(world);
         load_camera(world, camera_subject);
-
         world.add_resource(BulletResource {
             sprite_sheet: self.get_sprite_sheet_handle(
                 world,
@@ -72,12 +61,11 @@ impl SimpleState for LoadState {
                 "prefabs/bullet.ron",
             ),
         });
-
         world.add_resource(BulletImpactResource {
             sprite_sheet: self.get_sprite_sheet_handle(
                 world,
-                "textures/bullet.png",
-                "prefabs/bullet.ron",
+                "textures/bullet_impact.png",
+                "prefabs/bullet_impact.ron",
             ),
         });
     }
@@ -94,33 +82,9 @@ impl SimpleState for LoadState {
                     let map_handle = &self.map_handle.clone().unwrap();
                     map = map_storage.get(map_handle).unwrap().clone();
                 }
-
-                let screen_height = {
-                    let dim = data.world.read_resource::<ScreenDimensions>();
-                    dim.height()
-                };
-
-                map.load_non_collision_layer(
-                    data.world,
-                    AssetType::Background,
-                    -30.,
-                    screen_height
-                );
-                map.load_non_collision_layer(
-                    data.world,
-                    AssetType::Truss,
-                    -20.,
-                    screen_height
-                );
-                map.load_non_collision_layer(
-                    data.world,
-                    AssetType::Platform,
-                    -10.,
-                    screen_height
-                );
+                map.load_layers(data.world);
 
                 load_marine(data.world, self.marine_prefab_handle.take().unwrap());
-
                 self.progress_counter = None;
             }
         }
@@ -142,8 +106,6 @@ impl LoadState {
         let texture_handle = {
             let loader = &world.read_resource::<Loader>();
             let texture_storage = &world.read_resource::<AssetStorage<Texture>>();
-
-            println!("sprite sheet handle texture");
             loader.load(
                 texture_path,
                 ImageFormat::default(),
@@ -151,9 +113,9 @@ impl LoadState {
                 &texture_storage,
             )
         };
+
         let loader = &world.read_resource::<Loader>();
         let sprite_sheet_store = &world.read_resource::<AssetStorage<SpriteSheet>>();
-        println!("sprite sheet handle sprite sheet");
         loader.load(
             ron_path,
             SpriteSheetFormat(texture_handle),

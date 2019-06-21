@@ -1,0 +1,78 @@
+#![enable(implicit_some)]
+Prefab(
+    entities: [
+        // BulletImpact
+        PrefabEntity(
+            data: AnimationPrefabData(
+                // SpriteScenePrefab
+                sprite_scene: (
+                    // SpriteSheetPrefab with index 0
+                    sheet: Sheet(
+                        // TexturePrefab
+                        texture: File("textures/bullet_impact.png", (
+                            "IMAGE", (
+                                sampler_info: (
+                                    min_filter: Nearest,
+                                    mag_filter: Nearest,
+                                    mip_filter: Nearest,
+                                    wrap_mode: (Tile, Tile, Tile),
+                                    lod_bias: (0),
+                                    lod_range: (
+                                        start: ( 0 ),
+                                        end: ( 8000 ),
+                                    ),
+                                    comparison: None,
+                                    border: (0),
+                                    anisotropic: Off,
+                                ),
+                            ),
+                        )),
+                        sprites: [
+                            List((
+                                texture_width: 32,
+                                texture_height: 23,
+                                sprites: [
+                                    (x: 0, y: 0, width: 16, height: 24), // 1
+                                    (x: 16, y: 0, width: 16, height: 24), // 2
+                                ],
+                            )),
+                        ],
+                        // optional
+                        name: "bullet_impact",
+                    ),
+                    // SpriteRenderPrefab
+                    render: (
+                        sheet: "bullet_impact",
+                        sprite_number: 0,
+                    ),
+                ),
+                // AnimationSetPrefab
+                animation_set: (
+                    animations: [
+                        (
+                            // AnimationId
+                            Explode,
+                            (
+                                samplers: [
+                                    (
+                                        0,
+                                        // Only SpriteIndex channel allowed for SpriteRender in AnimationSetPrefab
+                                        SpriteIndex,
+                                        (
+                                            // Time of key frames
+                                            input: [0.0, 0.1],
+                                            // Sprite indexes from SpriteSheet for key frames
+                                            output: [0, 1],
+                                            // Sprites can only ever be animated with Step
+                                            function: Step,
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        ),
+    ],
+)

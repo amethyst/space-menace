@@ -30,7 +30,6 @@ impl<'s> System<'s> for MarineAccelerationSystem {
         // calculate this so we know if the character should be able to jump
         let mut marine_entities_on_ground = vec![];
 
-        println!("acclrn sys");
         for (marine, marine_entity) in (&marines, &entities).join() {
             for two_dim_obj in (&two_dim_objs).join() {
                 if marine.two_dim.bottom() == two_dim_obj.top()
@@ -42,7 +41,6 @@ impl<'s> System<'s> for MarineAccelerationSystem {
 
         for (marine, motion, mut marine_dir, marine_entity) in (&marines, &mut motions, &mut directions, &entities).join() {
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
-            println!("marine_on_ground = {}", marine_on_ground);
 
             let x_input = input.axis_value("run").expect("horizontal axis exists");
             let jump_input = input.action_is_down("jump").expect("jump action exists");

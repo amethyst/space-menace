@@ -1,5 +1,4 @@
 extern crate amethyst;
-// extern crate tiled;
 
 #[macro_use]
 extern crate log;
@@ -34,8 +33,6 @@ use amethyst::{
     Application,
     GameDataBuilder, 
 };
-
-// use tiled::Map;
 
 use std::sync::Arc;
 use std::time::Duration;
@@ -114,13 +111,11 @@ fn main() -> amethyst::Result<()> {
             &[],
         )
         .with(Processor::<Map>::new(), "map_processor", &[])
-        // .with(Processor::<Map>::new(), "map_processor", &[])
         .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
         .with(AttackSystem, "attack_system", &["marine_acceleration_system"])
-        // .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
-        // .with(BulletAnimationSystem, "bullet_animation_system", &["bullet_collision_system"])
-        .with(BulletAnimationSystem, "bullet_animation_system", &[])
-        // .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
+        .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
+        .with(BulletAnimationSystem, "bullet_animation_system", &["bullet_collision_system"])
+        .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
         .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
         .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
         .with(AnimationControlSystem, "animation_control_system", &[])
