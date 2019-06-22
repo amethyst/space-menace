@@ -26,7 +26,8 @@ impl<'s> System<'s> for MarineAccelerationSystem {
         Read<'s, InputHandler<StringBindings>>,
     );
 
-    fn run(&mut self, (entities, marines, two_dim_objs, mut motions, mut directions, input): Self::SystemData) {
+    fn run(&mut self, data: Self::SystemData) {
+        let (entities, marines, two_dim_objs, mut motions, mut directions, input) = data;
         // calculate this so we know if the character should be able to jump
         let mut marine_entities_on_ground = vec![];
 
@@ -39,9 +40,10 @@ impl<'s> System<'s> for MarineAccelerationSystem {
             }
         }
 
-        for (marine, motion, mut marine_dir, marine_entity) in (&marines, &mut motions, &mut directions, &entities).join() {
-            let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
+        for (marine, motion, mut marine_dir, marine_entity) in
+            (&marines, &mut motions, &mut directions, &entities).join() {
 
+            let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let x_input = input.axis_value("run").expect("horizontal axis exists");
             let jump_input = input.action_is_down("jump").expect("jump action exists");
 
@@ -67,7 +69,9 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                 } else {
                     // accelerate till velocity reaches a max threshold
                     motion.velocity.x += 0.4 * x_input as f32;
-                    motion.velocity.x = motion.velocity.x.min(MARINE_MAX_VELOCITY).max(-1. * MARINE_MAX_VELOCITY);
+                    motion.velocity.x = motion.velocity.x
+                        .min(MARINE_MAX_VELOCITY)
+                        .max(-1. * MARINE_MAX_VELOCITY);
                 }
                 
                 if x_input < 0. {

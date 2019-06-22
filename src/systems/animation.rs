@@ -1,14 +1,18 @@
 use amethyst::{
-    animation::{AnimationSet, AnimationCommand, AnimationControlSet, EndControl, get_animation_set},
+    animation::{
+        AnimationSet,
+        AnimationCommand,
+        AnimationControlSet,
+        EndControl,
+        get_animation_set
+    },
     core::Transform,
     ecs::{Entities, Join, ReadStorage, System, WriteStorage},
     renderer::{SpriteRender},
 };
 
-use std::f32::consts::PI;
-
 use crate::{
-    components::{Animation, AnimationId, Bullet, BulletImpact, Direction, Directions, Marine, Motion},
+    components::{Animation, AnimationId, Bullet, BulletImpact, Marine, Motion},
 };
 
 pub struct BulletAnimationSystem;
@@ -17,27 +21,14 @@ impl<'s> System<'s> for BulletAnimationSystem {
     type SystemData = (
         Entities<'s>,
         ReadStorage<'s, Bullet>,
-        WriteStorage<'s, Motion>,
         WriteStorage<'s, Transform>,
     );
 
-    fn run(&mut self, (entities, bullets, mut motions, mut transforms): Self::SystemData) {
+    fn run(&mut self, (entities, bullets, mut transforms): Self::SystemData) {
 
         // iterating over entities having bullet, sprite and transform components
-        for (entity, bullet, motion, mut transform) in
-            (&entities, &bullets, &mut motions, &mut transforms).join() {
-            let bullet_velocity = motion.velocity;
-
-            // set sprite direction
-            if bullet_velocity.x > 0. {
-                // fire right
-                transform.set_rotation_y_axis(0.);
-            } else if bullet_velocity.x < 0. {
-                // fire left 
-                transform.set_rotation_y_axis(PI);
-            }
-
-            // moving the marine
+        for (_, bullet, mut transform) in
+            (&entities, &bullets, &mut transforms).join() {
             bullet.two_dim.update_transform_position(&mut transform);
         }
     }
@@ -49,25 +40,21 @@ impl<'s> System<'s> for BulletImpactAnimationSystem {
     type SystemData = (
         Entities<'s>,
         WriteStorage<'s, BulletImpact>,
-        WriteStorage<'s, SpriteRender>,
-        ReadStorage<'s, Direction>,
-        WriteStorage<'s, Transform>,
+        ReadStorage<'s, Animation>,
+        WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
     );
 
     fn run(&mut self, data: Self::SystemData) {    
-        let (entities, mut bullet_impacts, mut sprites, directions, mut transforms) = data;
+        let (entities, mut bullet_impacts, animations, mut animation_control_sets) = data;
 
-        for (entity, mut bullet_impact, mut sprite, direction, transform) in
-            (&entities, &mut bullet_impacts, &mut sprites, &directions, &mut transforms).join() {
-            if direction.x == Directions::Right {
-                transform.set_rotation_y_axis(0.);
-            } else if direction.x == Directions::Left {
-                transform.set_rotation_y_axis(PI);
-            }
-            sprite.sprite_number = (bullet_impact.ticks / 8) % 2 + 0;
+        for (entity, mut bullet_impact, animation, animation_control_set) in
+            (&entities, &mut bullet_impacts, &animations, &mut animation_control_sets).join() {
 
-            bullet_impact.ticks = bullet_impact.ticks.wrapping_add(1);
-            if sprite.sprite_number == 1 {
+            if bullet_impact.show {
+                animation_control_set.start(animation.current);
+                bullet_impact.show = false;
+            } else {
+                animation_control_set.abort(animation.current);
                 let _ = entities.delete(entity);
             }
         }
@@ -106,10 +93,13 @@ impl<'s> System<'s> for AnimationControlSystem {
 
                     // TODO: make the logic to set `EndControl` generic
                     let end: EndControl;
-                    if animation_id == AnimationId::Shoot {
-                        end = EndControl::Loop(Some(1));
-                    } else {
-                        end = EndControl::Loop(None);
+                    match animation_id {
+                        AnimationId::Shoot | AnimationId::Explode => {
+                            end = EndControl::Loop(Some(1));
+                        },
+                        _ => {
+                            end = EndControl::Loop(None);
+                        }
                     }
                     animation_control_set.add_animation(
                         animation_id,
@@ -145,17 +135,8 @@ impl<'s> System<'s> for MarineAnimationSystem {
         
         for (entity, mut marine, motion, mut animation, animation_control_set, mut transform) in
             (&entities, &mut marines, &motions, &mut animations, &mut animation_control_sets, &mut transforms).join() {
+
             let marine_velocity = motion.velocity;
-
-            // set sprite direction
-            if marine_velocity.x > 0. {
-                // face right
-                transform.set_rotation_y_axis(0.);
-            } else if marine_velocity.x < 0. {
-                // face left
-                transform.set_rotation_y_axis(PI);
-            }
-
             let new_animation_id = 
                 if marine_velocity.y != 0. {
                     AnimationId::Jump

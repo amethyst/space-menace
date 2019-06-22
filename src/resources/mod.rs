@@ -1,12 +1,10 @@
-mod bullet;
 mod map;
-mod sprite;
+mod asset;
 
-pub use self::sprite::AssetType;
-pub use self::sprite::load_sprite_sheets;
-pub use self::sprite::SpriteSheetList;
-pub use self::bullet::BulletImpactResource;
-pub use self::bullet::BulletResource;
+pub use self::asset::AssetType;
+pub use self::asset::load_assets;
+pub use self::asset::PrefabList;
+pub use self::asset::SpriteSheetList;
 pub use self::{
     map::{
         Layer,

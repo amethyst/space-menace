@@ -5,61 +5,39 @@ extern crate log;
 #[macro_use]
 extern crate specs_derive;
 
+use std::sync::Arc;
+use std::time::Duration;
+
 use amethyst::{
     animation::AnimationBundle,
     assets::{PrefabLoaderSystem, Processor},
     core::{frame_limiter::FrameRateLimitStrategy, transform::{TransformBundle}},
-    ecs::{ReadExpect, Resources, SystemData},
     input::{InputBundle, StringBindings},
     renderer::{
-        pass::DrawFlat2DDesc,
-        rendy::{
-            factory::Factory,
-            graph::{
-                render::{RenderGroupDesc, SubpassBuilder},
-                GraphBuilder,
-            },
-            hal::{format::Format, image},
-        },
         sprite::{SpriteRender, SpriteSheet},
         types::DefaultBackend,
-        GraphCreator, RenderingSystem,
+        RenderingSystem,
     },
     utils::application_root_dir,
-    window::{ScreenDimensions, Window, WindowBundle},
+    window::WindowBundle,
     Application,
     GameDataBuilder, 
 };
-
-use std::sync::Arc;
-use std::time::Duration;
 
 mod entities;
 mod states;
 mod components;
 mod resources;
 mod systems;
+mod graph_creator;
 
 use resources::Map;
-
-use systems::{
-    AnimationControlSystem,
-    MarineAccelerationSystem,
-    MarineAnimationSystem,
-    AttackSystem,
-    BulletImpactAnimationSystem,
-    BulletAnimationSystem,
-    BulletCollisionSystem,
-    CameraMotionSystem,
-    MarineCollisionSystem
-};
-
+use systems::*;
 use components::{AnimationId, AnimationPrefabData};
 
 pub const SCALE: f32 = 2.;
 pub const BG_Z_TRANSFORM: f32 = -30.;
 pub const PLATFORM_Z_TRANSFORM: f32 = -10.;
-
 pub const MARINE_MAX_VELOCITY: f32 = 6.0;
 
 fn main() -> amethyst::Result<()> {
@@ -85,7 +63,7 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(
             TransformBundle::new()
                 .with_dep(&["sprite_animation_control", "sprite_sampler_interpolation"]),
-)?
+        )?
         .with_bundle(input_bundle)?
         .with(
             Processor::<SpriteSheet>::new(),
@@ -101,9 +79,10 @@ fn main() -> amethyst::Result<()> {
         .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
         .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
         .with(AnimationControlSystem, "animation_control_system", &[])
+        .with(DirectionSystem, "direction_system", &[])
         .with(CameraMotionSystem, "camera_motion_system", &["marine_collision_system"])
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
-            GameGraph::default(),
+            graph_creator::GameGraphCreator::default(),
         ));
     let mut game = Application::build(assets_path, states::LoadState::default())?
         // .with_frame_limit(
@@ -115,76 +94,4 @@ fn main() -> amethyst::Result<()> {
     game.run();
 
     Ok(())
-}
-
-#[derive(Default)]
-struct GameGraph {
-    dimensions: Option<ScreenDimensions>,
-    surface_format: Option<Format>,
-    dirty: bool,
-}
-
-impl GraphCreator<DefaultBackend> for GameGraph {
-    fn rebuild(&mut self, res: &Resources) -> bool {
-        // Rebuild when dimensions change, but wait until at least two frames have the same.
-        let new_dimensions = res.try_fetch::<ScreenDimensions>();
-        use std::ops::Deref;
-        if self.dimensions.as_ref() != new_dimensions.as_ref().map(|d| d.deref()) {
-            self.dirty = true;
-            self.dimensions = new_dimensions.map(|d| d.clone());
-            return false;
-        }
-        return self.dirty;
-    }
-
-    fn builder(
-        &mut self,
-        factory: &mut Factory<DefaultBackend>,
-        res: &Resources,
-    ) -> GraphBuilder<DefaultBackend, Resources> {
-        use amethyst::renderer::rendy::{
-            graph::present::PresentNode,
-            hal::command::{ClearDepthStencil, ClearValue},
-        };
-
-        self.dirty = false;
-
-        let window = <ReadExpect<'_, Window>>::fetch(res);
-        let surface = factory.create_surface(&window);
-        // cache surface format to speed things up
-        let surface_format = *self
-            .surface_format
-            .get_or_insert_with(|| factory.get_surface_format(&surface));
-        let dimensions = self.dimensions.as_ref().unwrap();
-        let window_kind =
-            image::Kind::D2(dimensions.width() as u32, dimensions.height() as u32, 1, 1);
-
-        let mut graph_builder = GraphBuilder::new();
-        let color = graph_builder.create_image(
-            window_kind,
-            1,
-            surface_format,
-            Some(ClearValue::Color([0.34, 0.36, 0.52, 1.0].into())),
-        );
-
-        let depth = graph_builder.create_image(
-            window_kind,
-            1,
-            Format::D32Sfloat,
-            Some(ClearValue::DepthStencil(ClearDepthStencil(1.0, 0))),
-        );
-
-        let sprite = graph_builder.add_node(
-            SubpassBuilder::new()
-                .with_group(DrawFlat2DDesc::new().builder())
-                .with_color(color)
-                .with_depth_stencil(depth)
-                .into_pass(),
-        );
-
-        let _present = graph_builder
-            .add_node(PresentNode::builder(factory, surface, color).with_dependency(sprite));
-
-        graph_builder
-    }
 }
