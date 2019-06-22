@@ -16,7 +16,9 @@ impl<'s> System<'s> for MarineCollisionSystem {
         WriteStorage<'s, Motion>,
     );
 
-    fn run(&mut self, (mut marines, two_dim_objects, mut motions): Self::SystemData) {
+    fn run(&mut self, data: Self::SystemData) {
+        let (mut marines, two_dim_objects, mut motions) = data;
+
         for (marine, marine_motion) in (&mut marines, &mut motions).join() {
             let marine_velocity = marine_motion.velocity;
             if marine_velocity.x > 0. {
@@ -80,7 +82,9 @@ impl<'s> System<'s> for BulletCollisionSystem {
         ReadExpect<'s, LazyUpdate>,
     );
 
-    fn run(&mut self, (entities, mut bullets, two_dim_objects, mut motions, bullet_impact_resource, lazy_update): Self::SystemData) {
+    fn run(&mut self, data: Self::SystemData) {
+        let (entities, mut bullets, two_dim_objects, mut motions, bullet_impact_resource, lazy_update) = data;
+
         for (bullet_entity, bullet, bullet_motion) in (&*entities, &mut bullets, &mut motions).join() {
             let bullet_velocity = bullet_motion.velocity;
             if bullet_velocity.x > 0. {
@@ -95,7 +99,14 @@ impl<'s> System<'s> for BulletCollisionSystem {
                 bullet.two_dim.set_right(new_x);
                 // on collision 
                 if possible_new_x < old_x + bullet_velocity.x {
-                    show_bullet_impact(&entities, &bullet_impact_resource, possible_new_x, bullet.two_dim.bottom(), bullet_velocity.x, &lazy_update);
+                    show_bullet_impact(
+                        &entities,
+                        &bullet_impact_resource,
+                        possible_new_x,
+                        bullet.two_dim.bottom(),
+                        bullet_velocity.x,
+                        &lazy_update
+                    );
                     let _ = entities.delete(bullet_entity);
                 }
                 // if bullet goes out of map
@@ -114,7 +125,14 @@ impl<'s> System<'s> for BulletCollisionSystem {
                 bullet.two_dim.set_left(new_x);
                 // on collision or if bullet goes out of map
                 if possible_new_x > old_x + bullet_velocity.x {
-                    show_bullet_impact(&entities, &bullet_impact_resource, possible_new_x, bullet.two_dim.bottom(), bullet_velocity.x, &lazy_update);
+                    show_bullet_impact(
+                        &entities,
+                        &bullet_impact_resource,
+                        possible_new_x,
+                        bullet.two_dim.bottom(),
+                        bullet_velocity.x,
+                        &lazy_update
+                    );
                     let _ = entities.delete(bullet_entity);
                 }
                 // if bullet goes out of map

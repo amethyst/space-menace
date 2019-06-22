@@ -76,12 +76,11 @@ impl SimpleState for LoadState {
             // Checks progress
             if progress_counter.is_complete() {
                 // Get the map, which is loaded in the previous load state.
-                let map: Map;
-                {
+                let map = {
                     let map_storage = &data.world.read_resource::<AssetStorage<Map>>();
                     let map_handle = &self.map_handle.clone().unwrap();
-                    map = map_storage.get(map_handle).unwrap().clone();
-                }
+                    map_storage.get(map_handle).unwrap().clone()
+                };
                 map.load_layers(data.world);
 
                 load_marine(data.world, self.marine_prefab_handle.take().unwrap());

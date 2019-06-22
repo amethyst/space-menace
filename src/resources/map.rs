@@ -5,7 +5,7 @@ use amethyst:: {
     error::Error,
     prelude::Builder,
     renderer::{
-        sprite::{SpriteRender, SpriteSheetHandle},
+        sprite::SpriteRender,
         transparent::Transparent,
     },
     window::ScreenDimensions,
@@ -108,8 +108,6 @@ impl Map {
             two_dim_object.set_left(obj.x * SCALE);
             two_dim_object.set_top(screen_height / 2. - (obj.y * SCALE));
             two_dim_object.update_transform_position(&mut transform);
-            println!("{} x-coord = {}", layer.name, obj.x * SCALE);
-            println!("{} y-coord = {}", layer.name, screen_height - (obj.y * SCALE));
 
             world.create_entity()
                 .with(transform)
@@ -125,6 +123,7 @@ impl Map {
         };
         let mut asset_type = None;
         let mut z_transform = 0.;
+
         match layer.name.as_ref() {
             "background" => {
                 asset_type = Some(AssetType::Background);
@@ -140,11 +139,11 @@ impl Map {
             },
             _ => {},
         };
-        let sprite_sheet_handle: SpriteSheetHandle;
-        {
+
+        let sprite_sheet_handle = {
             let sprite_sheet_list = world.read_resource::<SpriteSheetList>();
-            sprite_sheet_handle = sprite_sheet_list.get(asset_type.unwrap()).unwrap().clone();
-        }
+            sprite_sheet_list.get(asset_type.unwrap()).unwrap().clone()
+        };
 
         for obj in layer.objects.iter() {
             let mut transform = Transform::default();
@@ -153,9 +152,6 @@ impl Map {
                 screen_height / 2. - (obj.y + obj.height / 2.) * SCALE,
                 z_transform
             );
-
-            println!("{} x-coord = {}", layer.name, (obj.x + obj.width / 2.) * SCALE);
-            println!("{} y-coord = {}", layer.name, screen_height / 2. - (obj.y + obj.height / 2.) * SCALE);
 
             transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
             let sprite_index_prop = obj.properties.iter().find(
