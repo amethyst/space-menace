@@ -10,11 +10,8 @@ use amethyst::{
     assets::{PrefabLoaderSystem, Processor},
     core::{frame_limiter::FrameRateLimitStrategy, transform::{TransformBundle}},
     ecs::{ReadExpect, Resources, SystemData},
-    // error::Error,
     input::{InputBundle, StringBindings},
-    // prelude::{Builder, World},
     renderer::{
-        // camera::Camera,
         pass::DrawFlat2DDesc,
         rendy::{
             factory::Factory,
@@ -71,17 +68,6 @@ fn main() -> amethyst::Result<()> {
     let root = application_root_dir()?;
     let display_config_path = root.join("resources/display_config.ron");
     let assets_path = root.join("assets");
-    // let config = DisplayConfig::load(&display_config_path);
-
-    // let pipe = Pipeline::build().with_stage(
-        // Stage::with_backbuffer()
-            // .clear_target([1.0, 1.0, 1.0, 1.0], 1.0)
-            // .with_pass(
-                // DrawFlat2D::new()
-                    // .with_transparency(ColorMask::all(), ALPHA, None)
-            // ),
-    // );
-
     let input_bundle = InputBundle::<StringBindings>::new()
         .with_bindings_from_file(root.join("resources/bindings_config.ron"))?;
 
@@ -101,10 +87,6 @@ fn main() -> amethyst::Result<()> {
                 .with_dep(&["sprite_animation_control", "sprite_sampler_interpolation"]),
 )?
         .with_bundle(input_bundle)?
-        // .with_bundle(RenderBundle::new(pipe, Some(config))
-            // .with_sprite_sheet_processor()
-            // .with_sprite_visibility_sorting(&[])
-        // )?
         .with(
             Processor::<SpriteSheet>::new(),
             "sprite_sheet_processor",
@@ -121,7 +103,7 @@ fn main() -> amethyst::Result<()> {
         .with(AnimationControlSystem, "animation_control_system", &[])
         .with(CameraMotionSystem, "camera_motion_system", &["marine_collision_system"])
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
-            ExampleGraph::default(),
+            GameGraph::default(),
         ));
     let mut game = Application::build(assets_path, states::LoadState::default())?
         // .with_frame_limit(
@@ -136,13 +118,13 @@ fn main() -> amethyst::Result<()> {
 }
 
 #[derive(Default)]
-struct ExampleGraph {
+struct GameGraph {
     dimensions: Option<ScreenDimensions>,
     surface_format: Option<Format>,
     dirty: bool,
 }
 
-impl GraphCreator<DefaultBackend> for ExampleGraph {
+impl GraphCreator<DefaultBackend> for GameGraph {
     fn rebuild(&mut self, res: &Resources) -> bool {
         // Rebuild when dimensions change, but wait until at least two frames have the same.
         let new_dimensions = res.try_fetch::<ScreenDimensions>();

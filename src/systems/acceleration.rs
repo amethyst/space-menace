@@ -87,7 +87,6 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                     } else {
                         motion.velocity.x += 0.8 * x_input as f32;
                     }
-                // }
                 } else if marine_on_ground {
                     motion.velocity.y = 0.;
                 } else if !marine_on_ground {
