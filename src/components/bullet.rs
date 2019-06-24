@@ -5,8 +5,8 @@ use amethyst::{
 use crate::components::TwoDimObject;
 
 pub struct BulletImpact {
-    pub ticks: usize,
     pub two_dim: TwoDimObject,
+    pub show: bool,
 }
 
 impl Component for BulletImpact {
@@ -16,8 +16,8 @@ impl Component for BulletImpact {
 impl BulletImpact {
     pub fn new(two_dim: TwoDimObject) -> Self {
         BulletImpact {
-            ticks: 0,
             two_dim,
+            show: true,
         }
     }
 }

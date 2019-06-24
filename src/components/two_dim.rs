@@ -20,7 +20,6 @@ impl Default for TwoDimVector<f32> {
 pub struct TwoDimObject {
     pub size: TwoDimVector<f32>,
     pub position: TwoDimVector<f32>,
-    // pub velocity: TwoDimVector<f32>,
 }
 
 impl Component for TwoDimObject {
@@ -32,17 +31,12 @@ impl TwoDimObject {
         TwoDimObject {
             size: TwoDimVector { x: width, y: height },
             position: TwoDimVector { x: 0., y: 0. },
-            // velocity: TwoDimVector { x: 0., y: 0. },
         }
     }
 
     pub fn set_position(&mut self, x: f32, y: f32) {
         self.position = TwoDimVector { x, y };
     }
-
-    // pub fn set_velocity(&mut self, x: f32, y: f32) {
-    //     self.velocity = TwoDimVector { x, y };
-    // }
 
     pub fn update_transform_position(&self, transform: &mut Transform) {
         transform.set_translation_x(self.position.x);
@@ -89,45 +83,69 @@ impl TwoDimObject {
         self.bottom() < other.top() && other.bottom() < self.top()
     }
 
-    pub fn get_next_right(&self, two_dim_object: &TwoDimObject, old_x: f32, mut possible_new_x: f32) -> f32 {
+    pub fn get_next_right(
+        &self,
+        two_dim_object: &TwoDimObject,
+        old_x: f32,
+        mut possible_new_x: f32,
+    ) -> f32 {
         if self.overlapping_y(two_dim_object)
             && old_x <= two_dim_object.left()
             && possible_new_x >= two_dim_object.left() {
-            // can't early return here, because we need to consider collision with more than one other object
-            // don't need to set velocity back to zero here, but could depending on how we want the marine animation to act
+            // Can't early return here, because we need to consider collision with
+            // more than one other object. Don't need to set velocity back to zero here,
+            // but could depending on how we want the marine animation to act
             possible_new_x = two_dim_object.left();
         }
         possible_new_x
     }
 
-    pub fn get_next_left(&self, two_dim_object: &TwoDimObject, old_x: f32, mut possible_new_x: f32) -> f32 {
+    pub fn get_next_left(
+        &self,
+        two_dim_object: &TwoDimObject,
+        old_x: f32,
+        mut possible_new_x: f32
+    ) -> f32 {
         if self.overlapping_y(two_dim_object)
             && old_x >= two_dim_object.right()
             && possible_new_x <= two_dim_object.right() {
-            // can't early return here, because we need to consider collision with more than one other object
-            // don't need to set velocity back to zero here, but could depending on how we want the marine animation to act
+            // Can't early return here, because we need to consider collision with
+            // more than one other object. Don't need to set velocity back to zero here,
+            // but could depending on how we want the marine animation to act
             possible_new_x = two_dim_object.right();
         }
         possible_new_x
     }
 
-    pub fn get_next_top(&self, two_dim_object: &TwoDimObject, old_y: f32, mut possible_new_y: f32) -> f32 {
+    pub fn get_next_top(
+        &self,
+        two_dim_object: &TwoDimObject,
+        old_y: f32,
+        mut possible_new_y: f32
+    ) -> f32 {
         if self.overlapping_x(two_dim_object)
             && old_y <= two_dim_object.bottom()
             && possible_new_y >= two_dim_object.bottom() {
-            // can't early return here, because we need to consider collision with more than one other object
-            // don't need to set velocity back to zero here, but could depending on how we want the marine animation to act
+            // Can't early return here, because we need to consider collision with
+            // more than one other object. Don't need to set velocity back to zero here,
+            // but could depending on how we want the marine animation to act
             possible_new_y = two_dim_object.bottom();
         }
         possible_new_y
     }
 
-    pub fn get_next_bottom(&self, two_dim_object: &TwoDimObject, old_y: f32, mut possible_new_y: f32) -> f32 {
+    pub fn get_next_bottom(
+        &self,
+        two_dim_object: &TwoDimObject,
+        old_y: f32,
+        mut possible_new_y: f32
+    ) -> f32 {
         if self.overlapping_x(two_dim_object)
             && old_y >= two_dim_object.top()
             && possible_new_y <= two_dim_object.top() {
-            // can't early return here, because we need to consider collision with more than one other object
-            // don't need to set velocity back to zero here, but could depending on how we want the marine animation to act
+            // Can't early return here, because we need to consider collision with
+            // more than one other object. Don't need to set velocity back to zero here,
+            // but could depending on how we want the marine animation to act
             possible_new_y = two_dim_object.top();
         }
         possible_new_y

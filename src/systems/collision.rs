@@ -4,7 +4,7 @@ use amethyst::{
 use crate::{
     components::{Bullet, Marine, Motion, TwoDimObject},
     entities::show_bullet_impact,
-    resources::BulletImpactResource,
+    resources::{AssetType, PrefabList},
 };
 
 pub struct MarineCollisionSystem;
@@ -16,7 +16,9 @@ impl<'s> System<'s> for MarineCollisionSystem {
         WriteStorage<'s, Motion>,
     );
 
-    fn run(&mut self, (mut marines, two_dim_objects, mut motions): Self::SystemData) {
+    fn run(&mut self, data: Self::SystemData) {
+        let (mut marines, two_dim_objects, mut motions) = data;
+
         for (marine, marine_motion) in (&mut marines, &mut motions).join() {
             let marine_velocity = marine_motion.velocity;
             if marine_velocity.x > 0. {
@@ -25,7 +27,8 @@ impl<'s> System<'s> for MarineCollisionSystem {
                 let mut possible_new_x = old_x + marine_velocity.x;
 
                 for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = marine.two_dim.get_next_right(two_dim_object, old_x, possible_new_x);
+                    possible_new_x = marine.two_dim
+                        .get_next_right(two_dim_object, old_x, possible_new_x);
                 }
                 // ensure marine stays inside "walls" of display
                 let new_x = possible_new_x.min(1150.).max(32 as f32);
@@ -36,7 +39,8 @@ impl<'s> System<'s> for MarineCollisionSystem {
                 let mut possible_new_x = old_x + marine_velocity.x;
 
                 for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = marine.two_dim.get_next_left(two_dim_object, old_x, possible_new_x);
+                    possible_new_x = marine.two_dim
+                        .get_next_left(two_dim_object, old_x, possible_new_x);
                 }
                 // ensure marine stays inside "walls" of display
                 let new_x = possible_new_x.min(1150.- 32 as f32).max(0.);
@@ -49,7 +53,8 @@ impl<'s> System<'s> for MarineCollisionSystem {
                 let mut possible_new_y = marine.two_dim.top() + marine_velocity.y;
 
                 for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_y = marine.two_dim.get_next_top(two_dim_object, old_y, possible_new_y);
+                    possible_new_y = marine.two_dim
+                        .get_next_top(two_dim_object, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
                 marine.two_dim.set_top(new_y);
@@ -59,7 +64,8 @@ impl<'s> System<'s> for MarineCollisionSystem {
                 let mut possible_new_y = marine.two_dim.bottom() + marine_velocity.y;
 
                 for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_y = marine.two_dim.get_next_bottom(two_dim_object, old_y, possible_new_y);
+                    possible_new_y = marine.two_dim
+                        .get_next_bottom(two_dim_object, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
                 marine.two_dim.set_bottom(new_y);
@@ -76,11 +82,13 @@ impl<'s> System<'s> for BulletCollisionSystem {
         WriteStorage<'s, Bullet>,
         ReadStorage<'s, TwoDimObject>,
         WriteStorage<'s, Motion>,
-        ReadExpect<'s, BulletImpactResource>,
+        ReadExpect<'s, PrefabList>,
         ReadExpect<'s, LazyUpdate>,
     );
 
-    fn run(&mut self, (entities, mut bullets, two_dim_objects, mut motions, bullet_impact_resource, lazy_update): Self::SystemData) {
+    fn run(&mut self, data: Self::SystemData) {
+        let (entities, mut bullets, two_dim_objects, mut motions, prefab_list, lazy_update) = data;
+
         for (bullet_entity, bullet, bullet_motion) in (&*entities, &mut bullets, &mut motions).join() {
             let bullet_velocity = bullet_motion.velocity;
             if bullet_velocity.x > 0. {
@@ -89,13 +97,24 @@ impl<'s> System<'s> for BulletCollisionSystem {
                 let mut possible_new_x = old_x + bullet_velocity.x;
 
                 for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = bullet.two_dim.get_next_right(two_dim_object, old_x, possible_new_x);
+                    possible_new_x = bullet.two_dim
+                        .get_next_right(two_dim_object, old_x, possible_new_x);
                 }
                 let new_x = possible_new_x;
                 bullet.two_dim.set_right(new_x);
                 // on collision 
                 if possible_new_x < old_x + bullet_velocity.x {
-                    show_bullet_impact(&entities, &bullet_impact_resource, possible_new_x, bullet.two_dim.bottom(), bullet_velocity.x, &lazy_update);
+                    let bullet_impact_prefab_handle = {
+                        prefab_list.get(AssetType::BulletImpact).unwrap().clone()
+                    };
+                    show_bullet_impact(
+                        &entities,
+                        bullet_impact_prefab_handle,
+                        possible_new_x,
+                        bullet.two_dim.bottom(),
+                        bullet_velocity.x,
+                        &lazy_update
+                    );
                     let _ = entities.delete(bullet_entity);
                 }
                 // if bullet goes out of map
@@ -108,13 +127,24 @@ impl<'s> System<'s> for BulletCollisionSystem {
                 let mut possible_new_x = old_x + bullet_velocity.x;
 
                 for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = bullet.two_dim.get_next_left(two_dim_object, old_x, possible_new_x);
+                    possible_new_x = bullet.two_dim
+                        .get_next_left(two_dim_object, old_x, possible_new_x);
                 }
                 let new_x = possible_new_x;
                 bullet.two_dim.set_left(new_x);
                 // on collision or if bullet goes out of map
                 if possible_new_x > old_x + bullet_velocity.x {
-                    show_bullet_impact(&entities, &bullet_impact_resource, possible_new_x, bullet.two_dim.bottom(), bullet_velocity.x, &lazy_update);
+                    let bullet_impact_prefab_handle = {
+                        prefab_list.get(AssetType::BulletImpact).unwrap().clone()
+                    };
+                    show_bullet_impact(
+                        &entities,
+                        bullet_impact_prefab_handle,
+                        possible_new_x,
+                        bullet.two_dim.bottom(),
+                        bullet_velocity.x,
+                        &lazy_update
+                    );
                     let _ = entities.delete(bullet_entity);
                 }
                 // if bullet goes out of map
