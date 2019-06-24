@@ -2,10 +2,10 @@
     texture_width: 224,
     texture_height: 192,
     sprites: [
-        (x: 0, y: 0, width: 16, height: 192), // 1
-        (x: 32, y: 25, width: 64, height: 71), // 2
-        (x: 112, y: 17, width: 96, height: 79), // 3
-        (x: 32, y: 108, width: 64, height: 68), // 4
-        (x: 112, y: 103, width: 96, height: 57), // 5
+        // (x: 0, y: 0, width: 16, height: 192),
+        (x: 32, y: 16, width: 64, height: 80), // 1
+        (x: 112, y: 16, width: 96, height: 80), // 2
+        (x: 32, y: 96, width: 64, height: 80), // 3
+        (x: 112, y: 96, width: 96, height: 64), // 4
     ],
 )

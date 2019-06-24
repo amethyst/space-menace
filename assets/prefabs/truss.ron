@@ -1,11 +1,11 @@
 (
-    texture_width: 576,
+    texture_width: 416,
     texture_height: 176,
     sprites: [
         (
             x: 0,
             y: 0,
-            width: 576,
+            width: 416,
             height: 176,
         ),
     ],

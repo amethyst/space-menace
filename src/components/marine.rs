@@ -19,10 +19,7 @@ impl Default for MarineState {
     }
 }
 
-// #[derive(Component)]
-// #[storage(VecStorage)]
 pub struct Marine {
-    pub ticks: usize,
     pub state: MarineState,
     pub two_dim: TwoDimObject,
     pub is_shooting: bool,
@@ -36,7 +33,6 @@ impl Component for Marine {
 impl Marine {
     pub fn new(two_dim: TwoDimObject) -> Self {
         Marine {
-            ticks: 0,
             state: MarineState::Idle,
             two_dim,
             is_shooting: false,
