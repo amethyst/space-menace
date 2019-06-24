@@ -76,7 +76,7 @@ pub fn load_assets(world: &mut World, asset_type_list: Vec<AssetType>) -> Progre
                 ("textures/bullet.png", "prefabs/bullet.ron")
             },
             AssetType::BulletImpact => {
-                ("", "prefabs/bullet_impact_new.ron")
+                ("", "prefabs/bullet_impact.ron")
             },
             AssetType::Marine=> {
                 ("", "prefabs/marine.ron")

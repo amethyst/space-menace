@@ -3,8 +3,6 @@ use amethyst::{
     prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
 };
 
-// use specs_physics::{physics_dispatcher, Gravity};
-
 use crate::{
     entities::{load_camera_subject, load_camera, load_marine},
     resources::{AssetType, Map, PrefabList, load_assets},
@@ -48,7 +46,7 @@ impl SimpleState for LoadState {
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
         if let Some(ref progress_counter) = self.progress_counter {
-            // Check progress
+            // Check if all data has been loaded
             if progress_counter.is_complete() {
                 // Get the map, which is loaded in the previous load state.
                 let map = {

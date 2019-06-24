@@ -12,27 +12,8 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Animation, AnimationId, Bullet, BulletImpact, Marine, Motion},
+    components::{Animation, AnimationId, BulletImpact, Marine, Motion},
 };
-
-pub struct BulletAnimationSystem;
-
-impl<'s> System<'s> for BulletAnimationSystem {
-    type SystemData = (
-        Entities<'s>,
-        ReadStorage<'s, Bullet>,
-        WriteStorage<'s, Transform>,
-    );
-
-    fn run(&mut self, (entities, bullets, mut transforms): Self::SystemData) {
-
-        // iterating over entities having bullet, sprite and transform components
-        for (_, bullet, mut transform) in
-            (&entities, &bullets, &mut transforms).join() {
-            bullet.two_dim.update_transform_position(&mut transform);
-        }
-    }
-}
 
 pub struct BulletImpactAnimationSystem;
 
@@ -75,7 +56,7 @@ impl<'s> System<'s> for AnimationControlSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (entities, animations, animation_sets, mut animation_control_sets) = data;
 
-        // Iterate over all entities with Animation and AnimationSet components.
+        // Iterate over all entities having Animation and AnimationSet components.
         for (entity, animation, animation_set) in (&entities, &animations, &animation_sets).join() {
             // Fetch or create the AnimationControlSet for this entity.
             let animation_control_set =
@@ -91,16 +72,14 @@ impl<'s> System<'s> for AnimationControlSystem {
                         entity
                     );
 
-                    // TODO: make the logic to set `EndControl` generic
-                    let end: EndControl;
-                    match animation_id {
+                    let end = match animation_id {
                         AnimationId::Shoot | AnimationId::Explode => {
-                            end = EndControl::Loop(Some(1));
+                            EndControl::Loop(Some(1))
                         },
                         _ => {
-                            end = EndControl::Loop(None);
+                            EndControl::Loop(None)
                         }
-                    }
+                    };
                     animation_control_set.add_animation(
                         animation_id,
                         &animation_set.get(&animation_id).unwrap(),
