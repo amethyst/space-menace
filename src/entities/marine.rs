@@ -1,6 +1,6 @@
 use amethyst::{
     assets::{Handle, Prefab},
-    core::{math::Vector3, Transform},
+    core::{Float, math::Vector3, Transform},
     ecs::prelude::World,
     prelude::Builder,
     renderer::transparent::Transparent,
@@ -36,9 +36,9 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     two_dim_object.set_position(384., 176.);
     two_dim_object.update_transform_position(&mut transform);
 
-    let physics_body: PhysicsBody<f32> = PhysicsBodyBuilder::from(BodyStatus::Dynamic)
+    let physics_body = PhysicsBodyBuilder::<Float>::from(BodyStatus::Dynamic)
         .gravity_enabled(true)
-        .mass(1.3)
+        .mass(Float::from_f32(1.3))
         .build();
 
     world

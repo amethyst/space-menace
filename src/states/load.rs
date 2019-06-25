@@ -1,5 +1,6 @@
 use amethyst::{
     assets::{AssetStorage, Handle, Loader, JsonFormat, ProgressCounter},
+    core::Float,
     prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
 };
 
@@ -23,12 +24,12 @@ impl SimpleState for LoadState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
 
-        let mut gravity: Gravity<f32> = Gravity::default();
-        gravity.y = -9.8;
+        let mut gravity: Gravity<Float> = Gravity::default();
+        gravity.y = Float::from_f32(-9.8);
 
         world.add_resource(gravity);
 
-        let physics: Physics<f32> = Physics::new();
+        // let physics: Physics<f32> = Physics::new();
         // println!("physics.gravity() = {}", physics.gravity());
 
         self.progress_counter = Some(load_assets(
