@@ -1,6 +1,6 @@
 use amethyst:: {
     assets::{Asset, Handle, ProcessingState},
-    core::Transform,
+    core::{math::Vector3, Transform},
     ecs::{prelude::World, VecStorage},
     error::Error,
     prelude::Builder,
@@ -12,8 +12,6 @@ use amethyst:: {
 };
 
 use serde::{Deserialize, Serialize};
-
-use specs_physics::{math::Vector3};
 
 use crate::{
     components::TwoDimObject,

@@ -1,4 +1,5 @@
 extern crate amethyst;
+extern crate specs_physics;
 
 #[macro_use]
 extern crate log;
@@ -30,6 +31,7 @@ mod components;
 mod resources;
 mod systems;
 mod graph_creator;
+mod physics_bundle;
 
 use resources::Map;
 use systems::*;
@@ -65,6 +67,7 @@ fn main() -> amethyst::Result<()> {
                 .with_dep(&["sprite_animation_control", "sprite_sampler_interpolation"]),
         )?
         .with_bundle(input_bundle)?
+        .with_bundle(physics_bundle::PhysicsBundle::default())?
         .with(
             Processor::<SpriteSheet>::new(),
             "sprite_sheet_processor",

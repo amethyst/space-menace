@@ -7,6 +7,6 @@ edition = "2018"
 [dependencies]
 amethyst = { git = "https://github.com/amethyst/amethyst", features = ["nightly", "metal", "json"] }
 serde = "*"
-specs-physics = "*"
+specs-physics = { version = "0.3.0", features = ["amethyst"] }
 log = "*"
 specs-derive = "*"

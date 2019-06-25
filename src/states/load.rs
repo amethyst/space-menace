@@ -3,6 +3,11 @@ use amethyst::{
     prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
 };
 
+use specs_physics::{
+    parameters::Gravity,
+    Physics
+};
+
 use crate::{
     entities::{load_camera_subject, load_camera, load_marine},
     resources::{AssetType, Map, PrefabList, load_assets},
@@ -17,6 +22,15 @@ pub struct LoadState {
 impl SimpleState for LoadState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
+
+        let mut gravity: Gravity<f32> = Gravity::default();
+        gravity.y = -9.8;
+
+        world.add_resource(gravity);
+
+        let physics: Physics<f32> = Physics::new();
+        // println!("physics.gravity() = {}", physics.gravity());
+
         self.progress_counter = Some(load_assets(
             world,
             vec![
@@ -25,7 +39,7 @@ impl SimpleState for LoadState {
                 AssetType::BulletImpact,
                 AssetType::Marine,
                 AssetType::Platform,
-                AssetType::Truss
+                AssetType::Truss,
             ]
         ));
         {

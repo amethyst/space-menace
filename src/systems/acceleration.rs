@@ -94,7 +94,7 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                 } else if marine_on_ground {
                     motion.velocity.y = 0.;
                 } else if !marine_on_ground {
-                    motion.velocity.y -= 0.6;
+                    // motion.velocity.y -= 0.6;
                 }
 
                 if !jump_input {

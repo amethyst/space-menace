@@ -6,6 +6,14 @@ use amethyst::{
     renderer::transparent::Transparent,
 };
 
+use specs_physics::{
+    PhysicsBody,
+    PhysicsBodyBuilder,
+    PhysicsColliderBuilder,
+    nphysics::object::BodyStatus,
+    colliders::Shape,
+};
+
 use crate::{
     SCALE,
     components::{
@@ -28,9 +36,16 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     two_dim_object.set_position(384., 176.);
     two_dim_object.update_transform_position(&mut transform);
 
+    let physics_body: PhysicsBody<f32> = PhysicsBodyBuilder::from(BodyStatus::Dynamic)
+        .gravity_enabled(true)
+        .mass(1.3)
+        .build();
+
     world
         .create_entity()
         .with(Marine::new(two_dim_object))
+        .with(physics_body)
+        // .with(PhysicsColliderBuilder::from(Shape::Rectangle(32.0, 48.0, 0.)).build())
         .with(transform)
         .with(Motion::new())
         .with(Animation {
