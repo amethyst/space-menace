@@ -20,9 +20,9 @@ cargo run —release
 - [x] Animation using prefabs (Main character run, jump, shoot, etc.)
 - [x] Basic 2D physics (gravity, velocity, collision detection, etc.)
 - [x] Lazy spawning of entities
-- [ ] One complete level
+- [ ] One complete level (enemies, full map, etc.)
 - [ ] Parallax
-- [ ] Game mechanics / rules
+- [ ] Game mechanics / rules (points, lives, etc.)
 - [ ] Audio
 - [ ] [nphysics](https://nphysics.org/) integration (using [specs-physics](https://github.com/amethyst/specs-physics/))
 - [ ] Documentation
