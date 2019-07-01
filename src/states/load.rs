@@ -5,7 +5,7 @@ use amethyst::{
 
 use crate::{
     entities::{load_camera_subject, load_camera, load_marine},
-    resources::{AssetType, Map, PrefabList, load_assets},
+    resources::{AssetType, Context, Map, PrefabList, load_assets},
 };
 
 #[derive(Default)]
@@ -17,6 +17,9 @@ pub struct LoadState {
 impl SimpleState for LoadState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
+
+        world.add_resource(Context::new());
+
         self.progress_counter = Some(load_assets(
             world,
             vec![
@@ -28,17 +31,17 @@ impl SimpleState for LoadState {
                 AssetType::Truss
             ]
         ));
-        {
+        self.map_handle = {
             let loader = world.read_resource::<Loader>();
-            self.map_handle = Some(
+            Some(
                 loader.load(
                     "tilemaps/map.json",
                     JsonFormat,
                     self.progress_counter.as_mut().expect("map"),
                     &world.read_resource::<AssetStorage<Map>>(),
                 )
-            );
-        }
+            )
+        };
 
         let camera_subject = load_camera_subject(world);
         load_camera(world, camera_subject);
@@ -54,6 +57,7 @@ impl SimpleState for LoadState {
                     let map_handle = &self.map_handle.take().unwrap();
                     map_storage.get(map_handle).unwrap().clone()
                 };
+
                 map.load_layers(data.world);
 
                 let marine_prefab_handle = {
