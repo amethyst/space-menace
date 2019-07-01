@@ -17,17 +17,8 @@ use specs_physics::{math::Vector3};
 
 use crate::{
     components::TwoDimObject,
-    resources::{AssetType, SpriteSheetList},
-    SCALE,
+    resources::{AssetType, Context, SpriteSheetList},
 };
-
-#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
-pub struct Tileset {
-    pub image: String,
-    pub imagewidth: i32,
-    pub imageheight: i32,
-    pub name: String,
-}
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct Object {
@@ -54,7 +45,6 @@ pub struct Layer {
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct Property {
     pub name: String,
-    pub proptype: String,
     pub value: usize,
 }
 
@@ -64,7 +54,6 @@ pub struct Map {
     pub height: i32,
     pub tilewidth: i32,
     pub tileheight: i32,
-    pub tilesets: Vec<Tileset>,
     pub layers: Vec<Layer>,
 }
 
@@ -100,13 +89,18 @@ impl Map {
             let dim = world.read_resource::<ScreenDimensions>();
             dim.height()
         };
+        let (scale, x_correction, y_correction) = {
+            let context = world.read_resource::<Context>();
+            (context.scale, context.x_correction, context.y_correction)
+        };
+
         for obj in layer.objects.iter() {
             let mut transform = Transform::default();
             transform.set_translation_z(-10.);
 
-            let mut two_dim_object = TwoDimObject::new(obj.width * SCALE, obj.height * SCALE);
-            two_dim_object.set_left(obj.x * SCALE);
-            two_dim_object.set_top(screen_height / 2. - (obj.y * SCALE));
+            let mut two_dim_object = TwoDimObject::new(obj.width * scale, obj.height * scale);
+            two_dim_object.set_left(obj.x * scale + x_correction);
+            two_dim_object.set_top(screen_height / 2. - (obj.y * scale) + y_correction);
             two_dim_object.update_transform_position(&mut transform);
 
             world.create_entity()
@@ -121,21 +115,35 @@ impl Map {
             let dim = world.read_resource::<ScreenDimensions>();
             dim.height()
         };
+        let (x_correction, y_correction, scale, background_scale,
+            background_z_translation, truss_z_translation, platform_z_translation) = {
+                let context = world.read_resource::<Context>();    
+                (
+                    context.x_correction,
+                    context.y_correction,
+                    context.scale,
+                    context.background_scale,
+                    context.background_z_translation,
+                    context.truss_z_translation,
+                    context.platform_z_translation
+                )
+            };
+
         let mut asset_type = None;
-        let mut z_transform = 0.;
+        let mut z_translation = 0.;
 
         match layer.name.as_ref() {
             "background" => {
                 asset_type = Some(AssetType::Background);
-                z_transform = -30.;
+                z_translation = background_z_translation;
             },
             "platform" => {
                 asset_type = Some(AssetType::Platform);
-                z_transform = -10.;
+                z_translation = platform_z_translation;
             },
             "truss" => {
                 asset_type = Some(AssetType::Truss);
-                z_transform = -20.;
+                z_translation = truss_z_translation;
             },
             _ => {},
         };
@@ -147,13 +155,27 @@ impl Map {
 
         for obj in layer.objects.iter() {
             let mut transform = Transform::default();
-            transform.set_translation_xyz(
-                (obj.x + obj.width / 2.) * SCALE,
-                screen_height / 2. - (obj.y + obj.height / 2.) * SCALE,
-                z_transform
-            );
+            match layer.name.as_ref() {
+                "background" |
+                "truss" => {
+                    transform.set_translation_xyz(
+                        (obj.x + obj.width / 2.) * scale + x_correction,
+                        screen_height / 2. - (obj.y + obj.height / 2.),
+                        z_translation,
+                    );
+                    transform.set_scale(Vector3::new(background_scale, background_scale, background_scale));
+                },
+                "platform" => {
+                    transform.set_translation_xyz(
+                        (obj.x + obj.width / 2.) * scale + x_correction,
+                        screen_height / 2. - (obj.y + obj.height / 2.) * scale + y_correction,
+                        z_translation,
+                    );
+                    transform.set_scale(Vector3::new(scale, scale, scale));
+                },
+                _ => {},
+            };
 
-            transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
             let sprite_index_prop = obj.properties.iter().find(
                 |prop| prop.name == "spriteindex"
             );
