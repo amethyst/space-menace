@@ -15,5 +15,7 @@
         (x: 64, y: 160, width: 32, height: 16), // 9 (ladder bottom)
         (x: 112, y: 96, width: 96, height: 64), // 10
         (x: 112, y: 112, width: 32, height: 16), // 11 (bottom with notch)
+        (x: 112, y: 80, width: 16, height: 16), // 12 (left rope bottom)
+        (x: 192, y: 80, width: 16, height: 16), // 13 (right rope bottom)
     ],
 )

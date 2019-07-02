@@ -21,6 +21,12 @@ use crate::{
 };
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
+pub struct Property {
+    pub name: String,
+    pub value: usize,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct Object {
     pub width: f32,
     pub height: f32,
@@ -29,7 +35,7 @@ pub struct Object {
     pub visible: bool,
     pub x: f32,
     pub y: f32,
-    pub properties: Vec<Property>,
+    pub properties: Option<Vec<Property>>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
@@ -40,12 +46,6 @@ pub struct Layer {
     pub x: f32,
     pub y: f32,
     pub objects: Vec<Object>,
-}
-
-#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
-pub struct Property {
-    pub name: String,
-    pub value: usize,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
@@ -64,10 +64,9 @@ impl Asset for Map {
 }
 
 impl From<Map> for Result<ProcessingState<Map>, Error> {
-    fn from(map: Map)
-        -> Result<ProcessingState<Map>, Error> {
-            Ok(ProcessingState::Loaded(map))
-        }
+    fn from(map: Map) -> Result<ProcessingState<Map>, Error> {
+        Ok(ProcessingState::Loaded(map))
+    }
 }
 
 impl Map {
@@ -115,19 +114,26 @@ impl Map {
             let dim = world.read_resource::<ScreenDimensions>();
             dim.height()
         };
-        let (x_correction, y_correction, scale, background_scale,
-            background_z_translation, truss_z_translation, platform_z_translation) = {
-                let context = world.read_resource::<Context>();    
-                (
-                    context.x_correction,
-                    context.y_correction,
-                    context.scale,
-                    context.background_scale,
-                    context.background_z_translation,
-                    context.truss_z_translation,
-                    context.platform_z_translation
-                )
-            };
+        let (
+            x_correction,
+            y_correction,
+            scale,
+            background_scale,
+            background_z_translation,
+            truss_z_translation,
+            platform_z_translation,
+        ) = {
+            let context = world.read_resource::<Context>();    
+            (
+                context.x_correction,
+                context.y_correction,
+                context.scale,
+                context.background_scale,
+                context.background_z_translation,
+                context.truss_z_translation,
+                context.platform_z_translation,
+            )
+        };
 
         let mut asset_type = None;
         let mut z_translation = 0.;
@@ -176,9 +182,16 @@ impl Map {
                 _ => {},
             };
 
-            let sprite_index_prop = obj.properties.iter().find(
-                |prop| prop.name == "spriteindex"
-            );
+            // let sprite_index_prop = obj.properties.iter().find(
+            //     |prop| prop.name == "spriteindex"
+            // );
+
+            let sprite_index_prop = match &obj.properties {
+                Some(props) => props.iter().find(
+                    |prop| prop.name == "spriteindex"
+                ),
+                None => None
+            };
             let mut sprite = SpriteRender {
                 sprite_sheet: sprite_sheet_handle.clone(),
                 sprite_number: 0,

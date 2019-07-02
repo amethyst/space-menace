@@ -1,10 +1,11 @@
 use amethyst::{
     core::Transform,
-    ecs::{Join, ReadStorage, System, WriteStorage},
+    ecs::{Join, ReadExpect, ReadStorage, System, WriteStorage},
 };
 
 use crate::{
-    components::{Bullet, Marine, SubjectTag},
+    components::{Marine, SubjectTag},
+    resources::Context,
 };
 
 pub struct CameraMotionSystem;
@@ -14,39 +15,22 @@ impl<'s> System<'s> for CameraMotionSystem {
         ReadStorage<'s, Marine>,
         ReadStorage<'s, SubjectTag>,
         WriteStorage<'s, Transform>,
+        ReadExpect<'s, Context>,
     );
 
-    fn run(&mut self, (marines, subject_tags, mut transforms): Self::SystemData) {
+    fn run(&mut self, (marines, subject_tags, mut transforms, context): Self::SystemData) {
         let mut marine_x = 0.;
+        let map_width = context.map_width;
+        let background_width = context.background_width;
 
         for (_marine, transform) in (&marines, &transforms).join() {
             marine_x = transform.translation().x.as_f32();
         }
 
         for (_subject_tag, transform) in (&subject_tags, &mut transforms).join() {
-            if marine_x >= 384. && marine_x <= 900. {
+            if marine_x >= background_width && marine_x <= map_width - background_width {
                 transform.set_translation_x(marine_x);            
             }
         }
     }
 }
-
-pub struct BulletMotionSystem;
-
-impl<'s> System<'s> for BulletMotionSystem {
-    type SystemData = (
-        // Entities<'s>,
-        ReadStorage<'s, Bullet>,
-        WriteStorage<'s, Transform>,
-    );
-
-    fn run(&mut self, (bullets, mut transforms): Self::SystemData) {
-
-        // Iterate over all entities having bullet and transform components
-        for (bullet, mut transform) in
-            (&bullets, &mut transforms).join() {
-            bullet.two_dim.update_transform_position(&mut transform);
-        }
-    }
-}
-

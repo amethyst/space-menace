@@ -31,11 +31,11 @@ impl<'s> System<'s> for MarineAccelerationSystem {
         // calculate this so we know if the character should be able to jump
         let mut marine_entities_on_ground = vec![];
 
-        for (marine, marine_entity) in (&marines, &entities).join() {
+        for (_marine, marine_2d_obj, entity) in (&marines, &two_dim_objs, &entities).join() {
             for two_dim_obj in (&two_dim_objs).join() {
-                if marine.two_dim.bottom() == two_dim_obj.top()
-                    && marine.two_dim.overlapping_x(two_dim_obj) {
-                    marine_entities_on_ground.push(marine_entity);
+                if marine_2d_obj.bottom() == two_dim_obj.top()
+                    && marine_2d_obj.overlapping_x(two_dim_obj) {
+                    marine_entities_on_ground.push(entity);
                 }
             }
         }
@@ -82,7 +82,7 @@ impl<'s> System<'s> for MarineAccelerationSystem {
 
                 if jump_input && marine_on_ground && !motion.has_jumped {
                     motion.has_jumped = true;
-                    motion.velocity.y = 8.;
+                    motion.velocity.y = 12.;
                     // high acceleration on jump depending on velocity
                     if motion.velocity.x == 0. {
                         motion.velocity.x += 0.6 * x_input as f32;

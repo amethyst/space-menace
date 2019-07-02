@@ -6,7 +6,6 @@ use amethyst::{
         EndControl,
         get_animation_set
     },
-    core::Transform,
     ecs::{Entities, Join, ReadStorage, System, WriteStorage},
     renderer::{SpriteRender},
 };
@@ -106,14 +105,13 @@ impl<'s> System<'s> for MarineAnimationSystem {
         ReadStorage<'s, Motion>,
         WriteStorage<'s, Animation>,
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
-        WriteStorage<'s, Transform>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut marines, motions, mut animations, mut animation_control_sets, mut transforms) = data;
+        let (entities, mut marines, motions, mut animations, mut animation_control_sets) = data;
         
-        for (entity, mut marine, motion, mut animation, animation_control_set, mut transform) in
-            (&entities, &mut marines, &motions, &mut animations, &mut animation_control_sets, &mut transforms).join() {
+        for (entity, mut marine, motion, mut animation, animation_control_set) in
+            (&entities, &mut marines, &motions, &mut animations, &mut animation_control_sets).join() {
 
             let marine_velocity = motion.velocity;
             let new_animation_id = 
@@ -143,8 +141,6 @@ impl<'s> System<'s> for MarineAnimationSystem {
 
                 animation.current = new_animation_id;
             }
-
-            marine.two_dim.update_transform_position(&mut transform);
         }
     }
 }

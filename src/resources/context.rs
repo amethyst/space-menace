@@ -1,6 +1,7 @@
 #[derive(Default)]
 pub struct Context {
     pub map_width: f32,
+    pub background_width: f32,
     pub x_correction: f32,
     pub y_correction: f32,
     pub marine_idle_width: f32,
@@ -14,7 +15,8 @@ pub struct Context {
 impl Context {
     pub fn new() -> Self {
         Context {
-            map_width: 1200.,
+            map_width: 4608.,
+            background_width: 384.,
             x_correction: -(1200. / 2. - 384.), // - (screen_width / 2. - background_width)
             y_correction: -176., // background_height / 2.
             marine_idle_width: 48.,
