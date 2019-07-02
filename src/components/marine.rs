@@ -2,8 +2,6 @@ use amethyst::{
     ecs::{Component, DenseVecStorage},
 };
 
-use crate::components::TwoDimObject;
-
 #[derive(Eq, Hash, PartialEq, Clone, Copy)]
 pub enum MarineState {
     Dying,
@@ -21,7 +19,6 @@ impl Default for MarineState {
 
 pub struct Marine {
     pub state: MarineState,
-    pub two_dim: TwoDimObject,
     pub is_shooting: bool,
     pub has_shot: bool,
 }
@@ -31,10 +28,9 @@ impl Component for Marine {
 }
 
 impl Marine {
-    pub fn new(two_dim: TwoDimObject) -> Self {
+    pub fn new() -> Self {
         Marine {
             state: MarineState::Idle,
-            two_dim,
             is_shooting: false,
             has_shot: false,
         }

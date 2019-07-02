@@ -1,11 +1,8 @@
 use amethyst::{
-    ecs::{Component, DenseVecStorage},
+    ecs::{Component, DenseVecStorage, NullStorage},
 };
 
-use crate::components::TwoDimObject;
-
 pub struct BulletImpact {
-    pub two_dim: TwoDimObject,
     pub show: bool,
 }
 
@@ -14,26 +11,21 @@ impl Component for BulletImpact {
 }
 
 impl BulletImpact {
-    pub fn new(two_dim: TwoDimObject) -> Self {
+    pub fn new() -> Self {
         BulletImpact {
-            two_dim,
             show: true,
         }
     }
 }
 
-pub struct Bullet {
-    pub two_dim: TwoDimObject,
-}
+pub struct Bullet;
 
 impl Component for Bullet {
-    type Storage = DenseVecStorage<Self>;
+    type Storage = NullStorage<Self>;
 }
 
-impl Bullet {
-    pub fn new(two_dim: TwoDimObject) -> Self {
-        Bullet {
-            two_dim,
-        }
+impl Default for Bullet {
+    fn default() -> Self {
+        Self {}
     }
 }

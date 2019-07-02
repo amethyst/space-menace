@@ -4,6 +4,7 @@ use amethyst::{
 };
 
 pub struct Motion {
+    pub new_position: Vector2<f32>,
     pub velocity: Vector2<f32>,
     pub has_jumped: bool,
 }
@@ -13,8 +14,9 @@ impl Component for Motion {
 }
 
 impl Motion {
-    pub fn new() -> Self {
+    pub fn new(initial_position: Vector2<f32>) -> Self {
         Motion {
+            new_position: initial_position,
             velocity: Vector2::new(0., 0.),
             has_jumped: false,
         }

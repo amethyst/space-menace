@@ -29,13 +29,13 @@ impl Component for TwoDimObject {
 impl TwoDimObject {
     pub fn new(width: f32, height: f32) -> Self {
         TwoDimObject {
-            size: TwoDimVector { x: width, y: height },
-            position: TwoDimVector { x: 0., y: 0. },
+            size: TwoDimVector {x: width, y: height},
+            position: TwoDimVector {x: 0., y: 0.},
         }
     }
 
     pub fn set_position(&mut self, x: f32, y: f32) {
-        self.position = TwoDimVector { x, y };
+        self.position = TwoDimVector {x, y};
     }
 
     pub fn update_transform_position(&self, transform: &mut Transform) {
