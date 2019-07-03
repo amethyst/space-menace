@@ -5,7 +5,7 @@ use amethyst::{
 #[derive(Eq, Hash, PartialEq, Clone, Copy)]
 pub enum MarineState {
     Dying,
-    Idle,
+    Idling,
     Jumping,
     Running,
     Shooting,
@@ -13,7 +13,7 @@ pub enum MarineState {
 
 impl Default for MarineState {
     fn default() -> Self {
-        MarineState::Idle
+        MarineState::Idling
     }
 }
 
@@ -30,7 +30,7 @@ impl Component for Marine {
 impl Marine {
     pub fn new() -> Self {
         Marine {
-            state: MarineState::Idle,
+            state: MarineState::Idling,
             is_shooting: false,
             has_shot: false,
         }
