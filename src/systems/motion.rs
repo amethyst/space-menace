@@ -17,7 +17,7 @@ impl<'s> System<'s> for MotionSystem {
         WriteStorage<'s, Transform>,
     );
     fn run(&mut self, data: Self::SystemData) {
-        let (mut two_dim_objs, motions,  mut transforms) = data;
+        let (mut two_dim_objs, motions, mut transforms) = data;
 
         for (two_dim_obj, motion, mut transform) in
             (&mut two_dim_objs, &motions, &mut transforms).join() {

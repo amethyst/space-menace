@@ -10,34 +10,36 @@ use amethyst::{
 };
 
 use crate::{
-    SCALE,
     components::{
         Animation,
         AnimationId,
         AnimationPrefabData,
         Bullet,
         BulletImpact,
-        Direction,
-        Directions,
+        Orientation,
+        Orientations,
         Motion,
         TwoDimObject
     },
+    resources::Context,
 };
 
 pub fn spawn_bullet(
     entities: &Entities,
     sprite_sheet_handle: SpriteSheetHandle,
     shoot_start_position: f32,
-    marine_dir: &Direction,
+    marine_dir: &Orientation,
     marine_bottom: f32,
-    lazy_update: &ReadExpect<LazyUpdate>
+    lazy_update: &ReadExpect<LazyUpdate>,
+    ctx: &Context,
 ) {
     let bullet_entity: Entity = entities.create();
+    let scale = ctx.scale;
 
     let mut transform = Transform::default();
-    transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
+    transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut two_dim_object = TwoDimObject::new(22. * SCALE, 4. * SCALE);
+    let mut two_dim_object = TwoDimObject::new(22. * scale, 4. * scale);
     two_dim_object.set_position(shoot_start_position, marine_bottom + 48.);
     two_dim_object.update_transform_position(&mut transform);
 
@@ -47,13 +49,13 @@ pub fn spawn_bullet(
     };
     let mut motion = Motion::new(Vector2::new(shoot_start_position, marine_bottom + 48.));
 
-    let mut direction = Direction::new(Directions::Neutral, Directions::Neutral);
-    if marine_dir.x == Directions::Right {
+    let mut orientation = Orientation::new(Orientations::Normal, Orientations::Normal);
+    if marine_dir.x == Orientations::Normal {
         motion.velocity.x = 20.;
-        direction.x = Directions::Right;
-    } else if marine_dir.x == Directions::Left {
+        orientation.x = Orientations::Normal;
+    } else if marine_dir.x == Orientations::Inverted {
         motion.velocity.x = -20.;
-        direction.x = Directions::Left;
+        orientation.x = Orientations::Inverted;
     }
 
     lazy_update.insert(bullet_entity, Bullet::default());
@@ -61,7 +63,7 @@ pub fn spawn_bullet(
     lazy_update.insert(bullet_entity, sprite_render);
     lazy_update.insert(bullet_entity, motion);
     lazy_update.insert(bullet_entity, transform);
-    lazy_update.insert(bullet_entity, direction);
+    lazy_update.insert(bullet_entity, orientation);
     lazy_update.insert(bullet_entity, Transparent);
 }
 
@@ -71,23 +73,28 @@ pub fn show_bullet_impact(
     impact_position: f32,
     bullet_bottom: f32,
     bullet_velocity: f32,
-    lazy_update: &ReadExpect<LazyUpdate>
+    lazy_update: &ReadExpect<LazyUpdate>,
+    ctx: &Context,
 ) {
     let bullet_impact_entity: Entity = entities.create();
+    let scale = ctx.scale;
 
     let mut transform = Transform::default();
-    transform.set_scale(Vector3::new(SCALE, SCALE, SCALE));
+    transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut two_dim_object = TwoDimObject::new(16. * SCALE, 24. * SCALE);
-    two_dim_object.set_position(impact_position - (8. * SCALE), bullet_bottom + 2.);
-    two_dim_object.update_transform_position(&mut transform);
-
-    let mut direction = Direction::new(Directions::Neutral, Directions::Neutral);
+    let mut orientation = Orientation::new(Orientations::Normal, Orientations::Normal);
+    let impact_position_x;
     if bullet_velocity > 0. {
-        direction.x = Directions::Right;
+        orientation.x = Orientations::Normal;
+        impact_position_x = impact_position - (8. * scale);
     } else {
-        direction.x = Directions::Left;
+        orientation.x = Orientations::Inverted;
+        impact_position_x = impact_position + (8. * scale);
     }
+
+    let mut two_dim_object = TwoDimObject::new(16. * scale, 24. * scale);
+    two_dim_object.set_position(impact_position_x, bullet_bottom + 2.);
+    two_dim_object.update_transform_position(&mut transform);
 
     lazy_update.insert(bullet_impact_entity, BulletImpact::new());
     lazy_update.insert(bullet_impact_entity, Animation {
@@ -98,6 +105,6 @@ pub fn show_bullet_impact(
     });
     lazy_update.insert(bullet_impact_entity, prefab_handle);
     lazy_update.insert(bullet_impact_entity, transform);
-    lazy_update.insert(bullet_impact_entity, direction);
+    lazy_update.insert(bullet_impact_entity, orientation);
     lazy_update.insert(bullet_impact_entity, Transparent);
 }
