@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    entities::{load_camera_subject, load_camera, load_marine},
+    entities::{load_camera_subject, load_camera, load_marine, load_pincer},
     resources::{AssetType, Context, Map, PrefabList, load_assets},
 };
 
@@ -27,6 +27,7 @@ impl SimpleState for LoadState {
                 AssetType::Bullet,
                 AssetType::BulletImpact,
                 AssetType::Marine,
+                AssetType::Pincer,
                 AssetType::Platform,
                 AssetType::Truss
             ]
@@ -51,20 +52,27 @@ impl SimpleState for LoadState {
         if let Some(ref progress_counter) = self.progress_counter {
             // Check if all data has been loaded
             if progress_counter.is_complete() {
-                // Get the map, which is loaded in the previous load state.
+                // Get the map, which is loaded in the on_start function of load state.
                 let map = {
                     let map_storage = &data.world.read_resource::<AssetStorage<Map>>();
                     let map_handle = &self.map_handle.take().unwrap();
                     map_storage.get(map_handle).unwrap().clone()
                 };
+                let ctx = data.world.read_resource::<Context>().clone();
 
-                map.load_layers(data.world);
+                map.load_layers(data.world, &ctx);
 
                 let marine_prefab_handle = {
                     let prefab_list = data.world.read_resource::<PrefabList>();
                     prefab_list.get(AssetType::Marine).unwrap().clone()
                 };
-                load_marine(data.world, marine_prefab_handle);
+                load_marine(data.world, marine_prefab_handle, &ctx);
+
+                let pincer_prefab_handle = {
+                    let prefab_list = data.world.read_resource::<PrefabList>();
+                    prefab_list.get(AssetType::Pincer).unwrap().clone()
+                };
+                load_pincer(data.world, pincer_prefab_handle, &ctx);
                 self.progress_counter = None;
             }
         }

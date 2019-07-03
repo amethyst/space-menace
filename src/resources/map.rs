@@ -70,36 +70,33 @@ impl From<Map> for Result<ProcessingState<Map>, Error> {
 }
 
 impl Map {
-    pub fn load_layers(&self, world: &mut World) {
+    pub fn load_layers(&self, world: &mut World, context: &Context) {
         for layer in self.layers.iter() {
             match layer.name.as_ref() {
                 "collision" => {
-                    self.collision_layer(world, layer);
+                    self.collision_layer(world, layer, context);
                 },
                 _ => {
-                    self.load_non_collision_layer(world, layer);
+                    self.load_non_collision_layer(world, layer, context);
                 }
             }
         }
     }
 
-    fn collision_layer(&self, world: &mut World, layer: &Layer) {
+    fn collision_layer(&self, world: &mut World, layer: &Layer, context: &Context) {
         let screen_height = {
             let dim = world.read_resource::<ScreenDimensions>();
             dim.height()
         };
-        let (scale, x_correction, y_correction) = {
-            let context = world.read_resource::<Context>();
-            (context.scale, context.x_correction, context.y_correction)
-        };
+        let scale = context.scale;
 
         for obj in layer.objects.iter() {
             let mut transform = Transform::default();
             transform.set_translation_z(-10.);
 
             let mut two_dim_object = TwoDimObject::new(obj.width * scale, obj.height * scale);
-            two_dim_object.set_left(obj.x * scale + x_correction);
-            two_dim_object.set_top(screen_height / 2. - (obj.y * scale) + y_correction);
+            two_dim_object.set_left(obj.x * scale + context.x_correction);
+            two_dim_object.set_top(screen_height / 2. - (obj.y * scale) + context.y_correction);
             two_dim_object.update_transform_position(&mut transform);
 
             world.create_entity()
@@ -109,105 +106,89 @@ impl Map {
         }
     }
 
-    fn load_non_collision_layer(&self, world: &mut World, layer: &Layer) {
+    fn load_non_collision_layer(&self, world: &mut World, layer: &Layer, context: &Context) {
         let screen_height = {
             let dim = world.read_resource::<ScreenDimensions>();
             dim.height()
         };
-        let (
-            x_correction,
-            y_correction,
-            scale,
-            background_scale,
-            background_z_translation,
-            truss_z_translation,
-            platform_z_translation,
-        ) = {
-            let context = world.read_resource::<Context>();    
-            (
-                context.x_correction,
-                context.y_correction,
-                context.scale,
-                context.background_scale,
-                context.background_z_translation,
-                context.truss_z_translation,
-                context.platform_z_translation,
-            )
-        };
+        let scale = context.scale;
+        let x_correction = context.x_correction;
 
-        let mut asset_type = None;
+        let mut asset_type_wrapper = None;
         let mut z_translation = 0.;
 
         match layer.name.as_ref() {
             "background" => {
-                asset_type = Some(AssetType::Background);
-                z_translation = background_z_translation;
+                asset_type_wrapper = Some(AssetType::Background);
+                z_translation = context.bg_z_translation;
             },
             "platform" => {
-                asset_type = Some(AssetType::Platform);
-                z_translation = platform_z_translation;
+                asset_type_wrapper = Some(AssetType::Platform);
+                z_translation = context.platform_z_translation;
             },
             "truss" => {
-                asset_type = Some(AssetType::Truss);
-                z_translation = truss_z_translation;
+                asset_type_wrapper = Some(AssetType::Truss);
+                z_translation = context.truss_z_translation;
             },
             _ => {},
         };
 
-        let sprite_sheet_handle = {
-            let sprite_sheet_list = world.read_resource::<SpriteSheetList>();
-            sprite_sheet_list.get(asset_type.unwrap()).unwrap().clone()
-        };
-
-        for obj in layer.objects.iter() {
-            let mut transform = Transform::default();
-            match layer.name.as_ref() {
-                "background" |
-                "truss" => {
-                    transform.set_translation_xyz(
-                        (obj.x + obj.width / 2.) * scale + x_correction,
-                        screen_height / 2. - (obj.y + obj.height / 2.),
-                        z_translation,
-                    );
-                    transform.set_scale(Vector3::new(background_scale, background_scale, background_scale));
-                },
-                "platform" => {
-                    transform.set_translation_xyz(
-                        (obj.x + obj.width / 2.) * scale + x_correction,
-                        screen_height / 2. - (obj.y + obj.height / 2.) * scale + y_correction,
-                        z_translation,
-                    );
-                    transform.set_scale(Vector3::new(scale, scale, scale));
-                },
-                _ => {},
+        if let Some(asset_type) = asset_type_wrapper {
+            let sprite_sheet_handle = {
+                let sprite_sheet_list = world.read_resource::<SpriteSheetList>();
+                sprite_sheet_list.get(asset_type).unwrap().clone()
             };
 
-            let sprite_index_prop = match &obj.properties {
-                Some(props) => props.iter().find(
-                    |prop| prop.name == "spriteindex"
-                ),
-                None => None
-            };
-            let mut sprite = SpriteRender {
-                sprite_sheet: sprite_sheet_handle.clone(),
-                sprite_number: 0,
-            };
+            for obj in layer.objects.iter() {
+                let mut transform = Transform::default();
+                match layer.name.as_ref() {
+                    "background" |
+                    "truss" => {
+                        transform.set_translation_xyz(
+                            (obj.x + obj.width / 2.) * scale + x_correction,
+                            screen_height / 2. - (obj.y + obj.height / 2.),
+                            z_translation,
+                        );
+                        transform.set_scale(Vector3::new(4., 4., 4.));
+                    },
+                    "platform" => {
+                        transform.set_translation_xyz(
+                            (obj.x + obj.width / 2.) * scale + x_correction,
+                            screen_height / 2. - (obj.y + obj.height / 2.) * scale + context.y_correction,
+                            z_translation,
+                        );
+                        transform.set_scale(Vector3::new(scale, scale, scale));
+                    },
+                    _ => {},
+                };
 
-            match sprite_index_prop {
-                Some(prop) => {
-                    sprite = SpriteRender {
-                        sprite_sheet: sprite_sheet_handle.clone(),
-                        sprite_number: prop.value,
-                    };
-                },
-                None => {},
+                let sprite_index_prop = match &obj.properties {
+                    Some(props) => props.iter().find(
+                        |prop| prop.name == "spriteindex"
+                    ),
+                    None => None
+                };
+                let mut sprite = SpriteRender {
+                    sprite_sheet: sprite_sheet_handle.clone(),
+                    sprite_number: 0,
+                };
+
+                match sprite_index_prop {
+                    Some(prop) => {
+                        sprite = SpriteRender {
+                            sprite_sheet: sprite_sheet_handle.clone(),
+                            sprite_number: prop.value,
+                        };
+                    },
+                    None => {},
+                }
+
+                world.create_entity()
+                    .with(transform)
+                    .with(sprite)
+                    .with(Transparent)
+                    .build();
             }
-
-            world.create_entity()
-                .with(transform)
-                .with(sprite)
-                .with(Transparent)
-                .build();
         }
     }
 }

@@ -10,8 +10,7 @@ use amethyst::{
     input::{InputHandler, StringBindings},
 };
 use crate::{
-    MARINE_MAX_VELOCITY,
-    components::{Direction, Directions, Marine, MarineState, Motion, TwoDimObject},
+    components::{Orientation, Orientations, Marine, MarineState, Motion, TwoDimObject},
 };
 
 pub struct MarineAccelerationSystem;
@@ -22,12 +21,12 @@ impl<'s> System<'s> for MarineAccelerationSystem {
         ReadStorage<'s, Marine>,
         ReadStorage<'s, TwoDimObject>,
         WriteStorage<'s, Motion>,
-        WriteStorage<'s, Direction>,
+        WriteStorage<'s, Orientation>,
         Read<'s, InputHandler<StringBindings>>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, marines, two_dim_objs, mut motions, mut directions, input) = data;
+        let (entities, marines, two_dim_objs, mut motions, mut orientations, input) = data;
         // calculate this so we know if the character should be able to jump
         let mut marine_entities_on_ground = vec![];
 
@@ -41,7 +40,7 @@ impl<'s> System<'s> for MarineAccelerationSystem {
         }
 
         for (marine, motion, mut marine_dir, marine_entity) in
-            (&marines, &mut motions, &mut directions, &entities).join() {
+            (&marines, &mut motions, &mut orientations, &entities).join() {
 
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let x_input = input.axis_value("run").expect("horizontal axis exists");
@@ -70,14 +69,14 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                     // accelerate till velocity reaches a max threshold
                     motion.velocity.x += 0.4 * x_input as f32;
                     motion.velocity.x = motion.velocity.x
-                        .min(MARINE_MAX_VELOCITY)
-                        .max(-1. * MARINE_MAX_VELOCITY);
+                        .min(6.) // max velocity
+                        .max(-1. * 6.);
                 }
                 
                 if x_input < 0. {
-                    marine_dir.x = Directions::Left;
+                    marine_dir.x = Orientations::Inverted;
                 } else if x_input > 0. {
-                    marine_dir.x = Directions::Right;
+                    marine_dir.x = Orientations::Normal;
                 }
 
                 if jump_input && marine_on_ground && !motion.has_jumped {
@@ -86,7 +85,7 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                     // high acceleration on jump depending on velocity
                     if motion.velocity.x == 0. {
                         motion.velocity.x += 0.6 * x_input as f32;
-                    } else if motion.velocity.x.abs() == MARINE_MAX_VELOCITY {
+                    } else if motion.velocity.x.abs() == 6. {
                         motion.velocity.x += 1.0 * x_input as f32;
                     } else {
                         motion.velocity.x += 0.8 * x_input as f32;

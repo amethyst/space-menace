@@ -18,10 +18,10 @@ impl<'s> System<'s> for CameraMotionSystem {
         ReadExpect<'s, Context>,
     );
 
-    fn run(&mut self, (marines, subject_tags, mut transforms, context): Self::SystemData) {
+    fn run(&mut self, (marines, subject_tags, mut transforms, ctx): Self::SystemData) {
         let mut marine_x = 0.;
-        let map_width = context.map_width;
-        let background_width = context.background_width;
+        let map_width = ctx.map_width;
+        let background_width = ctx.bg_width;
 
         for (_marine, transform) in (&marines, &transforms).join() {
             marine_x = transform.translation().x.as_f32();

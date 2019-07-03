@@ -20,6 +20,7 @@ pub enum AnimationId {
     Move,
     Idle,
     Shoot,
+    Walk,
 }
 
 /// `AnimationPrefabData` type used for loading of `SpriteScene`s and their

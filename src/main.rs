@@ -32,11 +32,6 @@ use resources::Map;
 use systems::*;
 use components::{AnimationId, AnimationPrefabData};
 
-pub const SCALE: f32 = 2.;
-pub const BG_Z_TRANSFORM: f32 = -30.;
-pub const PLATFORM_Z_TRANSFORM: f32 = -10.;
-pub const MARINE_MAX_VELOCITY: f32 = 6.0;
-
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
 
@@ -73,10 +68,12 @@ fn main() -> amethyst::Result<()> {
         .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
         .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
         .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
+        .with(PincerCollisionSystem, "pincer_collision_system", &[])
+        .with(PincerAnimationSystem, "pincer_animation_system", &["pincer_collision_system"])
         .with(MotionSystem, "motion_system", &["marine_collision_system", "bullet_collision_system"])
         .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
         .with(AnimationControlSystem, "animation_control_system", &[])
-        .with(DirectionSystem, "direction_system", &[])
+        .with(OrientationSystem, "orientation_system", &[])
         .with(CameraMotionSystem, "camera_motion_system", &["marine_collision_system"])
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             graph_creator::GameGraphCreator::default(),

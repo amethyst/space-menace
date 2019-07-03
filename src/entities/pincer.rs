@@ -13,37 +13,37 @@ use crate::{
         AnimationPrefabData,
         Orientation,
         Orientations,
-        Marine,
+        Pincer,
         Motion,
         TwoDimObject
     },
     resources::Context,
 };
 
-pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
+pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
     let mut transform = Transform::default();
     let scale = ctx.scale;
 
     transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut two_dim_object = TwoDimObject::new(32. * scale, 36. * scale);
-    two_dim_object.set_position(384., 176.);
+    let mut two_dim_object = TwoDimObject::new(45. * scale, 30. * scale);
+    two_dim_object.set_position(1040., 16.);
     two_dim_object.update_transform_position(&mut transform);
+    let mut motion = Motion::new(Vector2::new(1040., 16.));
+    motion.velocity.x = -3.;
+    // motion.velocity.x = 0.;
 
     world
         .create_entity()
-        .with(Marine::new())
+        .with(Pincer::new())
         .with(two_dim_object)
         .with(transform)
-        .with(Motion::new(Vector2::new(384., 176.)))
+        .with(motion)
         .with(Animation {
             current: AnimationId::Idle,
             types: vec![
-                AnimationId::Die,
                 AnimationId::Idle,
-                AnimationId::Jump,
-                AnimationId::Move,
-                AnimationId::Shoot,
+                AnimationId::Walk,
             ],
         })
         .with(prefab)
