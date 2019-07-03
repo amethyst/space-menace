@@ -5,13 +5,10 @@ extern crate log;
 #[macro_use]
 extern crate specs_derive;
 
-use std::sync::Arc;
-use std::time::Duration;
-
 use amethyst::{
     animation::AnimationBundle,
     assets::{PrefabLoaderSystem, Processor},
-    core::{frame_limiter::FrameRateLimitStrategy, transform::{TransformBundle}},
+    core::{transform::{TransformBundle}},
     input::{InputBundle, StringBindings},
     renderer::{
         sprite::{SpriteRender, SpriteSheet},
@@ -85,10 +82,6 @@ fn main() -> amethyst::Result<()> {
             graph_creator::GameGraphCreator::default(),
         ));
     let mut game = Application::build(assets_path, states::LoadState::default())?
-        // .with_frame_limit(
-        //     FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
-        //     144,
-        // )
         .build(game_data)?;
 
     game.run();

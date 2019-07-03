@@ -182,10 +182,6 @@ impl Map {
                 _ => {},
             };
 
-            // let sprite_index_prop = obj.properties.iter().find(
-            //     |prop| prop.name == "spriteindex"
-            // );
-
             let sprite_index_prop = match &obj.properties {
                 Some(props) => props.iter().find(
                     |prop| prop.name == "spriteindex"

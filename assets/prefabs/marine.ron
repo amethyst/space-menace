@@ -132,7 +132,7 @@ Prefab(
                                         SpriteIndex,
                                         (
                                             // Time of key frames
-                                            input: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
+                                            input: [0.0, 0.15, 0.3, 0.45, 0.6, 0.75],
                                             // Sprite indexes from SpriteSheet for key frames
                                             output: [8, 9, 10, 11, 12, 13],
                                             // Sprites can only ever be animated with Step
