@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Motion, TwoDimObject},
+    components::{Collider, Motion, TwoDimObject},
 };
 
 #[derive(Default)]
@@ -14,24 +14,25 @@ impl<'s> System<'s> for MotionSystem {
     type SystemData = (
         WriteStorage<'s, TwoDimObject>,
         ReadStorage<'s, Motion>,
+        ReadStorage<'s, Collider>,
         WriteStorage<'s, Transform>,
     );
     fn run(&mut self, data: Self::SystemData) {
-        let (mut two_dim_objs, motions, mut transforms) = data;
+        let (mut two_dim_objs, motions, colliders, mut transforms) = data;
 
-        for (two_dim_obj, motion, mut transform) in
-            (&mut two_dim_objs, &motions, &mut transforms).join() {
+        for (two_dim_obj, motion, collider, mut transform) in
+            (&mut two_dim_objs, &motions, &colliders, &mut transforms).join() {
             if motion.velocity.x > 0. {
-                two_dim_obj.set_right(motion.new_position.x);
+                two_dim_obj.set_right(collider.next_position.x);
             }
             if motion.velocity.x < 0. {
-                two_dim_obj.set_left(motion.new_position.x);
+                two_dim_obj.set_left(collider.next_position.x);
             }
             if motion.velocity.y > 0. {
-                two_dim_obj.set_top(motion.new_position.y);
+                two_dim_obj.set_top(collider.next_position.y);
             }
             if motion.velocity.y < 0. {
-                two_dim_obj.set_bottom(motion.new_position.y);
+                two_dim_obj.set_bottom(collider.next_position.y);
             }
             two_dim_obj.update_transform_position(&mut transform);
         }

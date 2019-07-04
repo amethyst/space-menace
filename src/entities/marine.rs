@@ -1,6 +1,6 @@
 use amethyst::{
     assets::{Handle, Prefab},
-    core::{math::{Vector2, Vector3}, Transform},
+    core::{math::{Vector2, Vector3}, Transform, WithNamed},
     ecs::prelude::World,
     prelude::Builder,
     renderer::transparent::Transparent,
@@ -11,11 +11,13 @@ use crate::{
         Animation,
         AnimationId,
         AnimationPrefabData,
-        Orientation,
-        Orientations,
+        BoundingRect,
+        Collider,
+        Direction,
+        Directions,
         Marine,
         Motion,
-        TwoDimObject
+        TwoDimObject,
     },
     resources::Context,
 };
@@ -33,7 +35,12 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     world
         .create_entity()
         .with(Marine::new())
+        .named("Marine")
         .with(two_dim_object)
+        .with(Collider::new(
+            Vector2::new(384., 176.),
+            BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
+        ))
         .with(transform)
         .with(Motion::new(Vector2::new(384., 176.)))
         .with(Animation {
@@ -47,7 +54,12 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
             ],
         })
         .with(prefab)
-        .with(Orientation::new(Orientations::Normal, Orientations::Normal))
+        .with(Direction::new(
+            Directions::Right,
+            Directions::Neutral,
+            Directions::Right,
+            Directions::Neutral,
+        ))
         .with(Transparent) // Necessary for ordered layering
         .build();
 }
