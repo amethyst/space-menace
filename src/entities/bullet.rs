@@ -16,8 +16,8 @@ use crate::{
         AnimationPrefabData,
         Bullet,
         BulletImpact,
-        Orientation,
-        Orientations,
+        Direction,
+        Directions,
         Motion,
         TwoDimObject
     },
@@ -28,7 +28,7 @@ pub fn spawn_bullet(
     entities: &Entities,
     sprite_sheet_handle: SpriteSheetHandle,
     shoot_start_position: f32,
-    marine_dir: &Orientation,
+    marine_dir: &Direction,
     marine_bottom: f32,
     lazy_update: &ReadExpect<LazyUpdate>,
     ctx: &Context,
@@ -49,13 +49,18 @@ pub fn spawn_bullet(
     };
     let mut motion = Motion::new(Vector2::new(shoot_start_position, marine_bottom + 48.));
 
-    let mut orientation = Orientation::new(Orientations::Normal, Orientations::Normal);
-    if marine_dir.x == Orientations::Normal {
+    let mut direction = Direction::new(
+        Directions::Right,
+        Directions::Neutral,
+        Directions::Neutral,
+        Directions::Neutral,
+    );
+    if marine_dir.x == Directions::Right {
         motion.velocity.x = 20.;
-        orientation.x = Orientations::Normal;
-    } else if marine_dir.x == Orientations::Inverted {
+        direction.x = Directions::Right;
+    } else if marine_dir.x == Directions::Left {
         motion.velocity.x = -20.;
-        orientation.x = Orientations::Inverted;
+        direction.x = Directions::Left;
     }
 
     lazy_update.insert(bullet_entity, Bullet::default());
@@ -63,7 +68,7 @@ pub fn spawn_bullet(
     lazy_update.insert(bullet_entity, sprite_render);
     lazy_update.insert(bullet_entity, motion);
     lazy_update.insert(bullet_entity, transform);
-    lazy_update.insert(bullet_entity, orientation);
+    lazy_update.insert(bullet_entity, direction);
     lazy_update.insert(bullet_entity, Transparent);
 }
 
@@ -81,14 +86,20 @@ pub fn show_bullet_impact(
 
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
+    transform.set_translation_z(0.);
 
-    let mut orientation = Orientation::new(Orientations::Normal, Orientations::Normal);
+    let mut direction = Direction::new(
+        Directions::Right,
+        Directions::Neutral,
+        Directions::Neutral,
+        Directions::Neutral,
+    );
     let impact_position_x;
     if bullet_velocity > 0. {
-        orientation.x = Orientations::Normal;
+        direction.x = Directions::Right;
         impact_position_x = impact_position - (8. * scale);
     } else {
-        orientation.x = Orientations::Inverted;
+        direction.x = Directions::Left;
         impact_position_x = impact_position + (8. * scale);
     }
 
@@ -105,6 +116,6 @@ pub fn show_bullet_impact(
     });
     lazy_update.insert(bullet_impact_entity, prefab_handle);
     lazy_update.insert(bullet_impact_entity, transform);
-    lazy_update.insert(bullet_impact_entity, orientation);
+    lazy_update.insert(bullet_impact_entity, direction);
     lazy_update.insert(bullet_impact_entity, Transparent);
 }

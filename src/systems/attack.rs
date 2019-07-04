@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Orientation, Orientations, Marine, Motion, TwoDimObject},
+    components::{Direction, Directions, Marine, Motion, TwoDimObject},
     entities::spawn_bullet,
     resources::{AssetType, Context, SpriteSheetList},
 };
@@ -17,7 +17,7 @@ impl<'s> System<'s> for AttackSystem {
         ReadStorage<'s, TwoDimObject>,
         WriteStorage<'s, Marine>,
         ReadStorage<'s, Motion>,
-        ReadStorage<'s, Orientation>,
+        ReadStorage<'s, Direction>,
         ReadExpect<'s, SpriteSheetList>,
         ReadExpect<'s, LazyUpdate>,
         Read<'s, InputHandler<StringBindings>>,
@@ -25,7 +25,7 @@ impl<'s> System<'s> for AttackSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, two_dim_objs, mut marines, motions, orientations,
+        let (entities, two_dim_objs, mut marines, motions, directions,
             sprite_sheet_list, lazy_update, input, ctx) = data;
         let mut marine_entities_on_ground = vec![];
 
@@ -37,8 +37,8 @@ impl<'s> System<'s> for AttackSystem {
             }
         }
 
-        for (mut marine, motion, two_dim_obj, orientation, marine_entity) in
-            (&mut marines, &motions, &two_dim_objs, &orientations, &entities).join() {
+        for (mut marine, motion, two_dim_obj, direction, marine_entity) in
+            (&mut marines, &motions, &two_dim_objs, &directions, &entities).join() {
 
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
@@ -49,9 +49,9 @@ impl<'s> System<'s> for AttackSystem {
                 marine.has_shot = true;
 
                 let mut shoot_start_position = 0.;
-                if orientation.x == Orientations::Inverted{
+                if direction.x == Directions::Left {
                     shoot_start_position = two_dim_obj.left();
-                } else if orientation.x == Orientations::Normal{
+                } else if direction.x == Directions::Right {
                     shoot_start_position = two_dim_obj.right();
                 }
 
@@ -62,7 +62,7 @@ impl<'s> System<'s> for AttackSystem {
                     &entities,
                     bullet_sprite_sheet_handle,
                     shoot_start_position,
-                    orientation,
+                    direction,
                     two_dim_obj.bottom(),
                     &lazy_update,
                     &ctx,
