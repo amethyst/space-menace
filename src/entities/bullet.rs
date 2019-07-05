@@ -1,6 +1,6 @@
 use amethyst::{
     assets::{Handle, Prefab},
-    core::{math::{Vector2, Vector3}, Transform},
+    core::{math::{Vector2, Vector3}, Named, Transform},
     ecs::{Entities, Entity, LazyUpdate, ReadExpect},
     renderer::{
         sprite::SpriteSheetHandle,
@@ -14,8 +14,11 @@ use crate::{
         Animation,
         AnimationId,
         AnimationPrefabData,
+        BoundingRect,
         Bullet,
         BulletImpact,
+        Collidee,
+        Collider,
         Direction,
         Directions,
         Motion,
@@ -47,7 +50,7 @@ pub fn spawn_bullet(
         sprite_sheet: sprite_sheet_handle,
         sprite_number: 0,
     };
-    let mut motion = Motion::new(Vector2::new(shoot_start_position, marine_bottom + 48.));
+    let mut motion = Motion::new();
 
     let mut direction = Direction::new(
         Directions::Right,
@@ -64,7 +67,13 @@ pub fn spawn_bullet(
     }
 
     lazy_update.insert(bullet_entity, Bullet::default());
+    lazy_update.insert(bullet_entity, Named::new("Bullet"));
     lazy_update.insert(bullet_entity, two_dim_object);
+    lazy_update.insert(bullet_entity, Collider::new(
+        Vector2::new(shoot_start_position, marine_bottom + 48.),
+        BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
+    ));
+    lazy_update.insert(bullet_entity, Collidee::default());
     lazy_update.insert(bullet_entity, sprite_render);
     lazy_update.insert(bullet_entity, motion);
     lazy_update.insert(bullet_entity, transform);

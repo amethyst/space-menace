@@ -12,6 +12,7 @@ use crate::{
         AnimationId,
         AnimationPrefabData,
         BoundingRect,
+        Collidee,
         Collider,
         Direction,
         Directions,
@@ -30,23 +31,28 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     transform.set_translation_z(-10.);
 
     let mut two_dim_object = TwoDimObject::new(45. * scale, 30. * scale);
-    two_dim_object.hitbox_offset_back = 30.;
+    two_dim_object.hit_box_offset_back = 30.;
     two_dim_object.set_position(1040., 16.);
     two_dim_object.update_transform_position(&mut transform);
-    two_dim_object.hit_count = Some(0);
 
-    let mut motion = Motion::new(Vector2::new(1040., 16.));
+    let mut motion = Motion::new();
     motion.velocity.x = -3.;
+
+    let mut collider = Collider::new(
+        Vector2::new(1040., 16.),
+        BoundingRect::new(800., 1832., 352., 0.),
+    );
+
+    let mut collidee = Collidee::default();
+    collidee.hitbox_offset_back = 30.;
 
     world
         .create_entity()
         .with(Pincer::new())
         .named("Pincer")
         .with(two_dim_object)
-        .with(Collider::new(
-            Vector2::new(1040., 16.),
-            BoundingRect::new(800., 1832., 352., 0.),
-        ))
+        .with(collider)
+        .with(collidee)
         .with(transform)
         .with(motion)
         .with(Animation {

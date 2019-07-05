@@ -12,6 +12,7 @@ use crate::{
         AnimationId,
         AnimationPrefabData,
         BoundingRect,
+        Collidee,
         Collider,
         Direction,
         Directions,
@@ -41,8 +42,9 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
             Vector2::new(384., 176.),
             BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
         ))
+        .with(Collidee::default())
         .with(transform)
-        .with(Motion::new(Vector2::new(384., 176.)))
+        .with(Motion::new())
         .with(Animation {
             current: AnimationId::Idle,
             types: vec![
