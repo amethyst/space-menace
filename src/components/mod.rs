@@ -1,8 +1,10 @@
 mod animation;
 mod bullet;
+mod collider;
 mod direction;
 mod marine;
 mod motion;
+mod pincer;
 mod subject_tag;
 mod two_dim;
 
@@ -11,10 +13,15 @@ pub use self::animation::AnimationId;
 pub use self::animation::AnimationPrefabData;
 pub use self::bullet::Bullet;
 pub use self::bullet::BulletImpact;
+pub use self::collider::BoundingRect;
+pub use self::collider::Collider;
+pub use self::collider::Collidee;
 pub use self::direction::Direction;
 pub use self::direction::Directions;
 pub use self::marine::Marine;
 pub use self::marine::MarineState;
 pub use self::motion::Motion;
+pub use self::pincer::Pincer;
+pub use self::pincer::PincerState;
 pub use self::subject_tag::SubjectTag;
 pub use self::two_dim::TwoDimObject;

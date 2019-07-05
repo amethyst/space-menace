@@ -6,13 +6,12 @@ use amethyst::{
         EndControl,
         get_animation_set
     },
-    core::Transform,
     ecs::{Entities, Join, ReadStorage, System, WriteStorage},
     renderer::{SpriteRender},
 };
 
 use crate::{
-    components::{Animation, AnimationId, BulletImpact, Marine, Motion},
+    components::{Animation, AnimationId, BulletImpact, Marine, Motion, Pincer},
 };
 
 pub struct BulletImpactAnimationSystem;
@@ -106,14 +105,13 @@ impl<'s> System<'s> for MarineAnimationSystem {
         ReadStorage<'s, Motion>,
         WriteStorage<'s, Animation>,
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
-        WriteStorage<'s, Transform>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut marines, motions, mut animations, mut animation_control_sets, mut transforms) = data;
+        let (entities, mut marines, motions, mut animations, mut animation_control_sets) = data;
         
-        for (entity, mut marine, motion, mut animation, animation_control_set, mut transform) in
-            (&entities, &mut marines, &motions, &mut animations, &mut animation_control_sets, &mut transforms).join() {
+        for (entity, mut marine, motion, mut animation, animation_control_set) in
+            (&entities, &mut marines, &motions, &mut animations, &mut animation_control_sets).join() {
 
             let marine_velocity = motion.velocity;
             let new_animation_id = 
@@ -143,8 +141,51 @@ impl<'s> System<'s> for MarineAnimationSystem {
 
                 animation.current = new_animation_id;
             }
+        }
+    }
+}
 
-            marine.two_dim.update_transform_position(&mut transform);
+#[derive(Default)]
+pub struct PincerAnimationSystem;
+
+impl<'s> System<'s> for PincerAnimationSystem {
+    type SystemData = (
+        Entities<'s>,
+        ReadStorage<'s, Pincer>,
+        ReadStorage<'s, Motion>,
+        WriteStorage<'s, Animation>,
+        WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
+    );
+
+    fn run(&mut self, data: Self::SystemData) {
+        let (entities, pincers, motions, mut animations, mut animation_control_sets) = data;
+        
+        for (entity, _pincer, motion, mut animation, animation_control_set) in
+            (&entities, &pincers, &motions, &mut animations, &mut animation_control_sets).join() {
+
+            let pincer_velocity = motion.velocity;
+            let new_animation_id = 
+                if pincer_velocity.x != 0. {
+                    AnimationId::Walk
+                } else {
+                    AnimationId::Idle
+                };
+
+            // If the new AnimationId is different to the current one, abort the
+            // current animation and start the new one
+            if animation.current != new_animation_id {
+                trace!(
+                    "Updating animation for entity: {:?} from={:?}, to={:?}",
+                    entity,
+                    animation.current,
+                    new_animation_id
+                );
+
+                animation_control_set.abort(animation.current);
+                animation_control_set.start(new_animation_id);
+
+                animation.current = new_animation_id;
+            }
         }
     }
 }
