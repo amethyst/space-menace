@@ -16,52 +16,61 @@ use crate::{
         Collider,
         Direction,
         Directions,
-        Marine,
+        Pincer,
         Motion,
-        TwoDimObject,
+        TwoDimObject
     },
     resources::Context,
 };
 
-pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
+pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
     let mut transform = Transform::default();
     let scale = ctx.scale;
 
     transform.set_scale(Vector3::new(scale, scale, scale));
+    transform.set_translation_z(-10.);
 
-    let mut two_dim_object = TwoDimObject::new(32. * scale, 36. * scale);
-    two_dim_object.set_position(384., 176.);
+    let mut two_dim_object = TwoDimObject::new(45. * scale, 30. * scale);
+    two_dim_object.hit_box_offset_back = 30.;
+    two_dim_object.set_position(1040., 16.);
     two_dim_object.update_transform_position(&mut transform);
+
+    let mut motion = Motion::new();
+    motion.velocity.x = -3.;
+
+    let mut collider = Collider::new(
+        Vector2::new(1040., 16.),
+        BoundingRect::new(800., 1832., 352., 0.),
+    );
+
+    let mut collidee = Collidee::default();
+    collidee.hitbox_offset_back = 30.;
 
     world
         .create_entity()
-        .with(Marine::new())
-        .named("Marine")
+        .with(Pincer::new())
+        .named("Pincer")
         .with(two_dim_object)
-        .with(Collider::new(
-            Vector2::new(384., 176.),
-            BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
-        ))
-        .with(Collidee::default())
+        .with(collider)
+        .with(collidee)
         .with(transform)
-        .with(Motion::new())
+        .with(motion)
         .with(Animation {
             current: AnimationId::Idle,
             types: vec![
-                AnimationId::Die,
                 AnimationId::Idle,
-                AnimationId::Jump,
-                AnimationId::Move,
-                AnimationId::Shoot,
+                AnimationId::Walk,
             ],
         })
         .with(prefab)
         .with(Direction::new(
-            Directions::Right,
+            Directions::Left,
             Directions::Neutral,
-            Directions::Right,
+            Directions::Left,
             Directions::Neutral,
         ))
         .with(Transparent) // Necessary for ordered layering
         .build();
 }
+
+pub fn show_explosion() {}

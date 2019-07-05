@@ -22,6 +22,7 @@ cargo run —release
 - [x] Lazy spawning of entities
 - [ ] One complete level (enemies, full map, etc.)
 - [ ] Parallax
+- [ ] Start, Pause and Game Over screens
 - [ ] Game mechanics / rules (points, lives, etc.)
 - [ ] Audio
 - [ ] [nphysics](https://nphysics.org/) integration (using [specs-physics](https://github.com/amethyst/specs-physics/))

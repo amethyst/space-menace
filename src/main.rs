@@ -5,13 +5,10 @@ extern crate log;
 #[macro_use]
 extern crate specs_derive;
 
-use std::sync::Arc;
-use std::time::Duration;
-
 use amethyst::{
     animation::AnimationBundle,
     assets::{PrefabLoaderSystem, Processor},
-    core::{frame_limiter::FrameRateLimitStrategy, transform::{TransformBundle}},
+    core::{transform::{TransformBundle}},
     input::{InputBundle, StringBindings},
     renderer::{
         sprite::{SpriteRender, SpriteSheet},
@@ -34,11 +31,6 @@ mod graph_creator;
 use resources::Map;
 use systems::*;
 use components::{AnimationId, AnimationPrefabData};
-
-pub const SCALE: f32 = 2.;
-pub const BG_Z_TRANSFORM: f32 = -30.;
-pub const PLATFORM_Z_TRANSFORM: f32 = -10.;
-pub const MARINE_MAX_VELOCITY: f32 = 6.0;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -73,22 +65,20 @@ fn main() -> amethyst::Result<()> {
         .with(Processor::<Map>::new(), "map_processor", &[])
         .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
         .with(AttackSystem, "attack_system", &["marine_acceleration_system"])
-        .with(BulletCollisionSystem, "bullet_collision_system", &["marine_acceleration_system"])
-        .with(BulletMotionSystem, "bullet_motion_system", &["bullet_collision_system"])
+        .with(CollisionSystem, "collision_system", &["marine_acceleration_system"])
+        .with(BulletCollisionSystem, "bullet_collision_system", &["collision_system"])
         .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
-        .with(MarineCollisionSystem, "marine_collision_system", &["marine_acceleration_system"])
-        .with(MarineAnimationSystem, "marine_animation_system", &["marine_collision_system"])
+        .with(PincerCollisionSystem, "pincer_collision_system", &["collision_system"])
+        .with(PincerAnimationSystem, "pincer_animation_system", &["pincer_collision_system"])
+        .with(MotionSystem, "motion_system", &["collision_system"])
+        .with(MarineAnimationSystem, "marine_animation_system", &["collision_system"])
         .with(AnimationControlSystem, "animation_control_system", &[])
-        .with(DirectionSystem, "direction_system", &[])
-        .with(CameraMotionSystem, "camera_motion_system", &["marine_collision_system"])
+        .with(OrientationSystem, "orientation_system", &[])
+        .with(CameraMotionSystem, "camera_motion_system", &["collision_system"])
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             graph_creator::GameGraphCreator::default(),
         ));
     let mut game = Application::build(assets_path, states::LoadState::default())?
-        // .with_frame_limit(
-        //     FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
-        //     144,
-        // )
         .build(game_data)?;
 
     game.run();

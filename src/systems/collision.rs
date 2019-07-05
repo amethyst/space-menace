@@ -1,74 +1,131 @@
 use amethyst::{
+    core::Named,
     ecs::{Entities, Join, LazyUpdate, ReadExpect, ReadStorage, System, WriteStorage},
 };
 use crate::{
-    components::{Bullet, Marine, Motion, TwoDimObject},
-    entities::show_bullet_impact,
-    resources::{AssetType, PrefabList},
+    components::{Bullet, Collider, Collidee, Marine, Motion, Direction, Directions, Pincer, TwoDimObject},
+    entities::{show_bullet_impact, show_explosion},
+    resources::{AssetType, Context, PrefabList},
 };
 
-pub struct MarineCollisionSystem;
+pub struct CollisionSystem;
 
-impl<'s> System<'s> for MarineCollisionSystem {
+impl<'s> System<'s> for CollisionSystem {
     type SystemData = (
-        WriteStorage<'s, Marine>,
         ReadStorage<'s, TwoDimObject>,
-        WriteStorage<'s, Motion>,
+        ReadStorage<'s, Motion>,
+        WriteStorage<'s, Collider>,
+        WriteStorage<'s, Collidee>,
+        ReadStorage<'s, Named>,
+        ReadStorage<'s, Direction>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (mut marines, two_dim_objects, mut motions) = data;
+        let (two_dim_objs, motions, mut colliders, mut collidees, names, directions) = data;
 
-        for (marine, marine_motion) in (&mut marines, &mut motions).join() {
-            let marine_velocity = marine_motion.velocity;
-            if marine_velocity.x > 0. {
-                // marine moving right
-                let old_x = marine.two_dim.right();
-                let mut possible_new_x = old_x + marine_velocity.x;
+        for (motion_a, two_dim_obj_a, collider, name_a) in
+            (&motions, &two_dim_objs, &mut colliders, &names).join() {
+            let velocity_a = motion_a.velocity;
+            let bounding_rect = collider.bounding_rect;
 
-                for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = marine.two_dim
-                        .get_next_right(two_dim_object, old_x, possible_new_x);
+            if velocity_a.x > 0. {
+                let old_x = two_dim_obj_a.right();
+                let mut possible_new_x = old_x + velocity_a.x;
+                let mut collidee_name = String::from("");
+                let mut collidee_component = &mut Collidee::default();
+
+                for (two_dim_obj_b, motion_b, name_b, dir, collidee) in
+                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join() {
+                    let (x, has_changed) = two_dim_obj_a
+                        .get_next_right(two_dim_obj_b, old_x, possible_new_x);
+                    if has_changed {
+                        possible_new_x = x;
+                        collidee_name = name_b.name.to_string();
+                        collider.collidee_direction = dir.x;
+                        collider.collidee_hit_box_offset_front = collidee.hitbox_offset_front;
+                        collider.collidee_hit_box_offset_back = collidee.hitbox_offset_back;
+                        collidee_component = collidee;
+                    }
                 }
-                // ensure marine stays inside "walls" of display
-                let new_x = possible_new_x.min(1150.).max(32 as f32);
-                marine.two_dim.set_right(new_x);
-            } else if marine_velocity.x < 0. {
-                // marine moving left
-                let old_x = marine.two_dim.left();
-                let mut possible_new_x = old_x + marine_velocity.x;
+                collidee_component.is_hit = true;
+                collidee_component.collider_name = name_a.name.to_string();
 
-                for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = marine.two_dim
-                        .get_next_left(two_dim_object, old_x, possible_new_x);
+                // Ensure entity stays inside its right bound
+                let new_x = possible_new_x
+                    .min(bounding_rect.right);
+                collider.next_position.x = new_x;
+
+                if new_x < old_x + velocity_a.x ||
+                    possible_new_x + velocity_a.x == bounding_rect.right {
+                    collider.has_collided = true;
+                    if collidee_name == "" {
+                        collider.collidee_name = String::from("Boundary");
+                    } else {
+                        collider.collidee_name = collidee_name;
+                    }
+                } else {
+                    collider.has_collided = false;
                 }
-                // ensure marine stays inside "walls" of display
-                let new_x = possible_new_x.min(1150.- 32 as f32).max(0.);
-                marine.two_dim.set_left(new_x);
+            } else if velocity_a.x < 0. {
+                let old_x = two_dim_obj_a.left();
+                let mut possible_new_x = old_x + velocity_a.x;
+                let mut collidee_name = String::from("");
+                let mut collidee_component = &mut Collidee::default();
+
+                for (two_dim_obj_b, motion_b, name, dir, collidee) in
+                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join() {
+                    let (x, has_changed) = two_dim_obj_a
+                        .get_next_left(two_dim_obj_b, old_x, possible_new_x);
+                    if has_changed {
+                        possible_new_x = x;
+                        collidee_name = name.name.to_string();
+                        collider.collidee_direction = dir.x;
+                        collider.collidee_hit_box_offset_front = two_dim_obj_b.hit_box_offset_front;
+                        collider.collidee_hit_box_offset_back = two_dim_obj_b.hit_box_offset_back;
+                        collidee_component = collidee;
+                    }
+                }
+                collidee_component.is_hit = true;
+                collidee_component.collider_name = name_a.name.to_string();
+
+                // Ensure entity stays inside its left bound
+                let new_x = possible_new_x
+                    .max(bounding_rect.left);
+                collider.next_position.x = new_x;
+
+                if new_x > old_x + velocity_a.x ||
+                    possible_new_x + velocity_a.x == bounding_rect.left {
+                    collider.has_collided = true;
+                    if collidee_name == "" {
+                        collider.collidee_name = String::from("Boundary");
+                    } else {
+                        collider.collidee_name = collidee_name;
+                    }
+                } else {
+                    collider.has_collided = false;
+                }
             }
 
-            if marine_velocity.y > 0. {
-                // marine moving up
-                let old_y = marine.two_dim.top();
-                let mut possible_new_y = marine.two_dim.top() + marine_velocity.y;
+            if velocity_a.y > 0. {
+                let old_y = two_dim_obj_a.top();
+                let mut possible_new_y = two_dim_obj_a.top() + velocity_a.y;
 
-                for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_y = marine.two_dim
-                        .get_next_top(two_dim_object, old_y, possible_new_y);
+                for (two_dim_obj_b, motion_b) in (&two_dim_objs, &motions).join() {
+                    possible_new_y = two_dim_obj_a
+                        .get_next_top(two_dim_obj_b, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
-                marine.two_dim.set_top(new_y);
-            } else if marine_velocity.y < 0. {
-                // marine moving down
-                let old_y = marine.two_dim.bottom();
-                let mut possible_new_y = marine.two_dim.bottom() + marine_velocity.y;
+                collider.next_position.y = new_y;
+            } else if velocity_a.y < 0. {
+                let old_y = two_dim_obj_a.bottom();
+                let mut possible_new_y = two_dim_obj_a.bottom() + velocity_a.y;
 
-                for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_y = marine.two_dim
-                        .get_next_bottom(two_dim_object, old_y, possible_new_y);
+                for (two_dim_obj_b, motion_b) in (&two_dim_objs, &motions).join() {
+                    possible_new_y = two_dim_obj_a
+                        .get_next_bottom(two_dim_obj_b, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
-                marine.two_dim.set_bottom(new_y);
+                collider.next_position.y = new_y;
             }
         }
     }
@@ -81,75 +138,118 @@ impl<'s> System<'s> for BulletCollisionSystem {
         Entities<'s>,
         WriteStorage<'s, Bullet>,
         ReadStorage<'s, TwoDimObject>,
+        WriteStorage<'s, Collider>,
         WriteStorage<'s, Motion>,
+        ReadStorage<'s, Direction>,
         ReadExpect<'s, PrefabList>,
         ReadExpect<'s, LazyUpdate>,
+        ReadExpect<'s, Context>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut bullets, two_dim_objects, mut motions, prefab_list, lazy_update) = data;
+        let (entities, mut bullets, two_dim_objs, mut colliders, mut motions,
+            directions, prefab_list, lazy_update, ctx) = data;
+        for (entity, _bullet, two_dim_obj, collider, motion, dir) in
+            (&*entities, &mut bullets, &two_dim_objs, &mut colliders, &mut motions, &directions).join() {
+            if !collider.has_collided {
+                continue;
+            }
+            let velocity = motion.velocity;
+            let bullet_impact_prefab_handle = {
+                prefab_list.get(AssetType::BulletImpact).unwrap().clone()
+            };
 
-        for (bullet_entity, bullet, bullet_motion) in (&*entities, &mut bullets, &mut motions).join() {
-            let bullet_velocity = bullet_motion.velocity;
-            if bullet_velocity.x > 0. {
-                // bullet moving right
-                let old_x = bullet.two_dim.right();
-                let mut possible_new_x = old_x + bullet_velocity.x;
-
-                for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = bullet.two_dim
-                        .get_next_right(two_dim_object, old_x, possible_new_x);
+            // Bullet can be fired horizontally only
+            let offset = if dir.x == collider.collidee_direction {
+                if motion.velocity.x > 0. {
+                    collider.collidee_hit_box_offset_back
+                } else {
+                    -collider.collidee_hit_box_offset_back
                 }
-                let new_x = possible_new_x;
-                bullet.two_dim.set_right(new_x);
-                // on collision 
-                if possible_new_x < old_x + bullet_velocity.x {
-                    let bullet_impact_prefab_handle = {
-                        prefab_list.get(AssetType::BulletImpact).unwrap().clone()
-                    };
+            } else {
+                if motion.velocity.x < 0. {
+                    collider.collidee_hit_box_offset_front
+                } else {
+                    -collider.collidee_hit_box_offset_front
+                }
+            };
+            println!("offset = {}", offset);
+            println!("collider.collidee_name = {}", collider.collidee_name);
+            match collider.collidee_name.as_ref() {
+                "Collision" => {
                     show_bullet_impact(
                         &entities,
                         bullet_impact_prefab_handle,
-                        possible_new_x,
-                        bullet.two_dim.bottom(),
-                        bullet_velocity.x,
-                        &lazy_update
+                        collider.next_position.x + offset,
+                        two_dim_obj.bottom(),
+                        velocity.x,
+                        &lazy_update,
+                        &ctx,
                     );
-                    let _ = entities.delete(bullet_entity);
-                }
-                // if bullet goes out of map
-                if bullet.two_dim.right() > 1150. {
-                    let _ = entities.delete(bullet_entity);
-                }
-            } else if bullet_velocity.x < 0. {
-                // bullet moving left
-                let old_x = bullet.two_dim.left();
-                let mut possible_new_x = old_x + bullet_velocity.x;
-
-                for two_dim_object in (&two_dim_objects).join() {
-                    possible_new_x = bullet.two_dim
-                        .get_next_left(two_dim_object, old_x, possible_new_x);
-                }
-                let new_x = possible_new_x;
-                bullet.two_dim.set_left(new_x);
-                // on collision or if bullet goes out of map
-                if possible_new_x > old_x + bullet_velocity.x {
-                    let bullet_impact_prefab_handle = {
-                        prefab_list.get(AssetType::BulletImpact).unwrap().clone()
-                    };
+                },
+                "Pincer" => {
                     show_bullet_impact(
                         &entities,
                         bullet_impact_prefab_handle,
-                        possible_new_x,
-                        bullet.two_dim.bottom(),
-                        bullet_velocity.x,
-                        &lazy_update
+                        collider.next_position.x + offset,
+                        two_dim_obj.bottom(),
+                        velocity.x,
+                        &lazy_update,
+                        &ctx,
                     );
-                    let _ = entities.delete(bullet_entity);
-                }
-                // if bullet goes out of map
-                if bullet.two_dim.left() < 0. {
-                    let _ = entities.delete(bullet_entity);
+                },
+                _ => {}
+            };
+            let _ = entities.delete(entity);
+        }
+    }
+}
+
+pub struct PincerCollisionSystem;
+
+impl<'s> System<'s> for PincerCollisionSystem {
+    type SystemData = (
+        Entities<'s>,
+        WriteStorage<'s, Pincer>,
+        WriteStorage<'s, Collider>,
+        WriteStorage<'s, Collidee>,
+        WriteStorage<'s, Motion>,
+        WriteStorage<'s, Direction>,
+    );
+
+    fn run(&mut self, data: Self::SystemData) {
+        let (entities, mut pincers, mut colliders, mut collidees, mut motions, mut directions) = data;
+
+        for (entity, _pincer, motion, collider, collidee, direction) in
+            (&entities, &mut pincers, &mut motions, &mut colliders, &mut collidees, &mut directions).join() {
+            if collider.has_collided {
+                let velocity = motion.velocity;
+                match collider.collidee_name.as_ref() {
+                    "Boundary" => {
+                        if velocity.x > 0. {
+                            direction.x = Directions::Left;
+                            collider.next_position.x -= 45. * 2.;
+                        }
+                        if velocity.x < 0. {
+                            direction.x = Directions::Right;
+                            collider.next_position.x += 45. * 2.;
+                        }
+                        motion.velocity.x = -1. * velocity.x;
+                    },
+                    _ => {},
+                };
+            }
+            if collidee.is_hit {
+                match collidee.collider_name.as_ref() {
+                    "Bullet" => {
+                        collidee.hit_count += 1;
+                        if collidee.hit_count == 4 {
+                            show_explosion();
+                            let _ = entities.delete(entity);
+                        }
+                        collidee.is_hit = false;
+                    },
+                    _ => {},
                 }
             }
         }
