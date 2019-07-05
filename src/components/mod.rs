@@ -15,6 +15,7 @@ pub use self::bullet::Bullet;
 pub use self::bullet::BulletImpact;
 pub use self::collider::BoundingRect;
 pub use self::collider::Collider;
+pub use self::collider::Collidee;
 pub use self::direction::Direction;
 pub use self::direction::Directions;
 pub use self::marine::Marine;

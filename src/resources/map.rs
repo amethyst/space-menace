@@ -1,6 +1,6 @@
 use amethyst:: {
     assets::{Asset, Handle, ProcessingState},
-    core::{math::Vector2, Transform, WithNamed},
+    core::{math::{Vector2, Vector3}, Transform, WithNamed},
     ecs::{prelude::World, VecStorage},
     error::Error,
     prelude::Builder,
@@ -13,10 +13,8 @@ use amethyst:: {
 
 use serde::{Deserialize, Serialize};
 
-use specs_physics::{math::Vector3};
-
 use crate::{
-    components::{TwoDimObject, Direction, Motion},
+    components::{TwoDimObject, Collidee, Direction, Motion},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -101,9 +99,10 @@ impl Map {
 
             world.create_entity()
                 .named("Collision")
-                .with(Motion::new(Vector2::new(0., 0.)))
+                .with(Motion::new())
                 .with(transform)
                 .with(two_dim_object)
+                .with(Collidee::default())
                 .with(Direction::default())
                 .build();
         }

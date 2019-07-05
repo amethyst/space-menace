@@ -20,9 +20,8 @@ impl Default for TwoDimVector<f32> {
 pub struct TwoDimObject {
     pub size: TwoDimVector<f32>,
     pub position: TwoDimVector<f32>,
-    pub hitbox_offset_front: f32,
-    pub hitbox_offset_back: f32,
-    pub hit_count: Option<u32>,
+    pub hit_box_offset_front: f32,
+    pub hit_box_offset_back: f32,
 }
 
 impl Component for TwoDimObject {
@@ -34,9 +33,8 @@ impl TwoDimObject {
         TwoDimObject {
             size: TwoDimVector {x: width, y: height},
             position: TwoDimVector {x: 0., y: 0.},
-            hitbox_offset_front: 0.,
-            hitbox_offset_back: 0.,
-            hit_count: None,
+            hit_box_offset_front: 0.,
+            hit_box_offset_back: 0.,
         }
     }
 
@@ -95,7 +93,7 @@ impl TwoDimObject {
         old_x: f32,
         mut possible_new_x: f32,
     ) -> (f32, bool) {
-        let mut has_collided= false;
+        let mut has_changed= false;
         if self.overlapping_y(two_dim_object)
             && old_x <= two_dim_object.left()
             && possible_new_x >= two_dim_object.left() {
@@ -103,9 +101,9 @@ impl TwoDimObject {
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act
             possible_new_x = two_dim_object.left();
-            has_collided = true;
+            has_changed = true;
         }
-        (possible_new_x, has_collided)
+        (possible_new_x, has_changed)
     }
 
     pub fn get_next_left(
@@ -114,7 +112,7 @@ impl TwoDimObject {
         old_x: f32,
         mut possible_new_x: f32,
     ) -> (f32, bool) {
-        let mut has_collided = false;
+        let mut has_changed = false;
         if self.overlapping_y(two_dim_object)
             && old_x >= two_dim_object.right()
             && possible_new_x <= two_dim_object.right() {
@@ -122,9 +120,9 @@ impl TwoDimObject {
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act
             possible_new_x = two_dim_object.right();
-            has_collided = true;
+            has_changed = true;
         }
-        (possible_new_x, has_collided)
+        (possible_new_x, has_changed)
     }
 
     pub fn get_next_top(
