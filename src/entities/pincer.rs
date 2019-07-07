@@ -38,30 +38,28 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     let mut motion = Motion::new();
     motion.velocity.x = -3.;
 
-    let mut collider = Collider::new(
-        Vector2::new(1040., 16.),
-        BoundingRect::new(800., 1832., 352., 0.),
-    );
-
     let mut collidee = Collidee::default();
-    collidee.hitbox_offset_back = 30.;
+    collidee.hitbox_offset_back = 35.;
 
     world
         .create_entity()
         .with(Pincer::new())
         .named("Pincer")
         .with(two_dim_object)
-        .with(collider)
+        .with(Collider::new(
+            Vector2::new(1040., 16.),
+            BoundingRect::new(800., 1832., 352., 0.),
+        ))
         .with(collidee)
         .with(transform)
         .with(motion)
-        .with(Animation {
-            current: AnimationId::Idle,
-            types: vec![
+        .with(Animation::new(
+            AnimationId::Idle,
+            vec![
                 AnimationId::Idle,
                 AnimationId::Walk,
             ],
-        })
+        ))
         .with(prefab)
         .with(Direction::new(
             Directions::Left,
@@ -72,5 +70,3 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
         .with(Transparent) // Necessary for ordered layering
         .build();
 }
-
-pub fn show_explosion() {}

@@ -9,9 +9,9 @@ use crate::{
     components::{Direction, Directions},
 };
 
-pub struct OrientationSystem;
+pub struct DirectionSystem;
 
-impl<'s> System<'s> for OrientationSystem {
+impl<'s> System<'s> for DirectionSystem {
     type SystemData = (
         Entities<'s>,
         ReadStorage<'s, Direction>,

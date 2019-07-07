@@ -29,7 +29,8 @@ impl SimpleState for LoadState {
                 AssetType::Marine,
                 AssetType::Pincer,
                 AssetType::Platform,
-                AssetType::Truss
+                AssetType::SmallExplosion,
+                AssetType::Truss,
             ]
         ));
         self.map_handle = {

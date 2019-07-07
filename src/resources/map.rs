@@ -1,6 +1,6 @@
 use amethyst:: {
     assets::{Asset, Handle, ProcessingState},
-    core::{math::{Vector2, Vector3}, Transform, WithNamed},
+    core::{math::Vector3, Transform, WithNamed},
     ecs::{prelude::World, VecStorage},
     error::Error,
     prelude::Builder,

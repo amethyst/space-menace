@@ -9,7 +9,7 @@ Prefab(
                     // SpriteSheetPrefab with index 0
                     sheet: Sheet(
                         // TexturePrefab
-                        texture: File("textures/bullet_impact.png", (
+                        texture: File("textures/small_explosion.png", (
                             "IMAGE", (
                                 sampler_info: (
                                     min_filter: Nearest,
@@ -29,20 +29,26 @@ Prefab(
                         )),
                         sprites: [
                             List((
-                                texture_width: 32,
-                                texture_height: 23,
+                                texture_width: 512,
+                                texture_height: 64,
                                 sprites: [
-                                    (x: 0, y: 0, width: 16, height: 24), // 1
-                                    (x: 16, y: 0, width: 16, height: 24), // 2
+                                    (x: 0, y: 0, width: 64, height: 64), // 1
+                                    (x: 64, y: 0, width: 64, height: 64), // 2
+                                    (x: 128, y: 0, width: 64, height: 64), // 3
+                                    (x: 192, y: 0, width: 64, height: 64), // 4
+                                    (x: 256, y: 0, width: 64, height: 64), // 5
+                                    (x: 320, y: 0, width: 64, height: 64), // 6
+                                    (x: 384, y: 0, width: 64, height: 64), // 7
+                                    (x: 448, y: 0, width: 64, height: 64), // 8
                                 ],
                             )),
                         ],
                         // optional
-                        name: "bullet_impact",
+                        name: "small_explosion",
                     ),
                     // SpriteRenderPrefab
                     render: (
-                        sheet: "bullet_impact",
+                        sheet: "small_explosion",
                         sprite_number: 0,
                     ),
                 ),
@@ -51,7 +57,7 @@ Prefab(
                     animations: [
                         (
                             // AnimationId
-                            BulletImpact,
+                            Explode,
                             (
                                 samplers: [
                                     (
@@ -60,9 +66,9 @@ Prefab(
                                         SpriteIndex,
                                         (
                                             // Time of key frames
-                                            input: [0.0, 0.02],
+                                            input: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
                                             // Sprite indexes from SpriteSheet for key frames
-                                            output: [0, 1],
+                                            output: [0, 1, 2, 3, 4, 5, 6, 7],
                                             // Sprites can only ever be animated with Step
                                             function: Step,
                                         ),

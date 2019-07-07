@@ -3,29 +3,19 @@ use amethyst::{
     ecs::{Component, DenseVecStorage},
 };
 
+#[derive(Default)]
 pub struct TwoDimVector<T> {
     pub x: T,
     pub y: T,
 }
 
-impl Default for TwoDimVector<f32> {
-    fn default() -> Self {
-        Self {
-            x: 0.0,
-            y: 0.0,
-        }
-    }
-}
-
+#[derive(Component)]
+#[storage(DenseVecStorage)]
 pub struct TwoDimObject {
     pub size: TwoDimVector<f32>,
     pub position: TwoDimVector<f32>,
     pub hit_box_offset_front: f32,
     pub hit_box_offset_back: f32,
-}
-
-impl Component for TwoDimObject {
-    type Storage = DenseVecStorage<Self>;
 }
 
 impl TwoDimObject {
