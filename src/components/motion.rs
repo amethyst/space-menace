@@ -3,13 +3,11 @@ use amethyst::{
     ecs::{Component, DenseVecStorage},
 };
 
+#[derive(Component)]
+#[storage(DenseVecStorage)]
 pub struct Motion {
     pub velocity: Vector2<f32>,
     pub has_jumped: bool,
-}
-
-impl Component for Motion {
-    type Storage = DenseVecStorage<Self>;
 }
 
 impl Motion {

@@ -116,13 +116,13 @@ pub fn show_bullet_impact(
     two_dim_object.set_position(impact_position_x, bullet_bottom + 2.);
     two_dim_object.update_transform_position(&mut transform);
 
-    lazy_update.insert(bullet_impact_entity, BulletImpact::new());
-    lazy_update.insert(bullet_impact_entity, Animation {
-        current: AnimationId::Explode,
-        types: vec![
-            AnimationId::Explode,
-        ]
-    });
+    lazy_update.insert(bullet_impact_entity, BulletImpact::default());
+    lazy_update.insert(bullet_impact_entity, Animation::new(
+        AnimationId::BulletImpact,
+        vec![
+            AnimationId::BulletImpact,
+        ],
+    ));
     lazy_update.insert(bullet_impact_entity, prefab_handle);
     lazy_update.insert(bullet_impact_entity, transform);
     lazy_update.insert(bullet_impact_entity, direction);

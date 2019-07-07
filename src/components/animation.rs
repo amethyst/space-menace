@@ -14,6 +14,7 @@ use serde::{Deserialize, Serialize};
 /// animation to play.
 #[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, PartialOrd, Serialize)]
 pub enum AnimationId {
+    BulletImpact,
     Die,
     Explode,
     Jump,
@@ -38,4 +39,15 @@ pub struct AnimationPrefabData {
 pub struct Animation {
     pub current: AnimationId,
     pub types: Vec<AnimationId>,
+    pub show: bool,
+}
+
+impl Animation {
+    pub fn new(current: AnimationId, types: Vec<AnimationId>) -> Self {
+        Self {
+            current,
+            types,
+            show: true,
+        }
+    }
 }

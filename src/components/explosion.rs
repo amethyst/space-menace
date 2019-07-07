@@ -4,8 +4,4 @@ use amethyst::{
 
 #[derive(Component, Default)]
 #[storage(NullStorage)]
-pub struct BulletImpact;
-
-#[derive(Component, Default)]
-#[storage(NullStorage)]
-pub struct Bullet;
+pub struct Explosion;

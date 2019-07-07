@@ -17,14 +17,12 @@ impl Default for MarineState {
     }
 }
 
+#[derive(Component)]
+#[storage(DenseVecStorage)]
 pub struct Marine {
     pub state: MarineState,
     pub is_shooting: bool,
     pub has_shot: bool,
-}
-
-impl Component for Marine {
-    type Storage = DenseVecStorage<Self>;
 }
 
 impl Marine {
