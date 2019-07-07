@@ -11,7 +11,15 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Animation, AnimationId, BulletImpact, Marine, Motion, Pincer},
+    components::{
+        Animation,
+        AnimationId,
+        BulletImpact,
+        Explosion,
+        Marine,
+        Motion,
+        Pincer,
+    },
 };
 
 pub struct BulletImpactAnimationSystem;
@@ -19,24 +27,65 @@ pub struct BulletImpactAnimationSystem;
 impl<'s> System<'s> for BulletImpactAnimationSystem {
     type SystemData = (
         Entities<'s>,
-        WriteStorage<'s, BulletImpact>,
-        ReadStorage<'s, Animation>,
+        ReadStorage<'s, BulletImpact>,
+        WriteStorage<'s, Animation>,
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
     );
 
     fn run(&mut self, data: Self::SystemData) {    
-        let (entities, mut bullet_impacts, animations, mut animation_control_sets) = data;
+        let (entities, bullet_impacts, mut animations, mut animation_control_sets) = data;
 
-        for (entity, mut bullet_impact, animation, animation_control_set) in
-            (&entities, &mut bullet_impacts, &animations, &mut animation_control_sets).join() {
+        for (entity, _, mut animation, animation_control_set) in
+            (&entities, &bullet_impacts, &mut animations, &mut animation_control_sets).join() {
 
-            if bullet_impact.show {
+            if animation.show {
                 animation_control_set.start(animation.current);
-                bullet_impact.show = false;
+                animation.show = false;
             } else {
-                animation_control_set.abort(animation.current);
-                let _ = entities.delete(entity);
+                let bullet_impact_animation = animation_control_set
+                    .animations
+                    .iter()
+                    .find(|(id, _)| *id == AnimationId::BulletImpact);
+
+                if bullet_impact_animation.is_none() {
+                    let _ = entities.delete(entity);
+                }
             }
+        }
+    }
+}
+
+pub struct ExplosionAnimationSystem;
+
+impl<'s> System<'s> for ExplosionAnimationSystem {
+    type SystemData = (
+        Entities<'s>,
+        ReadStorage<'s, Explosion>,
+        WriteStorage<'s, Animation>,
+        WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
+    );
+
+    fn run(&mut self, data: Self::SystemData) {    
+        let (entities, explosions, mut animations, mut animation_control_sets) = data;
+
+        for (entity, _, mut animation, animation_control_set) in
+            (&entities, &explosions, &mut animations, &mut animation_control_sets).join() {
+
+            if animation.show {
+                animation_control_set.start(animation.current);
+                animation.show = false;
+            
+            } else {
+                let explode_animation = animation_control_set
+                    .animations
+                    .iter()
+                    .find(|(id, _)| *id == AnimationId::Explode);
+
+                if explode_animation.is_none() {
+                    let _ = entities.delete(entity);
+                }
+            }
+
         }
     }
 }
@@ -61,33 +110,35 @@ impl<'s> System<'s> for AnimationControlSystem {
             let animation_control_set =
                 get_animation_set(&mut animation_control_sets, entity).unwrap();
 
-            animation.types.iter().for_each(|&animation_id| {
-                // Add the animations to the AnimationControlSet if it doesn't exist already.
-                // This ensures they are re-added after a call to abort().
-                if !animation_control_set.has_animation(animation_id) {
-                    trace!(
-                        "Added animation with id {:?} for entity: {:?}",
-                        animation_id,
-                        entity
-                    );
+            if animation.show {
+                animation.types.iter().for_each(|&animation_id| {
+                    // Add the animations to the AnimationControlSet if it doesn't exist already.
+                    // This ensures they are re-added after a call to abort().
+                    if !animation_control_set.has_animation(animation_id) {
+                        trace!(
+                            "Added animation with id {:?} for entity: {:?}",
+                            animation_id,
+                            entity
+                        );
 
-                    let end = match animation_id {
-                        AnimationId::Shoot | AnimationId::Explode => {
-                            EndControl::Loop(Some(1))
-                        },
-                        _ => {
-                            EndControl::Loop(None)
-                        }
-                    };
-                    animation_control_set.add_animation(
-                        animation_id,
-                        &animation_set.get(&animation_id).unwrap(),
-                        end,
-                        1.0,
-                        AnimationCommand::Init,
-                    );
-                }
-            });
+                        let end = match animation_id {
+                            AnimationId::Shoot | AnimationId::Explode | AnimationId::BulletImpact => {
+                                EndControl::Stay
+                            },
+                            _ => {
+                                EndControl::Loop(None)
+                            }
+                        };
+                        animation_control_set.add_animation(
+                            animation_id,
+                            &animation_set.get(&animation_id).unwrap(),
+                            end,
+                            1.0,
+                            AnimationCommand::Init,
+                        );
+                    }
+                });
+            }
 
             // Start the animation for the current AnimationId
             animation_control_set.start(animation.current);

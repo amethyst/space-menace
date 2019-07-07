@@ -1,9 +1,9 @@
 use amethyst::{
-    core::Named,
+    core::{Named, Transform},
     ecs::{Entities, Join, LazyUpdate, ReadExpect, ReadStorage, System, WriteStorage},
 };
 use crate::{
-    components::{Bullet, Collider, Collidee, Marine, Motion, Direction, Directions, Pincer, TwoDimObject},
+    components::{Bullet, Collider, Collidee, Motion, Direction, Directions, Pincer, TwoDimObject},
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
 };
@@ -44,6 +44,7 @@ impl<'s> System<'s> for CollisionSystem {
                         collider.collidee_direction = dir.x;
                         collider.collidee_hit_box_offset_front = collidee.hitbox_offset_front;
                         collider.collidee_hit_box_offset_back = collidee.hitbox_offset_back;
+                        collider.collidee_velocity_x = motion_b.velocity.x;
                         collidee_component = collidee;
                     }
                 }
@@ -82,6 +83,7 @@ impl<'s> System<'s> for CollisionSystem {
                         collider.collidee_direction = dir.x;
                         collider.collidee_hit_box_offset_front = two_dim_obj_b.hit_box_offset_front;
                         collider.collidee_hit_box_offset_back = two_dim_obj_b.hit_box_offset_back;
+                        collider.collidee_velocity_x = motion_b.velocity.x;
                         collidee_component = collidee;
                     }
                 }
@@ -110,7 +112,7 @@ impl<'s> System<'s> for CollisionSystem {
                 let old_y = two_dim_obj_a.top();
                 let mut possible_new_y = two_dim_obj_a.top() + velocity_a.y;
 
-                for (two_dim_obj_b, motion_b) in (&two_dim_objs, &motions).join() {
+                for two_dim_obj_b in (&two_dim_objs).join() {
                     possible_new_y = two_dim_obj_a
                         .get_next_top(two_dim_obj_b, old_y, possible_new_y);
                 }
@@ -120,7 +122,7 @@ impl<'s> System<'s> for CollisionSystem {
                 let old_y = two_dim_obj_a.bottom();
                 let mut possible_new_y = two_dim_obj_a.bottom() + velocity_a.y;
 
-                for (two_dim_obj_b, motion_b) in (&two_dim_objs, &motions).join() {
+                for two_dim_obj_b in (&two_dim_objs).join() {
                     possible_new_y = two_dim_obj_a
                         .get_next_bottom(two_dim_obj_b, old_y, possible_new_y);
                 }
@@ -162,19 +164,17 @@ impl<'s> System<'s> for BulletCollisionSystem {
             // Bullet can be fired horizontally only
             let offset = if dir.x == collider.collidee_direction {
                 if motion.velocity.x > 0. {
-                    collider.collidee_hit_box_offset_back
+                    collider.collidee_hit_box_offset_back + collider.collidee_velocity_x
                 } else {
-                    -collider.collidee_hit_box_offset_back
+                    -(collider.collidee_hit_box_offset_back + collider.collidee_velocity_x)
                 }
             } else {
                 if motion.velocity.x < 0. {
-                    collider.collidee_hit_box_offset_front
+                    collider.collidee_hit_box_offset_front - collider.collidee_velocity_x
                 } else {
-                    -collider.collidee_hit_box_offset_front
+                    -(collider.collidee_hit_box_offset_front - collider.collidee_velocity_x)
                 }
             };
-            println!("offset = {}", offset);
-            println!("collider.collidee_name = {}", collider.collidee_name);
             match collider.collidee_name.as_ref() {
                 "Collision" => {
                     show_bullet_impact(
@@ -215,13 +215,19 @@ impl<'s> System<'s> for PincerCollisionSystem {
         WriteStorage<'s, Collidee>,
         WriteStorage<'s, Motion>,
         WriteStorage<'s, Direction>,
+        ReadStorage<'s, Transform>,
+        ReadExpect<'s, PrefabList>,
+        ReadExpect<'s, LazyUpdate>,
+        ReadExpect<'s, Context>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut pincers, mut colliders, mut collidees, mut motions, mut directions) = data;
+        let (entities, mut pincers, mut colliders, mut collidees, mut motions,
+            mut directions, transforms, prefab_list, lazy_update, ctx) = data;
 
-        for (entity, _pincer, motion, collider, collidee, direction) in
-            (&entities, &mut pincers, &mut motions, &mut colliders, &mut collidees, &mut directions).join() {
+        for (entity, _, motion, collider, collidee, direction, transform) in
+            (&entities, &mut pincers, &mut motions, &mut colliders,
+                &mut collidees, &mut directions, &transforms).join() {
             if collider.has_collided {
                 let velocity = motion.velocity;
                 match collider.collidee_name.as_ref() {
@@ -244,7 +250,18 @@ impl<'s> System<'s> for PincerCollisionSystem {
                     "Bullet" => {
                         collidee.hit_count += 1;
                         if collidee.hit_count == 4 {
-                            show_explosion();
+                            let small_explosion_prefab_handle = {
+                                prefab_list.get(AssetType::SmallExplosion).unwrap().clone()
+                            };
+                            let pincer_translation = transform.translation();
+                            show_explosion(
+                                &entities,
+                                small_explosion_prefab_handle,
+                                pincer_translation.x.as_f32(),
+                                pincer_translation.y.as_f32(),
+                                &lazy_update,
+                                &ctx,
+                            );
                             let _ = entities.delete(entity);
                         }
                         collidee.is_hit = false;

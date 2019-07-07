@@ -6,7 +6,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::SubjectTag,
+    components::Subject,
 };
 
 pub fn load_camera_subject(world: &mut World) -> Entity {
@@ -16,7 +16,7 @@ pub fn load_camera_subject(world: &mut World) -> Entity {
     world
         .create_entity()
         .with(transform)
-        .with(SubjectTag::default())
+        .with(Subject::default())
         .with(Transparent)
         .build()
 }
