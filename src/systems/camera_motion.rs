@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Marine, SubjectTag},
+    components::{Marine, Subject},
     resources::Context,
 };
 
@@ -13,7 +13,7 @@ pub struct CameraMotionSystem;
 impl<'s> System<'s> for CameraMotionSystem {
     type SystemData = (
         ReadStorage<'s, Marine>,
-        ReadStorage<'s, SubjectTag>,
+        ReadStorage<'s, Subject>,
         WriteStorage<'s, Transform>,
         ReadExpect<'s, Context>,
     );
