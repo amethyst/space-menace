@@ -15,6 +15,9 @@ cd code-name-dune
 cargo run —release 
 ```
 
+## Game controls
+Use the `left arrow` key and `right arrow` key to move the player and the `up arrow` key to jump. Use `spacebar` to fire.
+
 ## Features:
 - [x] Basic map using Tiled
 - [x] Animation using prefabs (Main character run, jump, shoot, etc.)

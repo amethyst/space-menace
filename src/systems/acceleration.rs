@@ -67,7 +67,7 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                     }
                 } else {
                     // accelerate till velocity reaches a max threshold
-                    motion.velocity.x += 0.4 * x_input as f32;
+                    motion.velocity.x += 0.6 * x_input as f32;
                     motion.velocity.x = motion.velocity.x
                         .min(6.) // max velocity
                         .max(-1. * 6.);
