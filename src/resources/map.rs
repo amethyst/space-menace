@@ -56,7 +56,7 @@ pub struct Map {
 }
 
 impl Asset for Map {
-    const NAME: &'static str = "code_name_dune::Map";
+    const NAME: &'static str = "space_menace::Map";
     type Data = Self;
     type HandleStorage = VecStorage<Handle<Map>>;
 }
