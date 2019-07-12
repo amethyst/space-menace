@@ -659,16 +659,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "code-name-dune"
-version = "0.1.0"
-dependencies = [
- "amethyst 0.11.0 (git+https://github.com/amethyst/amethyst)",
- "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.92 (registry+https://github.com/rust-lang/crates.io-index)",
- "specs-derive 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "color_quant"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3390,6 +3380,16 @@ dependencies = [
  "wayland-client 0.21.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "wayland-commons 0.21.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "wayland-protocols 0.21.13 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "space-menace"
+version = "0.1.0"
+dependencies = [
+ "amethyst 0.11.0 (git+https://github.com/amethyst/amethyst)",
+ "log 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.92 (registry+https://github.com/rust-lang/crates.io-index)",
+ "specs-derive 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

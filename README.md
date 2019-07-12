@@ -1,4 +1,4 @@
-# Code Name: Dune
+# Space Menace
 An action 2D platformer made with the [Amethyst](https://amethyst.rs/) game engine.
 
 This is my *firstish* attempt at a game (I did write a basic snake game some time back). Through this project, I aim to get better at coding in [Rust](https://www.rust-lang.org/), get familiar with the Amethyst game engine and start learning game development in general. I also hope that this project will help other Amethyst and game dev beginners like me in some way or the other.
@@ -8,8 +8,8 @@ Currently, it is a :warning:**WORK IN PROGRESS**:warning: and there is still a l
 ## Running the game
 ```
 # Clone the repo
-git clone https://github.com/krankur/code-name-dune.git
-cd code-name-dune
+git clone https://github.com/amethyst/space-menace.git
+cd space-menace
 
 # Run
 cargo run —release 
