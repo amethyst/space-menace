@@ -8,7 +8,6 @@ use amethyst:: {
         sprite::SpriteRender,
         transparent::Transparent,
     },
-    window::ScreenDimensions,
 };
 
 use serde::{Deserialize, Serialize};
@@ -68,33 +67,29 @@ impl From<Map> for Result<ProcessingState<Map>, Error> {
 }
 
 impl Map {
-    pub fn load_layers(&self, world: &mut World, context: &Context) {
+    pub fn load_layers(&self, world: &mut World, ctx: &Context) {
         for layer in self.layers.iter() {
             match layer.name.as_ref() {
                 "collision" => {
-                    self.collision_layer(world, layer, context);
+                    self.collision_layer(world, layer, ctx);
                 },
                 _ => {
-                    self.load_non_collision_layer(world, layer, context);
+                    self.load_non_collision_layer(world, layer, ctx);
                 }
             }
         }
     }
 
-    fn collision_layer(&self, world: &mut World, layer: &Layer, context: &Context) {
-        let screen_height = {
-            let dim = world.read_resource::<ScreenDimensions>();
-            dim.height()
-        };
-        let scale = context.scale;
+    fn collision_layer(&self, world: &mut World, layer: &Layer, ctx: &Context) {
+        let scale = ctx.scale;
 
         for obj in layer.objects.iter() {
             let mut transform = Transform::default();
             transform.set_translation_z(-10.);
 
             let mut two_dim_object = TwoDimObject::new(obj.width * scale, obj.height * scale);
-            two_dim_object.set_left(obj.x * scale + context.x_correction);
-            two_dim_object.set_top(screen_height / 2. - (obj.y * scale) + context.y_correction);
+            two_dim_object.set_left(obj.x * scale + ctx.x_correction);
+            two_dim_object.set_top(ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction);
             two_dim_object.update_transform_position(&mut transform);
 
             world.create_entity()
@@ -108,13 +103,9 @@ impl Map {
         }
     }
 
-    fn load_non_collision_layer(&self, world: &mut World, layer: &Layer, context: &Context) {
-        let screen_height = {
-            let dim = world.read_resource::<ScreenDimensions>();
-            dim.height()
-        };
-        let scale = context.scale;
-        let x_correction = context.x_correction;
+    fn load_non_collision_layer(&self, world: &mut World, layer: &Layer, ctx: &Context) {
+        let scale = ctx.scale;
+        let x_correction = ctx.x_correction;
 
         let mut asset_type_wrapper = None;
         let mut z_translation = 0.;
@@ -122,15 +113,15 @@ impl Map {
         match layer.name.as_ref() {
             "background" => {
                 asset_type_wrapper = Some(AssetType::Background);
-                z_translation = context.bg_z_translation;
+                z_translation = ctx.bg_z_translation;
             },
             "platform" => {
                 asset_type_wrapper = Some(AssetType::Platform);
-                z_translation = context.platform_z_translation;
+                z_translation = ctx.platform_z_translation;
             },
             "truss" => {
                 asset_type_wrapper = Some(AssetType::Truss);
-                z_translation = context.truss_z_translation;
+                z_translation = ctx.truss_z_translation;
             },
             _ => {},
         };
@@ -148,7 +139,7 @@ impl Map {
                     "truss" => {
                         transform.set_translation_xyz(
                             (obj.x + obj.width / 2.) * scale + x_correction,
-                            screen_height / 2. - (obj.y + obj.height / 2.),
+                            ctx.bg_height * 2. - (obj.y + obj.height / 2.),
                             z_translation,
                         );
                         transform.set_scale(Vector3::new(4., 4., 4.));
@@ -156,7 +147,7 @@ impl Map {
                     "platform" => {
                         transform.set_translation_xyz(
                             (obj.x + obj.width / 2.) * scale + x_correction,
-                            screen_height / 2. - (obj.y + obj.height / 2.) * scale + context.y_correction,
+                            ctx.bg_height * 2. - (obj.y + obj.height / 2.) * scale + ctx.y_correction,
                             z_translation,
                         );
                         transform.set_scale(Vector3::new(scale, scale, scale));
