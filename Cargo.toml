@@ -3,6 +3,7 @@ name = "space-menace"
 version = "0.1.0"
 authors = ["Kumar Ankur <kmrankur@outlook.com>"]
 edition = "2018"
+default-run = "space-menace"
 
 [dependencies]
 amethyst = { path = "../amethyst", features = ["nightly", "metal", "json"] }
@@ -10,8 +11,10 @@ serde = "*"
 log = "*"
 specs-derive = "*"
 
-[features]
-default = ["metal"]
-metal = ["amethyst/metal"]
-vulkan = ["amethyst/vulkan"]
+[[bin]]
+name = "space-menace"
+path = "src/client_main.rs"
 
+[[bin]]
+name = "space-menace-server"
+path = "src/server_main.rs"
