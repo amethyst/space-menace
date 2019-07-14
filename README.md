@@ -10,7 +10,20 @@ Currently, it is a :warning:**WORK IN PROGRESS**:warning: and there is still a l
 # Clone the repo
 git clone https://github.com/amethyst/space-menace.git
 cd space-menace
+```
 
+### Configure Cargo.toml
+
+If you are on Windows or Linux you will have to modify the `Cargo.toml` to enable the `vulkan` feature of the `amethyst` dependency.
+<pre>
+amethyst = { git = "https://github.com/amethyst/amethyst", features = ["nightly", <b style="color: green;">"vulkan"</b>, "json"] }
+</pre>
+On macOS, instead of `vulkan` the `metal` feature needs to be enabled.
+<pre>
+amethyst = { git = "https://github.com/amethyst/amethyst", features = ["nightly", <b style="color: green;">"metal"</b>, "json"] }
+</pre>
+
+```
 # Run
 cargo run —release 
 ```
