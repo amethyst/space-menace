@@ -78,7 +78,10 @@ impl GraphCreator<DefaultBackend> for GameGraphCreator {
             window_kind,
             1,
             surface_format,
-            Some(ClearValue::Color([0.34, 0.36, 0.52, 1.0].into())),
+            // Setting color to be same as the color of the background tile edges
+            // to hide tearing between background tiles when moved for parallax effect.
+            // This is a bit hackish but is the simplest solution and works for our purpose.
+            Some(ClearValue::Color([0.008, 0.043, 0.067, 1.0].into())),
         );
 
         let depth = graph_builder.create_image(

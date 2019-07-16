@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="144" height="22" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="156">
+ <tileset firstgid="1" source="background_new.tsx"/>
+ <tileset firstgid="3" source="foreground.tsx"/>
+ <objectgroup id="2" name="background">
+  <object id="2" gid="2" x="0" y="352" width="384" height="352"/>
+  <object id="6" gid="2" x="384" y="352" width="384" height="352"/>
+  <object id="7" gid="2" x="768" y="352" width="384" height="352"/>
+  <object id="11" gid="2" x="1152" y="352" width="384" height="352"/>
+  <object id="12" gid="2" x="1536" y="352" width="384" height="352"/>
+  <object id="13" gid="2" x="1920" y="352" width="384" height="352"/>
+  <object id="23" x="1290.5" y="198" width="16" height="16"/>
+  <object id="24" x="1078.5" y="250.5"/>
+  <object id="27" x="1563" y="230" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="4" name="truss">
+  <object id="9" gid="1" x="0" y="352" width="832" height="352"/>
+  <object id="10" gid="1" x="1472" y="352" width="832" height="352"/>
+ </objectgroup>
+ <objectgroup id="8" name="platform">
+  <object id="30" type="platform" x="128" y="288" width="96" height="64">
+   <properties>
+    <property name="spriteindex" type="int" value="10"/>
+   </properties>
+  </object>
+  <object id="31" type="platform" x="0" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="32" type="platform" x="32" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="35" type="platform" x="96" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="36" type="platform" x="64" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="37" type="platform" x="0" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="38" type="platform" x="96" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="39" type="platform" x="64" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="40" type="platform" x="32" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="41" type="platform" x="256" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="42" type="platform" x="224" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="43" type="platform" x="320" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="44" type="platform" x="288" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="45" type="platform" x="256" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="46" type="platform" x="320" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="47" type="platform" x="288" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="48" type="platform" x="352" y="288" width="96" height="64">
+   <properties>
+    <property name="spriteindex" type="int" value="10"/>
+   </properties>
+  </object>
+  <object id="49" type="platform" x="224" y="272" width="32" height="32">
+   <properties>
+    <property name="spriteindex" type="int" value="5"/>
+   </properties>
+  </object>
+  <object id="51" type="platform" x="512" y="256" width="64" height="80">
+   <properties>
+    <property name="spriteindex" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="52" type="platform" x="544" y="336" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="9"/>
+   </properties>
+  </object>
+  <object id="53" type="platform" x="992" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="54" type="platform" x="960" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="55" type="platform" x="928" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="56" type="platform" x="896" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="57" type="platform" x="864" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="58" type="platform" x="832" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="59" type="platform" x="800" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="60" type="platform" x="768" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="61" type="platform" x="736" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="62" type="platform" x="704" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="63" type="platform" x="672" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="64" type="platform" x="640" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="65" type="platform" x="608" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="66" type="platform" x="576" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="67" type="platform" x="1056" y="208" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="68" type="platform" x="1024" y="208" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="69" type="platform" x="864" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="70" type="platform" x="832" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="71" type="platform" x="800" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="72" type="platform" x="768" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="73" type="platform" x="992" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="74" type="platform" x="960" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="75" type="platform" x="672" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="76" type="platform" x="640" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="77" type="platform" x="608" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="78" type="platform" x="576" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="79" type="platform" x="1056" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="80" type="platform" x="1056" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="81" type="platform" x="1056" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="82" type="platform" x="1056" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="83" type="platform" x="1024" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="84" type="platform" x="1024" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="85" type="platform" x="1024" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="86" type="platform" x="1024" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="87" type="platform" x="928" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="88" type="platform" x="896" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="89" type="platform" x="736" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="90" type="platform" x="704" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="91" type="platform" x="1216" y="272" width="96" height="80">
+   <properties>
+    <property name="spriteindex" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="92" type="platform" x="1888" y="176" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="93" type="platform" x="1392" y="336" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="9"/>
+   </properties>
+  </object>
+  <object id="94" type="platform" x="1392" y="304" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="9"/>
+   </properties>
+  </object>
+  <object id="98" type="platform" x="1680" y="272" width="96" height="64">
+   <properties>
+    <property name="spriteindex" type="int" value="10"/>
+   </properties>
+  </object>
+  <object id="99" type="platform" x="1680" y="336" width="16" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="12"/>
+   </properties>
+  </object>
+  <object id="101" type="platform" x="1760" y="336" width="16" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="13"/>
+   </properties>
+  </object>
+  <object id="105" type="platform" x="1920" y="176" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="106" type="platform" x="1840" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="107" type="platform" x="1872" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="108" type="platform" x="1904" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="109" type="platform" x="1936" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="110" type="platform" x="1968" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="111" type="platform" x="2000" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="112" type="platform" x="1776" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="113" type="platform" x="1808" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="114" type="platform" x="1360" y="208" width="64" height="80">
+   <properties>
+    <property name="spriteindex" type="int" value="4"/>
+   </properties>
+  </object>
+  <object id="115" type="platform" x="1424" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="116" type="platform" x="1456" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="117" type="platform" x="1488" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="118" type="platform" x="1520" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="119" type="platform" x="1552" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="120" type="platform" x="1584" y="224" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="121" type="platform" x="1088" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="122" type="platform" x="1120" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="123" type="platform" x="1392" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="8"/>
+   </properties>
+  </object>
+  <object id="124" type="platform" x="1392" y="320" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="8"/>
+   </properties>
+  </object>
+  <object id="125" type="platform" x="1088" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="126" type="platform" x="1120" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="127" type="platform" x="1424" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="128" type="platform" x="1456" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="129" type="platform" x="1552" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="130" type="platform" x="1584" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="7"/>
+   </properties>
+  </object>
+  <object id="131" type="platform" x="1488" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="132" type="platform" x="1520" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="133" type="platform" x="1776" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="134" type="platform" x="1808" y="240" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="135" type="platform" x="1776" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="136" type="platform" x="1808" y="256" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="137" type="platform" x="1776" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="138" type="platform" x="1808" y="272" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="139" type="platform" x="1776" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="140" type="platform" x="1808" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="141" type="platform" x="1888" y="192" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="142" type="platform" x="1920" y="192" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="143" type="platform" x="1968" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="144" type="platform" x="2000" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="145" type="platform" x="1840" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="11"/>
+   </properties>
+  </object>
+  <object id="146" type="platform" x="1872" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="11"/>
+   </properties>
+  </object>
+  <object id="147" type="platform" x="1904" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="11"/>
+   </properties>
+  </object>
+  <object id="148" type="platform" x="1936" y="288" width="32" height="16">
+   <properties>
+    <property name="spriteindex" type="int" value="11"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="10" name="collision">
+  <object id="50" type="collision" x="0" y="304" width="448" height="16"/>
+  <object id="149" type="collision" x="512" y="272" width="640" height="16"/>
+  <object id="150" type="collision" x="1024" y="224" width="64" height="48"/>
+  <object id="151" type="collision" x="1216" y="294" width="96" height="16"/>
+  <object id="152" type="collision" x="1360" y="240" width="256" height="16"/>
+  <object id="153" type="collision" x="1680" y="288" width="352" height="16"/>
+  <object id="154" type="collision" x="1776" y="240" width="64" height="48"/>
+  <object id="155" type="collision" x="1888" y="192" width="64" height="16"/>
+ </objectgroup>
+ <layer id="9" name="platform" width="144" height="22">
+  <data encoding="base64" compression="zlib">
+   eJzt1jVPBEEYgOH9D0jQAglaIEELJGiB5LACCVogQQskaIEELZAfzEsxCczdsDZzx5HvTZ5MQmaXWdjZXc+TJEmSJEmSJEmSJEmSJEmSJEmSJPflIBd5yM/wWqTsqwzlqEBlhtfyn1P7VI02msUc5rFg6ZzS3+wYJ99GG61jA5vY8pLvUb8xaKbjuuItXwqRi/vnEEcpzq1G9W5RY9Q16OdRjWA01hVkT/p3Xti9GnfU/3fqmaHGKF3jBre4i3iOIJnun2xIvePjpn/nmfZs0L0bd77fs6AAhShCMUpQqs15xRve8RHpr/KzRSxhGStYxVqKa3P1nvwtv99hWrt6x4c9Tq8BjWhCs6VrclkVqlGDWtSh3jDX1vNnGzvYxR72ceAl3z9qnml08bzy26emtfvtc9Nxel/fet3oQa+la3JZC1rRhnZ0oNMw19bz5xRnOMcFLnFl4bzpKOragx6nvvXGMG5hva7rQz8GMIghDBvm2nr+3OMBj3jCM14snDcdRV172ONs7VXXJTCBSUxhGjOGubauKZHiZ6bfme4+AWnsZ+s=
+  </data>
+ </layer>
+</map>

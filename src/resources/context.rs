@@ -19,8 +19,8 @@ impl Context {
             bg_height: 352.,
             x_correction: -(1200. / 2. - 384.), // - (screen_width / 2. - background_width)
             y_correction: -176., // (background_height / 2.) * -1.
-            bg_z_translation: -30.,
-            truss_z_translation: -20.,
+            bg_z_translation: -50.,
+            truss_z_translation: -40.,
             platform_z_translation: -10.,
             scale: 2.,
         }

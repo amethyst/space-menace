@@ -26,7 +26,6 @@ use crate::{
 pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
     let mut transform = Transform::default();
     let scale = ctx.scale;
-
     transform.set_scale(Vector3::new(scale, scale, scale));
 
     let mut two_dim_object = TwoDimObject::new(32. * scale, 36. * scale);
