@@ -13,7 +13,7 @@ use amethyst:: {
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    components::{TwoDimObject, Collidee, Direction, Motion},
+    components::{TwoDimObject, Collidee, Direction, Motion, Parallax},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -134,26 +134,6 @@ impl Map {
 
             for obj in layer.objects.iter() {
                 let mut transform = Transform::default();
-                match layer.name.as_ref() {
-                    "background" |
-                    "truss" => {
-                        transform.set_translation_xyz(
-                            (obj.x + obj.width / 2.) * scale + x_correction,
-                            ctx.bg_height * 2. - (obj.y + obj.height / 2.),
-                            z_translation,
-                        );
-                        transform.set_scale(Vector3::new(4., 4., 4.));
-                    },
-                    "platform" => {
-                        transform.set_translation_xyz(
-                            (obj.x + obj.width / 2.) * scale + x_correction,
-                            ctx.bg_height * 2. - (obj.y + obj.height / 2.) * scale + ctx.y_correction,
-                            z_translation,
-                        );
-                        transform.set_scale(Vector3::new(scale, scale, scale));
-                    },
-                    _ => {},
-                };
 
                 let sprite_index_prop = match &obj.properties {
                     Some(props) => props.iter().find(
@@ -176,11 +156,37 @@ impl Map {
                     None => {},
                 }
 
-                world.create_entity()
-                    .with(transform)
-                    .with(sprite)
-                    .with(Transparent)
-                    .build();
+                match layer.name.as_ref() {
+                    "background" |
+                    "truss" => {
+                        transform.set_translation_xyz(
+                            (obj.x + obj.width / 2.) * scale + x_correction,
+                            ctx.bg_height * 2. - (obj.y + obj.height / 2.),
+                            z_translation,
+                        );
+                        transform.set_scale(Vector3::new(4., 4., 4.));
+                        world.create_entity()
+                            .with(transform)
+                            .with(sprite)
+                            .with(Transparent)
+                            .with(Parallax::default())
+                            .build();
+                    },
+                    "platform" => {
+                        transform.set_translation_xyz(
+                            (obj.x + obj.width / 2.) * scale + x_correction,
+                            ctx.bg_height * 2. - (obj.y + obj.height / 2.) * scale + ctx.y_correction,
+                            z_translation,
+                        );
+                        transform.set_scale(Vector3::new(scale, scale, scale));
+                        world.create_entity()
+                            .with(transform)
+                            .with(sprite)
+                            .with(Transparent)
+                            .build();
+                    },
+                    _ => {},
+                };
             }
         }
     }

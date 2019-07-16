@@ -4,6 +4,7 @@ mod attack;
 mod collision;
 mod direction;
 mod motion;
+mod parallax;
 
 pub use self::acceleration::MarineAccelerationSystem;
 pub use self::animation::AnimationControlSystem;
@@ -18,3 +19,4 @@ pub use self::collision::PincerCollisionSystem;
 pub use self::direction::DirectionSystem;
 pub use self::motion::CameraMotionSystem;
 pub use self::motion::MotionSystem;
+pub use self::parallax::ParallaxSystem;

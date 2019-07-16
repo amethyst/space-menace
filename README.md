@@ -6,6 +6,7 @@ This is my *firstish* attempt at a game (I did write a basic snake game some tim
 Currently, it is a :warning:**WORK IN PROGRESS**:warning: and there is still a lot to be done before it reaches a playable state. Also, the code is far from perfect and there is a lot of scope for improvement. I will keep enhancing the code incrementally, as I go along. 
 
 ## Running the game
+**Note:** This game requires Rust nightly.
 ```
 # Clone the repo
 git clone https://github.com/amethyst/space-menace.git

@@ -26,10 +26,10 @@ use crate::{
 pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
     let mut transform = Transform::default();
     let scale = ctx.scale;
-
     transform.set_scale(Vector3::new(scale, scale, scale));
 
     let mut two_dim_object = TwoDimObject::new(32. * scale, 36. * scale);
+    // two_dim_object.set_position(32. / 2. * scale + ctx.x_correction, 176.);
     two_dim_object.set_position(384., 176.);
     two_dim_object.update_transform_position(&mut transform);
 
@@ -39,6 +39,7 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
         .named("Marine")
         .with(two_dim_object)
         .with(Collider::new(
+            // Vector2::new(32. / 2. * scale + ctx.x_correction, 176.),
             Vector2::new(384., 176.),
             BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
         ))
