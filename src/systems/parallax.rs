@@ -30,8 +30,8 @@ impl<'s> System<'s> for ParallaxSystem {
         for (_, transform) in (&parallaxes, &mut transforms).join() {
             if marine_moved {
                 transform.set_translation_x(
-                    transform.translation().x
-                        + marine_velocity_x / (transform.translation().z.abs() * 4. / 10.),
+                    transform.translation().x +
+                    marine_velocity_x / (transform.translation().z.abs() * 4. / 10.)
                 );
             }
         }
