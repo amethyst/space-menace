@@ -52,18 +52,18 @@ impl<'s> System<'s> for CollisionSystem {
                 collidee_component.collider_name = name_a.name.to_string();
 
                 // Ensure entity stays inside its right bound
-                let new_x = possible_new_x
-                    .min(bounding_rect.right);
+                let new_x = if possible_new_x >= bounding_rect.right{
+                    collidee_name = String::from("Boundary");
+                    bounding_rect.right
+                }else{
+                    possible_new_x
+                };
                 collider.next_position.x = new_x;
 
                 if new_x < old_x + velocity_a.x ||
                     possible_new_x + velocity_a.x == bounding_rect.right {
                     collider.has_collided = true;
-                    if collidee_name == "" {
-                        collider.collidee_name = String::from("Boundary");
-                    } else {
-                        collider.collidee_name = collidee_name;
-                    }
+                    collider.collidee_name = collidee_name;
                 } else {
                     collider.has_collided = false;
                 }
@@ -91,18 +91,18 @@ impl<'s> System<'s> for CollisionSystem {
                 collidee_component.collider_name = name_a.name.to_string();
 
                 // Ensure entity stays inside its left bound
-                let new_x = possible_new_x
-                    .max(bounding_rect.left);
+                let new_x = if possible_new_x <= bounding_rect.left{
+                    collidee_name = String::from("Boundary");
+                    bounding_rect.left
+                }else{
+                    possible_new_x
+                };
                 collider.next_position.x = new_x;
 
                 if new_x > old_x + velocity_a.x ||
                     possible_new_x + velocity_a.x == bounding_rect.left {
                     collider.has_collided = true;
-                    if collidee_name == "" {
-                        collider.collidee_name = String::from("Boundary");
-                    } else {
-                        collider.collidee_name = collidee_name;
-                    }
+                    collider.collidee_name = collidee_name;
                 } else {
                     collider.has_collided = false;
                 }
