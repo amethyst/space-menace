@@ -1,6 +1,6 @@
+pub mod collider;
 mod animation;
 mod bullet;
-mod collider;
 mod direction;
 mod explosion;
 mod marine;

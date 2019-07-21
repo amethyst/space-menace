@@ -4,6 +4,7 @@ use amethyst::{
 };
 use crate::{
     components::{Bullet, Collider, Collidee, Motion, Direction, Directions, Pincer, TwoDimObject},
+    components::collider::{CollisionSource, CollisionWithCollidee},
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
 };
@@ -28,10 +29,11 @@ impl<'s> System<'s> for CollisionSystem {
             let velocity_a = motion_a.velocity;
             let bounding_rect = collider.bounding_rect;
 
+
             if velocity_a.x > 0. {
+                let mut collision = CollisionSource::None;
                 let old_x = two_dim_obj_a.right();
                 let mut possible_new_x = old_x + velocity_a.x;
-                let mut collidee_name = String::from("");
                 let mut collidee_component = &mut Collidee::default();
 
                 for (two_dim_obj_b, motion_b, name_b, dir, collidee) in
@@ -39,38 +41,36 @@ impl<'s> System<'s> for CollisionSystem {
                     let (x, has_changed) = two_dim_obj_a
                         .get_next_right(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
+                        collision = CollisionSource::Collidee(CollisionWithCollidee{
+                            name: name_b.name.to_string(),
+                            direction: dir.x,
+                            hit_box_offset_front: collidee.hitbox_offset_front,
+                            hit_box_offset_back: collidee.hitbox_offset_back,
+                            velocity_x: motion_b.velocity.x,
+                        });
                         possible_new_x = x;
-                        collidee_name = name_b.name.to_string();
-                        collider.collidee_direction = dir.x;
-                        collider.collidee_hit_box_offset_front = collidee.hitbox_offset_front;
-                        collider.collidee_hit_box_offset_back = collidee.hitbox_offset_back;
-                        collider.collidee_velocity_x = motion_b.velocity.x;
                         collidee_component = collidee;
                     }
                 }
-                collidee_component.is_hit = true;
-                collidee_component.collider_name = name_a.name.to_string();
 
                 // Ensure entity stays inside its right bound
                 let new_x = if possible_new_x >= bounding_rect.right{
-                    collidee_name = String::from("Boundary");
+                    collision = CollisionSource::Boundary;
                     bounding_rect.right
                 }else{
                     possible_new_x
                 };
-                collider.next_position.x = new_x;
-
-                if new_x < old_x + velocity_a.x ||
-                    possible_new_x + velocity_a.x == bounding_rect.right {
-                    collider.has_collided = true;
-                    collider.collidee_name = collidee_name;
-                } else {
-                    collider.has_collided = false;
+                if let CollisionSource::Collidee(_) = &collision {
+                    collidee_component.is_hit = true;
+                    collidee_component.collider_name = name_a.name.to_string();
                 }
+
+                collider.next_position.x = new_x;
+                collider.collision = collision;
             } else if velocity_a.x < 0. {
+                let mut collision = CollisionSource::None;
                 let old_x = two_dim_obj_a.left();
                 let mut possible_new_x = old_x + velocity_a.x;
-                let mut collidee_name = String::from("");
                 let mut collidee_component = &mut Collidee::default();
 
                 for (two_dim_obj_b, motion_b, name, dir, collidee) in
@@ -78,34 +78,31 @@ impl<'s> System<'s> for CollisionSystem {
                     let (x, has_changed) = two_dim_obj_a
                         .get_next_left(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
+                        collision = CollisionSource::Collidee(CollisionWithCollidee{
+                            name: name.name.to_string(),
+                            direction: dir.x,
+                            hit_box_offset_front: collidee.hitbox_offset_front,
+                            hit_box_offset_back: collidee.hitbox_offset_back,
+                            velocity_x: motion_b.velocity.x,
+                        });
                         possible_new_x = x;
-                        collidee_name = name.name.to_string();
-                        collider.collidee_direction = dir.x;
-                        collider.collidee_hit_box_offset_front = two_dim_obj_b.hit_box_offset_front;
-                        collider.collidee_hit_box_offset_back = two_dim_obj_b.hit_box_offset_back;
-                        collider.collidee_velocity_x = motion_b.velocity.x;
                         collidee_component = collidee;
                     }
                 }
-                collidee_component.is_hit = true;
-                collidee_component.collider_name = name_a.name.to_string();
 
                 // Ensure entity stays inside its left bound
                 let new_x = if possible_new_x <= bounding_rect.left{
-                    collidee_name = String::from("Boundary");
+                    collision = CollisionSource::Boundary;
                     bounding_rect.left
                 }else{
                     possible_new_x
                 };
-                collider.next_position.x = new_x;
-
-                if new_x > old_x + velocity_a.x ||
-                    possible_new_x + velocity_a.x == bounding_rect.left {
-                    collider.has_collided = true;
-                    collider.collidee_name = collidee_name;
-                } else {
-                    collider.has_collided = false;
+                if let CollisionSource::Collidee(_) = &collision {
+                    collidee_component.is_hit = true;
+                    collidee_component.collider_name = name_a.name.to_string();
                 }
+                collider.next_position.x = new_x;
+                collider.collision = collision;
             }
 
             if velocity_a.y > 0. {
@@ -152,42 +149,21 @@ impl<'s> System<'s> for BulletCollisionSystem {
         let (entities, mut bullets, two_dim_objs, mut colliders, mut motions,
             directions, prefab_list, lazy_update, ctx) = data;
         for (entity, _bullet, two_dim_obj, collider, motion, dir) in
-            (&*entities, &mut bullets, &two_dim_objs, &mut colliders, &mut motions, &directions).join() {
-            if !collider.has_collided {
-                continue;
-            }
+            (&*entities, &mut bullets, &two_dim_objs, &mut colliders, &mut motions, &directions).join()
+        {
+            let collidee_data = match &collider.collision{
+                CollisionSource::Collidee(collidee_data) => collidee_data,
+                 _ => {continue;}
+            };
+
+            let offset = BulletCollisionSystem::collision_offset(collidee_data, motion, dir);
             let velocity = motion.velocity;
             let bullet_impact_prefab_handle = {
                 prefab_list.get(AssetType::BulletImpact).unwrap().clone()
             };
 
-            // Bullet can be fired horizontally only
-            let offset = if dir.x == collider.collidee_direction {
-                if motion.velocity.x > 0. {
-                    collider.collidee_hit_box_offset_back + collider.collidee_velocity_x
-                } else {
-                    -(collider.collidee_hit_box_offset_back + collider.collidee_velocity_x)
-                }
-            } else {
-                if motion.velocity.x < 0. {
-                    collider.collidee_hit_box_offset_front - collider.collidee_velocity_x
-                } else {
-                    -(collider.collidee_hit_box_offset_front - collider.collidee_velocity_x)
-                }
-            };
-            match collider.collidee_name.as_ref() {
-                "Collision" => {
-                    show_bullet_impact(
-                        &entities,
-                        bullet_impact_prefab_handle,
-                        collider.next_position.x + offset,
-                        two_dim_obj.bottom(),
-                        velocity.x,
-                        &lazy_update,
-                        &ctx,
-                    );
-                },
-                "Pincer" => {
+            match collidee_data.name.as_ref() {
+                "Collision" | "Pincer" => {
                     show_bullet_impact(
                         &entities,
                         bullet_impact_prefab_handle,
@@ -201,6 +177,25 @@ impl<'s> System<'s> for BulletCollisionSystem {
                 _ => {}
             };
             let _ = entities.delete(entity);
+        }
+    }
+}
+
+impl BulletCollisionSystem{
+    fn collision_offset(collidee_data: &CollisionWithCollidee, motion: &Motion, dir: &Direction) -> f32{
+        // Bullet can be fired horizontally only
+        if dir.x == collidee_data.direction {
+            if motion.velocity.x > 0. {
+                collidee_data.hit_box_offset_back + collidee_data.velocity_x
+            } else {
+                -(collidee_data.hit_box_offset_back + collidee_data.velocity_x)
+            }
+        } else {
+            if motion.velocity.x < 0. {
+                collidee_data.hit_box_offset_front - collidee_data.velocity_x
+            } else {
+                -(collidee_data.hit_box_offset_front - collidee_data.velocity_x)
+            }
         }
     }
 }
@@ -228,22 +223,22 @@ impl<'s> System<'s> for PincerCollisionSystem {
         for (entity, _, motion, collider, collidee, direction, transform) in
             (&entities, &mut pincers, &mut motions, &mut colliders,
                 &mut collidees, &mut directions, &transforms).join() {
-            if collider.has_collided {
+            let change_direction = match &collider.collision {
+                CollisionSource::Boundary => true,
+                CollisionSource::Collidee(collidee_data) if collidee_data.name == "Collision" => true,
+                _ => false,
+            };
+            if change_direction{
                 let velocity = motion.velocity;
-                match collider.collidee_name.as_ref() {
-                    "Boundary" | "Collision" => {
-                        if velocity.x > 0. {
-                            direction.x = Directions::Left;
-                            collider.next_position.x -= 45. * 2.;
-                        }
-                        if velocity.x < 0. {
-                            direction.x = Directions::Right;
-                            collider.next_position.x += 45. * 2.;
-                        }
-                        motion.velocity.x = -1. * velocity.x;
-                    },
-                    _ => {},
-                };
+                if velocity.x > 0. {
+                    direction.x = Directions::Left;
+                    collider.next_position.x -= 45. * 2.;
+                }
+                if velocity.x < 0. {
+                    direction.x = Directions::Right;
+                    collider.next_position.x += 45. * 2.;
+                }
+                motion.velocity.x = -1. * velocity.x;
             }
             if collidee.is_hit {
                 match collidee.collider_name.as_ref() {
