@@ -1,6 +1,9 @@
 use amethyst::{
     assets::{Handle, Prefab},
-    core::{math::{Vector2, Vector3}, Transform, WithNamed},
+    core::{
+        math::{Vector2, Vector3},
+        Transform, WithNamed,
+    },
     ecs::prelude::World,
     prelude::Builder,
     renderer::transparent::Transparent,
@@ -8,17 +11,8 @@ use amethyst::{
 
 use crate::{
     components::{
-        Animation,
-        AnimationId,
-        AnimationPrefabData,
-        BoundingRect,
-        Collidee,
-        Collider,
-        Direction,
-        Directions,
-        Pincer,
-        Motion,
-        TwoDimObject
+        Animation, AnimationId, AnimationPrefabData, BoundingRect, Collidee, Collider, Direction,
+        Directions, Motion, Pincer, TwoDimObject,
     },
     resources::Context,
 };
@@ -53,10 +47,7 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
         .with(motion)
         .with(Animation::new(
             AnimationId::Idle,
-            vec![
-                AnimationId::Idle,
-                AnimationId::Walk,
-            ],
+            vec![AnimationId::Idle, AnimationId::Walk],
         ))
         .with(prefab)
         .with(Direction::new(

@@ -1,28 +1,17 @@
 use amethyst::{
     assets::{Handle, Prefab},
-    core::{math::{Vector2, Vector3}, Named, Transform},
-    ecs::{Entities, Entity, LazyUpdate, ReadExpect},
-    renderer::{
-        sprite::SpriteSheetHandle,
-        SpriteRender,
-        transparent::Transparent,
+    core::{
+        math::{Vector2, Vector3},
+        Named, Transform,
     },
+    ecs::{Entities, Entity, LazyUpdate, ReadExpect},
+    renderer::{sprite::SpriteSheetHandle, transparent::Transparent, SpriteRender},
 };
 
 use crate::{
     components::{
-        Animation,
-        AnimationId,
-        AnimationPrefabData,
-        BoundingRect,
-        Bullet,
-        BulletImpact,
-        Collidee,
-        Collider,
-        Direction,
-        Directions,
-        Motion,
-        TwoDimObject
+        Animation, AnimationId, AnimationPrefabData, BoundingRect, Bullet, BulletImpact, Collidee,
+        Collider, Direction, Directions, Motion, TwoDimObject,
     },
     resources::Context,
 };
@@ -69,10 +58,13 @@ pub fn spawn_bullet(
     lazy_update.insert(bullet_entity, Bullet::default());
     lazy_update.insert(bullet_entity, Named::new("Bullet"));
     lazy_update.insert(bullet_entity, two_dim_object);
-    lazy_update.insert(bullet_entity, Collider::new(
-        Vector2::new(shoot_start_position, marine_bottom + 48.),
-        BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
-    ));
+    lazy_update.insert(
+        bullet_entity,
+        Collider::new(
+            Vector2::new(shoot_start_position, marine_bottom + 48.),
+            BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
+        ),
+    );
     lazy_update.insert(bullet_entity, Collidee::default());
     lazy_update.insert(bullet_entity, sprite_render);
     lazy_update.insert(bullet_entity, motion);
@@ -117,12 +109,10 @@ pub fn show_bullet_impact(
     two_dim_object.update_transform_position(&mut transform);
 
     lazy_update.insert(bullet_impact_entity, BulletImpact::default());
-    lazy_update.insert(bullet_impact_entity, Animation::new(
-        AnimationId::BulletImpact,
-        vec![
-            AnimationId::BulletImpact,
-        ],
-    ));
+    lazy_update.insert(
+        bullet_impact_entity,
+        Animation::new(AnimationId::BulletImpact, vec![AnimationId::BulletImpact]),
+    );
     lazy_update.insert(bullet_impact_entity, prefab_handle);
     lazy_update.insert(bullet_impact_entity, transform);
     lazy_update.insert(bullet_impact_entity, direction);

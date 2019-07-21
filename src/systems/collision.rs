@@ -1,12 +1,12 @@
+use crate::{
+    components::collider::{CollisionSource, CollisionWithCollidee},
+    components::{Bullet, Collidee, Collider, Direction, Directions, Motion, Pincer, TwoDimObject},
+    entities::{show_bullet_impact, show_explosion},
+    resources::{AssetType, Context, PrefabList},
+};
 use amethyst::{
     core::{Named, Transform},
     ecs::{Entities, Join, LazyUpdate, ReadExpect, ReadStorage, System, WriteStorage},
-};
-use crate::{
-    components::{Bullet, Collider, Collidee, Motion, Direction, Directions, Pincer, TwoDimObject},
-    components::collider::{CollisionSource, CollisionWithCollidee},
-    entities::{show_bullet_impact, show_explosion},
-    resources::{AssetType, Context, PrefabList},
 };
 
 pub struct CollisionSystem;
@@ -25,10 +25,10 @@ impl<'s> System<'s> for CollisionSystem {
         let (two_dim_objs, motions, mut colliders, mut collidees, names, directions) = data;
 
         for (motion_a, two_dim_obj_a, collider, name_a) in
-            (&motions, &two_dim_objs, &mut colliders, &names).join() {
+            (&motions, &two_dim_objs, &mut colliders, &names).join()
+        {
             let velocity_a = motion_a.velocity;
             let bounding_rect = collider.bounding_rect;
-
 
             if velocity_a.x > 0. {
                 let mut collision = CollisionSource::None;
@@ -37,11 +37,12 @@ impl<'s> System<'s> for CollisionSystem {
                 let mut collidee_component = &mut Collidee::default();
 
                 for (two_dim_obj_b, motion_b, name_b, dir, collidee) in
-                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join() {
-                    let (x, has_changed) = two_dim_obj_a
-                        .get_next_right(two_dim_obj_b, old_x, possible_new_x);
+                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join()
+                {
+                    let (x, has_changed) =
+                        two_dim_obj_a.get_next_right(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
-                        collision = CollisionSource::Collidee(CollisionWithCollidee{
+                        collision = CollisionSource::Collidee(CollisionWithCollidee {
                             name: name_b.name.to_string(),
                             direction: dir.x,
                             hit_box_offset_front: collidee.hitbox_offset_front,
@@ -54,10 +55,10 @@ impl<'s> System<'s> for CollisionSystem {
                 }
 
                 // Ensure entity stays inside its right bound
-                let new_x = if possible_new_x >= bounding_rect.right{
+                let new_x = if possible_new_x >= bounding_rect.right {
                     collision = CollisionSource::Boundary;
                     bounding_rect.right
-                }else{
+                } else {
                     possible_new_x
                 };
                 if let CollisionSource::Collidee(_) = &collision {
@@ -74,11 +75,12 @@ impl<'s> System<'s> for CollisionSystem {
                 let mut collidee_component = &mut Collidee::default();
 
                 for (two_dim_obj_b, motion_b, name, dir, collidee) in
-                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join() {
-                    let (x, has_changed) = two_dim_obj_a
-                        .get_next_left(two_dim_obj_b, old_x, possible_new_x);
+                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join()
+                {
+                    let (x, has_changed) =
+                        two_dim_obj_a.get_next_left(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
-                        collision = CollisionSource::Collidee(CollisionWithCollidee{
+                        collision = CollisionSource::Collidee(CollisionWithCollidee {
                             name: name.name.to_string(),
                             direction: dir.x,
                             hit_box_offset_front: collidee.hitbox_offset_front,
@@ -91,10 +93,10 @@ impl<'s> System<'s> for CollisionSystem {
                 }
 
                 // Ensure entity stays inside its left bound
-                let new_x = if possible_new_x <= bounding_rect.left{
+                let new_x = if possible_new_x <= bounding_rect.left {
                     collision = CollisionSource::Boundary;
                     bounding_rect.left
-                }else{
+                } else {
                     possible_new_x
                 };
                 if let CollisionSource::Collidee(_) = &collision {
@@ -110,8 +112,8 @@ impl<'s> System<'s> for CollisionSystem {
                 let mut possible_new_y = two_dim_obj_a.top() + velocity_a.y;
 
                 for two_dim_obj_b in (&two_dim_objs).join() {
-                    possible_new_y = two_dim_obj_a
-                        .get_next_top(two_dim_obj_b, old_y, possible_new_y);
+                    possible_new_y =
+                        two_dim_obj_a.get_next_top(two_dim_obj_b, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
                 collider.next_position.y = new_y;
@@ -120,8 +122,8 @@ impl<'s> System<'s> for CollisionSystem {
                 let mut possible_new_y = two_dim_obj_a.bottom() + velocity_a.y;
 
                 for two_dim_obj_b in (&two_dim_objs).join() {
-                    possible_new_y = two_dim_obj_a
-                        .get_next_bottom(two_dim_obj_b, old_y, possible_new_y);
+                    possible_new_y =
+                        two_dim_obj_a.get_next_bottom(two_dim_obj_b, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
                 collider.next_position.y = new_y;
@@ -146,21 +148,38 @@ impl<'s> System<'s> for BulletCollisionSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut bullets, two_dim_objs, mut colliders, mut motions,
-            directions, prefab_list, lazy_update, ctx) = data;
-        for (entity, _bullet, two_dim_obj, collider, motion, dir) in
-            (&*entities, &mut bullets, &two_dim_objs, &mut colliders, &mut motions, &directions).join()
+        let (
+            entities,
+            mut bullets,
+            two_dim_objs,
+            mut colliders,
+            mut motions,
+            directions,
+            prefab_list,
+            lazy_update,
+            ctx,
+        ) = data;
+        for (entity, _bullet, two_dim_obj, collider, motion, dir) in (
+            &*entities,
+            &mut bullets,
+            &two_dim_objs,
+            &mut colliders,
+            &mut motions,
+            &directions,
+        )
+            .join()
         {
-            let collidee_data = match &collider.collision{
+            let collidee_data = match &collider.collision {
                 CollisionSource::Collidee(collidee_data) => collidee_data,
-                 _ => {continue;}
+                _ => {
+                    continue;
+                }
             };
 
             let offset = BulletCollisionSystem::collision_offset(collidee_data, motion, dir);
             let velocity = motion.velocity;
-            let bullet_impact_prefab_handle = {
-                prefab_list.get(AssetType::BulletImpact).unwrap().clone()
-            };
+            let bullet_impact_prefab_handle =
+                { prefab_list.get(AssetType::BulletImpact).unwrap().clone() };
 
             match collidee_data.name.as_ref() {
                 "Collision" | "Pincer" => {
@@ -173,7 +192,7 @@ impl<'s> System<'s> for BulletCollisionSystem {
                         &lazy_update,
                         &ctx,
                     );
-                },
+                }
                 _ => {}
             };
             let _ = entities.delete(entity);
@@ -181,8 +200,12 @@ impl<'s> System<'s> for BulletCollisionSystem {
     }
 }
 
-impl BulletCollisionSystem{
-    fn collision_offset(collidee_data: &CollisionWithCollidee, motion: &Motion, dir: &Direction) -> f32{
+impl BulletCollisionSystem {
+    fn collision_offset(
+        collidee_data: &CollisionWithCollidee,
+        motion: &Motion,
+        dir: &Direction,
+    ) -> f32 {
         // Bullet can be fired horizontally only
         if dir.x == collidee_data.direction {
             if motion.velocity.x > 0. {
@@ -217,18 +240,38 @@ impl<'s> System<'s> for PincerCollisionSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut pincers, mut colliders, mut collidees, mut motions,
-            mut directions, transforms, prefab_list, lazy_update, ctx) = data;
+        let (
+            entities,
+            mut pincers,
+            mut colliders,
+            mut collidees,
+            mut motions,
+            mut directions,
+            transforms,
+            prefab_list,
+            lazy_update,
+            ctx,
+        ) = data;
 
-        for (entity, _, motion, collider, collidee, direction, transform) in
-            (&entities, &mut pincers, &mut motions, &mut colliders,
-                &mut collidees, &mut directions, &transforms).join() {
+        for (entity, _, motion, collider, collidee, direction, transform) in (
+            &entities,
+            &mut pincers,
+            &mut motions,
+            &mut colliders,
+            &mut collidees,
+            &mut directions,
+            &transforms,
+        )
+            .join()
+        {
             let change_direction = match &collider.collision {
                 CollisionSource::Boundary => true,
-                CollisionSource::Collidee(collidee_data) if collidee_data.name == "Collision" => true,
+                CollisionSource::Collidee(collidee_data) if collidee_data.name == "Collision" => {
+                    true
+                }
                 _ => false,
             };
-            if change_direction{
+            if change_direction {
                 let velocity = motion.velocity;
                 if velocity.x > 0. {
                     direction.x = Directions::Left;
@@ -245,9 +288,8 @@ impl<'s> System<'s> for PincerCollisionSystem {
                     "Bullet" => {
                         collidee.hit_count += 1;
                         if collidee.hit_count == 4 {
-                            let small_explosion_prefab_handle = {
-                                prefab_list.get(AssetType::SmallExplosion).unwrap().clone()
-                            };
+                            let small_explosion_prefab_handle =
+                                { prefab_list.get(AssetType::SmallExplosion).unwrap().clone() };
                             let pincer_translation = transform.translation();
                             show_explosion(
                                 &entities,
@@ -260,8 +302,8 @@ impl<'s> System<'s> for PincerCollisionSystem {
                             let _ = entities.delete(entity);
                         }
                         collidee.is_hit = false;
-                    },
-                    _ => {},
+                    }
+                    _ => {}
                 }
             }
         }
