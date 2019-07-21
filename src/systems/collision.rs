@@ -231,7 +231,7 @@ impl<'s> System<'s> for PincerCollisionSystem {
             if collider.has_collided {
                 let velocity = motion.velocity;
                 match collider.collidee_name.as_ref() {
-                    "Boundary" => {
+                    "Boundary" | "Collision" => {
                         if velocity.x > 0. {
                             direction.x = Directions::Left;
                             collider.next_position.x -= 45. * 2.;
