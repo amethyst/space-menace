@@ -8,7 +8,7 @@ extern crate specs_derive;
 use amethyst::{
     animation::AnimationBundle,
     assets::{PrefabLoaderSystem, Processor},
-    core::{transform::{TransformBundle}},
+    core::transform::TransformBundle,
     input::{InputBundle, StringBindings},
     renderer::{
         sprite::{SpriteRender, SpriteSheet},
@@ -17,20 +17,19 @@ use amethyst::{
     },
     utils::application_root_dir,
     window::WindowBundle,
-    Application,
-    GameDataBuilder, 
+    Application, GameDataBuilder,
 };
 
-mod entities;
-mod states;
 mod components;
-mod resources;
-mod systems;
+mod entities;
 mod graph_creator;
+mod resources;
+mod states;
+mod systems;
 
+use components::{AnimationId, AnimationPrefabData};
 use resources::Map;
 use systems::*;
-use components::{AnimationId, AnimationPrefabData};
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -64,24 +63,60 @@ fn main() -> amethyst::Result<()> {
         )
         .with(Processor::<Map>::new(), "map_processor", &[])
         .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
-        .with(AttackSystem, "attack_system", &["marine_acceleration_system"])
-        .with(CollisionSystem, "collision_system", &["marine_acceleration_system"])
-        .with(BulletCollisionSystem, "bullet_collision_system", &["collision_system"])
-        .with(BulletImpactAnimationSystem, "bullet_impact_animation_system", &["bullet_collision_system"])
-        .with(PincerCollisionSystem, "pincer_collision_system", &["collision_system"])
-        .with(PincerAnimationSystem, "pincer_animation_system", &["pincer_collision_system"])
+        .with(
+            AttackSystem,
+            "attack_system",
+            &["marine_acceleration_system"],
+        )
+        .with(
+            CollisionSystem,
+            "collision_system",
+            &["marine_acceleration_system"],
+        )
+        .with(
+            BulletCollisionSystem,
+            "bullet_collision_system",
+            &["collision_system"],
+        )
+        .with(
+            BulletImpactAnimationSystem,
+            "bullet_impact_animation_system",
+            &["bullet_collision_system"],
+        )
+        .with(
+            PincerCollisionSystem,
+            "pincer_collision_system",
+            &["collision_system"],
+        )
+        .with(
+            PincerAnimationSystem,
+            "pincer_animation_system",
+            &["pincer_collision_system"],
+        )
         .with(ExplosionAnimationSystem, "explosion_animation_system", &[])
         .with(ParallaxSystem, "parallax_system", &[])
-        .with(MotionSystem, "motion_system", &["collision_system", "parallax_system"])
-        .with(MarineAnimationSystem, "marine_animation_system", &["collision_system"])
+        .with(
+            MotionSystem,
+            "motion_system",
+            &["collision_system", "parallax_system"],
+        )
+        .with(
+            MarineAnimationSystem,
+            "marine_animation_system",
+            &["collision_system"],
+        )
         .with(AnimationControlSystem, "animation_control_system", &[])
         .with(DirectionSystem, "direction_system", &[])
-        .with(CameraMotionSystem, "camera_motion_system", &["collision_system"])
+        .with(
+            CameraMotionSystem,
+            "camera_motion_system",
+            &["collision_system"],
+        )
         .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
             graph_creator::GameGraphCreator::default(),
         ));
-    let mut game = Application::build(assets_path, states::LoadState::default())?
-        .build(game_data)?;
+    let mut game =
+        Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
 
     game.run();
 

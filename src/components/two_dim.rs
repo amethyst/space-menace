@@ -1,5 +1,5 @@
 use amethyst::{
-    core::{Transform},
+    core::Transform,
     ecs::{Component, DenseVecStorage},
 };
 
@@ -21,15 +21,18 @@ pub struct TwoDimObject {
 impl TwoDimObject {
     pub fn new(width: f32, height: f32) -> Self {
         TwoDimObject {
-            size: TwoDimVector {x: width, y: height},
-            position: TwoDimVector {x: 0., y: 0.},
+            size: TwoDimVector {
+                x: width,
+                y: height,
+            },
+            position: TwoDimVector { x: 0., y: 0. },
             hit_box_offset_front: 0.,
             hit_box_offset_back: 0.,
         }
     }
 
     pub fn set_position(&mut self, x: f32, y: f32) {
-        self.position = TwoDimVector {x, y};
+        self.position = TwoDimVector { x, y };
     }
 
     pub fn update_transform_position(&self, transform: &mut Transform) {
@@ -83,10 +86,11 @@ impl TwoDimObject {
         old_x: f32,
         mut possible_new_x: f32,
     ) -> (f32, bool) {
-        let mut has_changed= false;
+        let mut has_changed = false;
         if self.overlapping_y(two_dim_object)
             && old_x <= two_dim_object.left()
-            && possible_new_x >= two_dim_object.left() {
+            && possible_new_x >= two_dim_object.left()
+        {
             // Can't early return here, because we need to consider collision with
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act
@@ -105,7 +109,8 @@ impl TwoDimObject {
         let mut has_changed = false;
         if self.overlapping_y(two_dim_object)
             && old_x >= two_dim_object.right()
-            && possible_new_x <= two_dim_object.right() {
+            && possible_new_x <= two_dim_object.right()
+        {
             // Can't early return here, because we need to consider collision with
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act
@@ -119,11 +124,12 @@ impl TwoDimObject {
         &self,
         two_dim_object: &TwoDimObject,
         old_y: f32,
-        mut possible_new_y: f32
+        mut possible_new_y: f32,
     ) -> f32 {
         if self.overlapping_x(two_dim_object)
             && old_y <= two_dim_object.bottom()
-            && possible_new_y >= two_dim_object.bottom() {
+            && possible_new_y >= two_dim_object.bottom()
+        {
             // Can't early return here, because we need to consider collision with
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act
@@ -136,11 +142,12 @@ impl TwoDimObject {
         &self,
         two_dim_object: &TwoDimObject,
         old_y: f32,
-        mut possible_new_y: f32
+        mut possible_new_y: f32,
     ) -> f32 {
         if self.overlapping_x(two_dim_object)
             && old_y >= two_dim_object.top()
-            && possible_new_y <= two_dim_object.top() {
+            && possible_new_y <= two_dim_object.top()
+        {
             // Can't early return here, because we need to consider collision with
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act

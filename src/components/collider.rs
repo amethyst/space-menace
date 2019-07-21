@@ -52,13 +52,13 @@ impl Collider {
     }
 }
 
-pub enum CollisionSource{
+pub enum CollisionSource {
     None,
     Boundary,
-    Collidee(CollisionWithCollidee)
+    Collidee(CollisionWithCollidee),
 }
 
-pub struct CollisionWithCollidee{
+pub struct CollisionWithCollidee {
     pub name: String,
     pub direction: Directions,
     pub velocity_x: f32,
