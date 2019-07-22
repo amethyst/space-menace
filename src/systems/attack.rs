@@ -25,8 +25,17 @@ impl<'s> System<'s> for AttackSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, two_dim_objs, mut marines, motions, directions,
-            sprite_sheet_list, lazy_update, input, ctx) = data;
+        let (
+            entities,
+            two_dim_objs,
+            mut marines,
+            motions,
+            directions,
+            sprite_sheet_list,
+            lazy_update,
+            input,
+            ctx,
+        ) = data;
         let mut marine_entities_on_ground = vec![];
 
         for (_marine, marine_2d_obj, entity) in (&marines, &two_dim_objs, &entities).join() {
@@ -37,9 +46,15 @@ impl<'s> System<'s> for AttackSystem {
             }
         }
 
-        for (mut marine, motion, two_dim_obj, direction, marine_entity) in
-            (&mut marines, &motions, &two_dim_objs, &directions, &entities).join() {
-
+        for (mut marine, motion, two_dim_obj, direction, marine_entity) in (
+            &mut marines,
+            &motions,
+            &two_dim_objs,
+            &directions,
+            &entities,
+        )
+            .join()
+        {
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
@@ -55,9 +70,8 @@ impl<'s> System<'s> for AttackSystem {
                     shoot_start_position = two_dim_obj.right();
                 }
 
-                let bullet_sprite_sheet_handle = {
-                    sprite_sheet_list.get(AssetType::Bullet).unwrap().clone()
-                };
+                let bullet_sprite_sheet_handle =
+                    { sprite_sheet_list.get(AssetType::Bullet).unwrap().clone() };
                 spawn_bullet(
                     &entities,
                     bullet_sprite_sheet_handle,

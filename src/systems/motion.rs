@@ -22,7 +22,8 @@ impl<'s> System<'s> for MotionSystem {
         let (mut two_dim_objs, motions, colliders, mut transforms) = data;
 
         for (two_dim_obj, motion, collider, mut transform) in
-            (&mut two_dim_objs, &motions, &colliders, &mut transforms).join() {
+            (&mut two_dim_objs, &motions, &colliders, &mut transforms).join()
+        {
             if motion.velocity.x > 0. {
                 two_dim_obj.set_right(collider.next_position.x);
             }
@@ -56,12 +57,12 @@ impl<'s> System<'s> for CameraMotionSystem {
         let background_width = ctx.bg_width;
 
         for (_marine, transform) in (&marines, &transforms).join() {
-            marine_x = transform.translation().x.as_f32();
+            marine_x = transform.translation().x;
         }
 
         for (_subject_tag, transform) in (&subject_tags, &mut transforms).join() {
             if marine_x >= background_width && marine_x <= map_width - background_width {
-                transform.set_translation_x(marine_x);            
+                transform.set_translation_x(marine_x);
             }
         }
     }

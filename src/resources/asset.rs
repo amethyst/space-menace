@@ -6,8 +6,7 @@ use amethyst::{
     renderer::{
         formats::texture::ImageFormat,
         sprite::{SpriteSheetFormat, SpriteSheetHandle},
-        SpriteSheet,
-        Texture,
+        SpriteSheet, Texture,
     },
 };
 
@@ -31,11 +30,7 @@ pub struct SpriteSheetList {
 }
 
 impl SpriteSheetList {
-    pub fn insert(
-        &mut self,
-        asset_type: AssetType,
-        sprite_sheet_handle: SpriteSheetHandle,
-    ) {
+    pub fn insert(&mut self, asset_type: AssetType, sprite_sheet_handle: SpriteSheetHandle) {
         self.sprite_sheets.insert(asset_type, sprite_sheet_handle);
     }
 
@@ -71,54 +66,31 @@ pub fn load_assets(world: &mut World, asset_type_list: Vec<AssetType>) -> Progre
 
     for &asset_type in asset_type_list.iter() {
         let (texture_path, ron_path) = match asset_type {
-            AssetType::Background => {
-                ("textures/background.png", "prefabs/background.ron")
-            },
-            AssetType::Bullet => {
-                ("textures/bullet.png", "prefabs/bullet.ron")
-            },
-            AssetType::BulletImpact => {
-                ("", "prefabs/bullet_impact.ron")
-            },
-            AssetType::Marine => {
-                ("", "prefabs/marine.ron")
-            },
-            AssetType::Pincer => {
-                ("", "prefabs/pincer.ron")
-            },
-            AssetType::Platform => {
-                ("textures/platform.png", "prefabs/platform.ron")
-            },
-            AssetType::SmallExplosion => {
-                ("textures/small_explosion.png", "prefabs/small_explosion.ron")
-            },
-            AssetType::Truss => {
-                ("textures/truss.png", "prefabs/truss.ron")
-            },
+            AssetType::Background => ("textures/background.png", "prefabs/background.ron"),
+            AssetType::Bullet => ("textures/bullet.png", "prefabs/bullet.ron"),
+            AssetType::BulletImpact => ("", "prefabs/bullet_impact.ron"),
+            AssetType::Marine => ("", "prefabs/marine.ron"),
+            AssetType::Pincer => ("", "prefabs/pincer.ron"),
+            AssetType::Platform => ("textures/platform.png", "prefabs/platform.ron"),
+            AssetType::SmallExplosion => (
+                "textures/small_explosion.png",
+                "prefabs/small_explosion.ron",
+            ),
+            AssetType::Truss => ("textures/truss.png", "prefabs/truss.ron"),
         };
 
         match asset_type {
-            AssetType::Background |
-            AssetType::Bullet |
-            AssetType::Platform |
-            AssetType::Truss => {
-                let sprite_sheet_handle = get_sprite_sheet_handle(
-                    world,
-                    texture_path,
-                    ron_path,
-                    &mut progress_counter,
-                );
+            AssetType::Background | AssetType::Bullet | AssetType::Platform | AssetType::Truss => {
+                let sprite_sheet_handle =
+                    get_sprite_sheet_handle(world, texture_path, ron_path, &mut progress_counter);
                 sprite_sheet_list.insert(asset_type, sprite_sheet_handle);
-            },
-            AssetType::BulletImpact |
-            AssetType::Marine |
-            AssetType::Pincer |
-            AssetType::SmallExplosion => {
-                let prefab_handle = get_animation_prefab_handle(
-                    world,
-                    ron_path,
-                    &mut progress_counter
-                );
+            }
+            AssetType::BulletImpact
+            | AssetType::Marine
+            | AssetType::Pincer
+            | AssetType::SmallExplosion => {
+                let prefab_handle =
+                    get_animation_prefab_handle(world, ron_path, &mut progress_counter);
                 prefab_list.insert(asset_type, prefab_handle);
             }
         };
@@ -142,12 +114,7 @@ pub fn get_sprite_sheet_handle(
     let texture_handle = {
         let loader = &world.read_resource::<Loader>();
         let texture_storage = &world.read_resource::<AssetStorage<Texture>>();
-        loader.load(
-            texture_path,
-            ImageFormat::default(),
-            (),
-            &texture_storage,
-        )
+        loader.load(texture_path, ImageFormat::default(), (), &texture_storage)
     };
     let loader = &world.read_resource::<Loader>();
     let sprite_sheet_store = &world.read_resource::<AssetStorage<SpriteSheet>>();

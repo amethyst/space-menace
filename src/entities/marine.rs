@@ -1,6 +1,9 @@
 use amethyst::{
     assets::{Handle, Prefab},
-    core::{math::{Vector2, Vector3}, Transform, WithNamed},
+    core::{
+        math::{Vector2, Vector3},
+        Transform, WithNamed,
+    },
     ecs::prelude::World,
     prelude::Builder,
     renderer::transparent::Transparent,
@@ -8,17 +11,8 @@ use amethyst::{
 
 use crate::{
     components::{
-        Animation,
-        AnimationId,
-        AnimationPrefabData,
-        BoundingRect,
-        Collidee,
-        Collider,
-        Direction,
-        Directions,
-        Marine,
-        Motion,
-        TwoDimObject,
+        Animation, AnimationId, AnimationPrefabData, BoundingRect, Collidee, Collider, Direction,
+        Directions, Marine, Motion, TwoDimObject,
     },
     resources::Context,
 };
