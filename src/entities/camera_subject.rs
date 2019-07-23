@@ -1,13 +1,11 @@
 use amethyst::{
     core::Transform,
-    ecs::{Entity, prelude::World},
+    ecs::{prelude::World, Entity},
     prelude::Builder,
     renderer::transparent::Transparent,
 };
 
-use crate::{
-    components::Subject,
-};
+use crate::components::Subject;
 
 pub fn load_camera_subject(world: &mut World) -> Entity {
     let mut transform = Transform::default();

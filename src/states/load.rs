@@ -1,11 +1,11 @@
 use amethyst::{
-    assets::{AssetStorage, Handle, Loader, JsonFormat, ProgressCounter},
+    assets::{AssetStorage, Handle, JsonFormat, Loader, ProgressCounter},
     prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
 };
 
 use crate::{
-    entities::{load_camera_subject, load_camera, load_marine, load_pincer},
-    resources::{AssetType, Context, Map, PrefabList, load_assets},
+    entities::{load_camera, load_camera_subject, load_marine, load_pincer},
+    resources::{load_assets, AssetType, Context, Map, PrefabList},
 };
 
 #[derive(Default)]
@@ -31,18 +31,16 @@ impl SimpleState for LoadState {
                 AssetType::Platform,
                 AssetType::SmallExplosion,
                 AssetType::Truss,
-            ]
+            ],
         ));
         self.map_handle = {
             let loader = world.read_resource::<Loader>();
-            Some(
-                loader.load(
-                    "tilemaps/map.json",
-                    JsonFormat,
-                    self.progress_counter.as_mut().expect("map"),
-                    &world.read_resource::<AssetStorage<Map>>(),
-                )
-            )
+            Some(loader.load(
+                "tilemaps/map.json",
+                JsonFormat,
+                self.progress_counter.as_mut().expect("map"),
+                &world.read_resource::<AssetStorage<Map>>(),
+            ))
         };
 
         let camera_subject = load_camera_subject(world);

@@ -1,26 +1,12 @@
 use amethyst::{
     animation::{
-        AnimationSet,
-        AnimationCommand,
-        AnimationControlSet,
-        EndControl,
-        get_animation_set
+        get_animation_set, AnimationCommand, AnimationControlSet, AnimationSet, EndControl,
     },
     ecs::{Entities, Join, ReadStorage, System, WriteStorage},
-    renderer::{SpriteRender},
+    renderer::SpriteRender,
 };
 
-use crate::{
-    components::{
-        Animation,
-        AnimationId,
-        BulletImpact,
-        Explosion,
-        Marine,
-        Motion,
-        Pincer,
-    },
-};
+use crate::components::{Animation, AnimationId, BulletImpact, Explosion, Marine, Motion, Pincer};
 
 pub struct BulletImpactAnimationSystem;
 
@@ -32,12 +18,17 @@ impl<'s> System<'s> for BulletImpactAnimationSystem {
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
     );
 
-    fn run(&mut self, data: Self::SystemData) {    
+    fn run(&mut self, data: Self::SystemData) {
         let (entities, bullet_impacts, mut animations, mut animation_control_sets) = data;
 
-        for (entity, _, mut animation, animation_control_set) in
-            (&entities, &bullet_impacts, &mut animations, &mut animation_control_sets).join() {
-
+        for (entity, _, mut animation, animation_control_set) in (
+            &entities,
+            &bullet_impacts,
+            &mut animations,
+            &mut animation_control_sets,
+        )
+            .join()
+        {
             if animation.show {
                 animation_control_set.start(animation.current);
                 animation.show = false;
@@ -65,16 +56,20 @@ impl<'s> System<'s> for ExplosionAnimationSystem {
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
     );
 
-    fn run(&mut self, data: Self::SystemData) {    
+    fn run(&mut self, data: Self::SystemData) {
         let (entities, explosions, mut animations, mut animation_control_sets) = data;
 
-        for (entity, _, mut animation, animation_control_set) in
-            (&entities, &explosions, &mut animations, &mut animation_control_sets).join() {
-
+        for (entity, _, mut animation, animation_control_set) in (
+            &entities,
+            &explosions,
+            &mut animations,
+            &mut animation_control_sets,
+        )
+            .join()
+        {
             if animation.show {
                 animation_control_set.start(animation.current);
                 animation.show = false;
-            
             } else {
                 let explode_animation = animation_control_set
                     .animations
@@ -85,7 +80,6 @@ impl<'s> System<'s> for ExplosionAnimationSystem {
                     let _ = entities.delete(entity);
                 }
             }
-
         }
     }
 }
@@ -122,12 +116,10 @@ impl<'s> System<'s> for AnimationControlSystem {
                         );
 
                         let end = match animation_id {
-                            AnimationId::Shoot | AnimationId::Explode | AnimationId::BulletImpact => {
-                                EndControl::Stay
-                            },
-                            _ => {
-                                EndControl::Loop(None)
-                            }
+                            AnimationId::Shoot
+                            | AnimationId::Explode
+                            | AnimationId::BulletImpact => EndControl::Stay,
+                            _ => EndControl::Loop(None),
                         };
                         animation_control_set.add_animation(
                             animation_id,
@@ -160,21 +152,26 @@ impl<'s> System<'s> for MarineAnimationSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let (entities, mut marines, motions, mut animations, mut animation_control_sets) = data;
-        
-        for (entity, mut marine, motion, mut animation, animation_control_set) in
-            (&entities, &mut marines, &motions, &mut animations, &mut animation_control_sets).join() {
 
+        for (entity, mut marine, motion, mut animation, animation_control_set) in (
+            &entities,
+            &mut marines,
+            &motions,
+            &mut animations,
+            &mut animation_control_sets,
+        )
+            .join()
+        {
             let marine_velocity = motion.velocity;
-            let new_animation_id = 
-                if marine_velocity.y != 0. {
-                    AnimationId::Jump
-                } else if marine_velocity.x != 0. {
-                    AnimationId::Move
-                } else if marine.has_shot {
-                    AnimationId::Shoot
-                } else {
-                    AnimationId::Idle
-                };
+            let new_animation_id = if marine_velocity.y != 0. {
+                AnimationId::Jump
+            } else if marine_velocity.x != 0. {
+                AnimationId::Move
+            } else if marine.has_shot {
+                AnimationId::Shoot
+            } else {
+                AnimationId::Idle
+            };
             marine.has_shot = false;
 
             // If the new AnimationId is different to the current one, abort the
@@ -210,17 +207,22 @@ impl<'s> System<'s> for PincerAnimationSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let (entities, pincers, motions, mut animations, mut animation_control_sets) = data;
-        
-        for (entity, _pincer, motion, mut animation, animation_control_set) in
-            (&entities, &pincers, &motions, &mut animations, &mut animation_control_sets).join() {
 
+        for (entity, _pincer, motion, mut animation, animation_control_set) in (
+            &entities,
+            &pincers,
+            &motions,
+            &mut animations,
+            &mut animation_control_sets,
+        )
+            .join()
+        {
             let pincer_velocity = motion.velocity;
-            let new_animation_id = 
-                if pincer_velocity.x != 0. {
-                    AnimationId::Walk
-                } else {
-                    AnimationId::Idle
-                };
+            let new_animation_id = if pincer_velocity.x != 0. {
+                AnimationId::Walk
+            } else {
+                AnimationId::Idle
+            };
 
             // If the new AnimationId is different to the current one, abort the
             // current animation and start the new one

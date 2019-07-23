@@ -1,16 +1,7 @@
+use crate::components::{Direction, Directions, Marine, MarineState, Motion, TwoDimObject};
 use amethyst::{
-    ecs::{
-        Entities,
-        Join,
-        Read,
-        ReadStorage,
-        System,
-        WriteStorage
-    },
+    ecs::{Entities, Join, Read, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
-};
-use crate::{
-    components::{Direction, Directions, Marine, MarineState, Motion, TwoDimObject},
 };
 
 pub struct MarineAccelerationSystem;
@@ -33,15 +24,16 @@ impl<'s> System<'s> for MarineAccelerationSystem {
         for (_marine, marine_2d_obj, entity) in (&marines, &two_dim_objs, &entities).join() {
             for two_dim_obj in (&two_dim_objs).join() {
                 if marine_2d_obj.bottom() == two_dim_obj.top()
-                    && marine_2d_obj.overlapping_x(two_dim_obj) {
+                    && marine_2d_obj.overlapping_x(two_dim_obj)
+                {
                     marine_entities_on_ground.push(entity);
                 }
             }
         }
 
         for (marine, motion, mut marine_dir, marine_entity) in
-            (&marines, &mut motions, &mut directions, &entities).join() {
-
+            (&marines, &mut motions, &mut directions, &entities).join()
+        {
             let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let x_input = input.axis_value("run").expect("horizontal axis exists");
             let jump_input = input.action_is_down("jump").expect("jump action exists");
@@ -68,11 +60,13 @@ impl<'s> System<'s> for MarineAccelerationSystem {
                 } else {
                     // accelerate till velocity reaches a max threshold
                     motion.velocity.x += 0.6 * x_input as f32;
-                    motion.velocity.x = motion.velocity.x
+                    motion.velocity.x = motion
+                        .velocity
+                        .x
                         .min(6.) // max velocity
                         .max(-1. * 6.);
                 }
-                
+
                 if x_input < 0. {
                     marine_dir.x = Directions::Left;
                 } else if x_input > 0. {

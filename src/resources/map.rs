@@ -1,19 +1,16 @@
-use amethyst:: {
+use amethyst::{
     assets::{Asset, Handle, ProcessingState},
     core::{math::Vector3, Transform, WithNamed},
     ecs::{prelude::World, VecStorage},
     error::Error,
     prelude::Builder,
-    renderer::{
-        sprite::SpriteRender,
-        transparent::Transparent,
-    },
+    renderer::{sprite::SpriteRender, transparent::Transparent},
 };
 
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    components::{TwoDimObject, Collidee, Direction, Motion, Parallax},
+    components::{Collidee, Direction, Motion, Parallax, TwoDimObject},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -72,7 +69,7 @@ impl Map {
             match layer.name.as_ref() {
                 "collision" => {
                     self.collision_layer(world, layer, ctx);
-                },
+                }
                 _ => {
                     self.load_non_collision_layer(world, layer, ctx);
                 }
@@ -92,7 +89,8 @@ impl Map {
             two_dim_object.set_top(ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction);
             two_dim_object.update_transform_position(&mut transform);
 
-            world.create_entity()
+            world
+                .create_entity()
                 .named("Collision")
                 .with(Motion::new())
                 .with(transform)
@@ -114,16 +112,16 @@ impl Map {
             "background" => {
                 asset_type_wrapper = Some(AssetType::Background);
                 z_translation = ctx.bg_z_translation;
-            },
+            }
             "platform" => {
                 asset_type_wrapper = Some(AssetType::Platform);
                 z_translation = ctx.platform_z_translation;
-            },
+            }
             "truss" => {
                 asset_type_wrapper = Some(AssetType::Truss);
                 z_translation = ctx.truss_z_translation;
-            },
-            _ => {},
+            }
+            _ => {}
         };
 
         if let Some(asset_type) = asset_type_wrapper {
@@ -136,10 +134,8 @@ impl Map {
                 let mut transform = Transform::default();
 
                 let sprite_index_prop = match &obj.properties {
-                    Some(props) => props.iter().find(
-                        |prop| prop.name == "spriteindex"
-                    ),
-                    None => None
+                    Some(props) => props.iter().find(|prop| prop.name == "spriteindex"),
+                    None => None,
                 };
                 let mut sprite = SpriteRender {
                     sprite_sheet: sprite_sheet_handle.clone(),
@@ -152,40 +148,42 @@ impl Map {
                             sprite_sheet: sprite_sheet_handle.clone(),
                             sprite_number: prop.value,
                         };
-                    },
-                    None => {},
+                    }
+                    None => {}
                 }
 
                 match layer.name.as_ref() {
-                    "background" |
-                    "truss" => {
+                    "background" | "truss" => {
                         transform.set_translation_xyz(
                             (obj.x + obj.width / 2.) * scale + x_correction,
                             ctx.bg_height * 2. - (obj.y + obj.height / 2.),
                             z_translation,
                         );
                         transform.set_scale(Vector3::new(4., 4., 4.));
-                        world.create_entity()
+                        world
+                            .create_entity()
                             .with(transform)
                             .with(sprite)
                             .with(Transparent)
                             .with(Parallax::default())
                             .build();
-                    },
+                    }
                     "platform" => {
                         transform.set_translation_xyz(
                             (obj.x + obj.width / 2.) * scale + x_correction,
-                            ctx.bg_height * 2. - (obj.y + obj.height / 2.) * scale + ctx.y_correction,
+                            ctx.bg_height * 2. - (obj.y + obj.height / 2.) * scale
+                                + ctx.y_correction,
                             z_translation,
                         );
                         transform.set_scale(Vector3::new(scale, scale, scale));
-                        world.create_entity()
+                        world
+                            .create_entity()
                             .with(transform)
                             .with(sprite)
                             .with(Transparent)
                             .build();
-                    },
-                    _ => {},
+                    }
+                    _ => {}
                 };
             }
         }

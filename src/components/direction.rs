@@ -1,6 +1,4 @@
-use amethyst::{
-    ecs::{Component, DenseVecStorage},
-};
+use amethyst::ecs::{Component, DenseVecStorage};
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum Directions {

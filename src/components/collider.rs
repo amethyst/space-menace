@@ -37,29 +37,40 @@ pub struct Collidee {
 #[derive(Component)]
 #[storage(DenseVecStorage)]
 pub struct Collider {
-    pub has_collided: bool,
     pub next_position: Vector2<f32>,
     pub bounding_rect: BoundingRect,
-    pub collidee_name: String,
-    pub collidee_direction: Directions,
-    pub collidee_velocity_x: f32,
-    pub collidee_velocity_y: f32,
-    pub collidee_hit_box_offset_front: f32,
-    pub collidee_hit_box_offset_back: f32,
+    pub collision: CollisionTarget,
 }
 
 impl Collider {
     pub fn new(next_position: Vector2<f32>, bounding_rect: BoundingRect) -> Self {
         Self {
-            has_collided: false,
             next_position,
             bounding_rect,
-            collidee_name: String::from(""),
-            collidee_direction: Directions::Neutral,
-            collidee_velocity_x: 0.,
-            collidee_velocity_y: 0.,
-            collidee_hit_box_offset_front: 0.,
-            collidee_hit_box_offset_back: 0.,
+            collision: CollisionTarget::None,
+        }
+    }
+}
+
+pub enum CollisionTarget {
+    None,
+    Boundary,
+    Collidee(CollisionTargetCollidee),
+}
+
+pub struct CollisionTargetCollidee {
+    pub name: String,
+    pub direction: Directions,
+    pub velocity_x: f32,
+    pub hit_box_offset_front: f32,
+    pub hit_box_offset_back: f32,
+}
+
+impl CollisionTarget {
+    pub fn is_collidee(&self) -> bool {
+        match self {
+            CollisionTarget::Collidee(_) => true,
+            _ => false,
         }
     }
 }
