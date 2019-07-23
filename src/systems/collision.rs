@@ -42,7 +42,7 @@ impl<'s> System<'s> for CollisionSystem {
                     let (x, has_changed) =
                         two_dim_obj_a.get_next_right(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
-                        collision_target = CollisionTarget::Collidee(CollisionTargetCollidee{
+                        collision_target = CollisionTarget::Collidee(CollisionTargetCollidee {
                             name: name_b.name.to_string(),
                             direction: dir.x,
                             hit_box_offset_front: collidee.hitbox_offset_front,
@@ -80,7 +80,7 @@ impl<'s> System<'s> for CollisionSystem {
                     let (x, has_changed) =
                         two_dim_obj_a.get_next_left(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
-                        collision_target = CollisionTarget::Collidee(CollisionTargetCollidee{
+                        collision_target = CollisionTarget::Collidee(CollisionTargetCollidee {
                             name: name.name.to_string(),
                             direction: dir.x,
                             hit_box_offset_front: collidee.hitbox_offset_front,
@@ -169,31 +169,35 @@ impl<'s> System<'s> for BulletCollisionSystem {
         )
             .join()
         {
-            let collidee_data = match &collider.collision{
-                CollisionTarget::Collidee(collidee_data) => collidee_data,
-                _ => continue,
-            };
+            match &collider.collision {
+                CollisionTarget::Collidee(collidee_data) => {
+                    let offset =
+                        BulletCollisionSystem::collision_offset(&collidee_data, motion, dir);
+                    let velocity = motion.velocity;
+                    let bullet_impact_prefab_handle =
+                        { prefab_list.get(AssetType::BulletImpact).unwrap().clone() };
 
-            let offset = BulletCollisionSystem::collision_offset(&collidee_data, motion, dir);
-            let velocity = motion.velocity;
-            let bullet_impact_prefab_handle =
-                { prefab_list.get(AssetType::BulletImpact).unwrap().clone() };
-
-            match collidee_data.name.as_ref() {
-                "Collision" | "Pincer" => {
-                    show_bullet_impact(
-                        &entities,
-                        bullet_impact_prefab_handle,
-                        collider.next_position.x + offset,
-                        two_dim_obj.bottom(),
-                        velocity.x,
-                        &lazy_update,
-                        &ctx,
-                    );
+                    match collidee_data.name.as_ref() {
+                        "Collision" | "Pincer" => {
+                            show_bullet_impact(
+                                &entities,
+                                bullet_impact_prefab_handle,
+                                collider.next_position.x + offset,
+                                two_dim_obj.bottom(),
+                                velocity.x,
+                                &lazy_update,
+                                &ctx,
+                            );
+                        }
+                        _ => {}
+                    };
+                    let _ = entities.delete(entity);
+                }
+                CollisionTarget::Boundary => {
+                    let _ = entities.delete(entity);
                 }
                 _ => {}
             };
-            let _ = entities.delete(entity);
         }
     }
 }
@@ -211,7 +215,7 @@ impl BulletCollisionSystem {
             } else {
                 -(collision_target.hit_box_offset_back + collision_target.velocity_x)
             }
-        }else{
+        } else {
             if motion.velocity.x < 0. {
                 collision_target.hit_box_offset_front - collision_target.velocity_x
             } else {
@@ -266,7 +270,9 @@ impl<'s> System<'s> for PincerCollisionSystem {
                 CollisionTarget::Boundary => {
                     change_pincer_movement_direction(collider, motion, direction);
                 }
-                CollisionTarget::Collidee(CollisionTargetCollidee{name, ..}) if name == "Collision" => {
+                CollisionTarget::Collidee(CollisionTargetCollidee { name, .. })
+                    if name == "Collision" =>
+                {
                     change_pincer_movement_direction(collider, motion, direction);
                 }
                 _ => {}
@@ -298,7 +304,11 @@ impl<'s> System<'s> for PincerCollisionSystem {
     }
 }
 
-fn change_pincer_movement_direction(collider: &mut Collider, motion: &mut Motion, direction: &mut Direction){
+fn change_pincer_movement_direction(
+    collider: &mut Collider,
+    motion: &mut Motion,
+    direction: &mut Direction,
+) {
     let velocity = motion.velocity;
     if velocity.x > 0. {
         direction.x = Directions::Left;

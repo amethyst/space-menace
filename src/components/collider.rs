@@ -58,7 +58,7 @@ pub enum CollisionTarget {
     Collidee(CollisionTargetCollidee),
 }
 
-pub struct CollisionTargetCollidee{
+pub struct CollisionTargetCollidee {
     pub name: String,
     pub direction: Directions,
     pub velocity_x: f32,
@@ -66,11 +66,11 @@ pub struct CollisionTargetCollidee{
     pub hit_box_offset_back: f32,
 }
 
-impl CollisionTarget{
-    pub fn is_collidee(&self) -> bool{
-        match self{
+impl CollisionTarget {
+    pub fn is_collidee(&self) -> bool {
+        match self {
             CollisionTarget::Collidee(_) => true,
-            _ => false
+            _ => false,
         }
     }
 }
