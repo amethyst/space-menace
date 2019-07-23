@@ -39,7 +39,7 @@ pub struct Collidee {
 pub struct Collider {
     pub next_position: Vector2<f32>,
     pub bounding_rect: BoundingRect,
-    pub collision: CollisionSource,
+    pub collision: CollisionTarget,
 }
 
 impl Collider {
@@ -47,21 +47,30 @@ impl Collider {
         Self {
             next_position,
             bounding_rect,
-            collision: CollisionSource::None,
+            collision: CollisionTarget::None,
         }
     }
 }
 
-pub enum CollisionSource {
+pub enum CollisionTarget {
     None,
     Boundary,
-    Collidee(CollisionWithCollidee),
+    Collidee(CollisionTargetCollidee),
 }
 
-pub struct CollisionWithCollidee {
+pub struct CollisionTargetCollidee{
     pub name: String,
     pub direction: Directions,
     pub velocity_x: f32,
     pub hit_box_offset_front: f32,
     pub hit_box_offset_back: f32,
+}
+
+impl CollisionTarget{
+    pub fn is_collidee(&self) -> bool{
+        match self{
+            CollisionTarget::Collidee(_) => true,
+            _ => false
+        }
+    }
 }

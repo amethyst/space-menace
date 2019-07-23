@@ -1,5 +1,5 @@
 use crate::{
-    components::collider::{CollisionSource, CollisionWithCollidee},
+    components::collider::{CollisionTarget, CollisionTargetCollidee},
     components::{Bullet, Collidee, Collider, Direction, Directions, Motion, Pincer, TwoDimObject},
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
@@ -31,7 +31,7 @@ impl<'s> System<'s> for CollisionSystem {
             let bounding_rect = collider.bounding_rect;
 
             if velocity_a.x > 0. {
-                let mut collision = CollisionSource::None;
+                let mut collision_target = CollisionTarget::None;
                 let old_x = two_dim_obj_a.right();
                 let mut possible_new_x = old_x + velocity_a.x;
                 let mut collidee_component = &mut Collidee::default();
@@ -42,7 +42,7 @@ impl<'s> System<'s> for CollisionSystem {
                     let (x, has_changed) =
                         two_dim_obj_a.get_next_right(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
-                        collision = CollisionSource::Collidee(CollisionWithCollidee {
+                        collision_target = CollisionTarget::Collidee(CollisionTargetCollidee{
                             name: name_b.name.to_string(),
                             direction: dir.x,
                             hit_box_offset_front: collidee.hitbox_offset_front,
@@ -56,20 +56,20 @@ impl<'s> System<'s> for CollisionSystem {
 
                 // Ensure entity stays inside its right bound
                 let new_x = if possible_new_x >= bounding_rect.right {
-                    collision = CollisionSource::Boundary;
+                    collision_target = CollisionTarget::Boundary;
                     bounding_rect.right
                 } else {
                     possible_new_x
                 };
-                if let CollisionSource::Collidee(_) = &collision {
+                if collision_target.is_collidee() {
                     collidee_component.is_hit = true;
                     collidee_component.collider_name = name_a.name.to_string();
                 }
 
                 collider.next_position.x = new_x;
-                collider.collision = collision;
+                collider.collision = collision_target;
             } else if velocity_a.x < 0. {
-                let mut collision = CollisionSource::None;
+                let mut collision_target = CollisionTarget::None;
                 let old_x = two_dim_obj_a.left();
                 let mut possible_new_x = old_x + velocity_a.x;
                 let mut collidee_component = &mut Collidee::default();
@@ -80,7 +80,7 @@ impl<'s> System<'s> for CollisionSystem {
                     let (x, has_changed) =
                         two_dim_obj_a.get_next_left(two_dim_obj_b, old_x, possible_new_x);
                     if has_changed {
-                        collision = CollisionSource::Collidee(CollisionWithCollidee {
+                        collision_target = CollisionTarget::Collidee(CollisionTargetCollidee{
                             name: name.name.to_string(),
                             direction: dir.x,
                             hit_box_offset_front: collidee.hitbox_offset_front,
@@ -94,17 +94,17 @@ impl<'s> System<'s> for CollisionSystem {
 
                 // Ensure entity stays inside its left bound
                 let new_x = if possible_new_x <= bounding_rect.left {
-                    collision = CollisionSource::Boundary;
+                    collision_target = CollisionTarget::Boundary;
                     bounding_rect.left
                 } else {
                     possible_new_x
                 };
-                if let CollisionSource::Collidee(_) = &collision {
+                if collision_target.is_collidee() {
                     collidee_component.is_hit = true;
                     collidee_component.collider_name = name_a.name.to_string();
                 }
                 collider.next_position.x = new_x;
-                collider.collision = collision;
+                collider.collision = collision_target;
             }
 
             if velocity_a.y > 0. {
@@ -169,14 +169,12 @@ impl<'s> System<'s> for BulletCollisionSystem {
         )
             .join()
         {
-            let collidee_data = match &collider.collision {
-                CollisionSource::Collidee(collidee_data) => collidee_data,
-                _ => {
-                    continue;
-                }
+            let collidee_data = match &collider.collision{
+                CollisionTarget::Collidee(collidee_data) => collidee_data,
+                _ => continue,
             };
 
-            let offset = BulletCollisionSystem::collision_offset(collidee_data, motion, dir);
+            let offset = BulletCollisionSystem::collision_offset(&collidee_data, motion, dir);
             let velocity = motion.velocity;
             let bullet_impact_prefab_handle =
                 { prefab_list.get(AssetType::BulletImpact).unwrap().clone() };
@@ -202,22 +200,22 @@ impl<'s> System<'s> for BulletCollisionSystem {
 
 impl BulletCollisionSystem {
     fn collision_offset(
-        collidee_data: &CollisionWithCollidee,
+        collision_target: &CollisionTargetCollidee,
         motion: &Motion,
         dir: &Direction,
     ) -> f32 {
         // Bullet can be fired horizontally only
-        if dir.x == collidee_data.direction {
+        if dir.x == collision_target.direction {
             if motion.velocity.x > 0. {
-                collidee_data.hit_box_offset_back + collidee_data.velocity_x
+                collision_target.hit_box_offset_back + collision_target.velocity_x
             } else {
-                -(collidee_data.hit_box_offset_back + collidee_data.velocity_x)
+                -(collision_target.hit_box_offset_back + collision_target.velocity_x)
             }
-        } else {
+        }else{
             if motion.velocity.x < 0. {
-                collidee_data.hit_box_offset_front - collidee_data.velocity_x
+                collision_target.hit_box_offset_front - collision_target.velocity_x
             } else {
-                -(collidee_data.hit_box_offset_front - collidee_data.velocity_x)
+                -(collision_target.hit_box_offset_front - collision_target.velocity_x)
             }
         }
     }
@@ -264,24 +262,14 @@ impl<'s> System<'s> for PincerCollisionSystem {
         )
             .join()
         {
-            let change_direction = match &collider.collision {
-                CollisionSource::Boundary => true,
-                CollisionSource::Collidee(collidee_data) if collidee_data.name == "Collision" => {
-                    true
+            match &collider.collision {
+                CollisionTarget::Boundary => {
+                    change_pincer_movement_direction(collider, motion, direction);
                 }
-                _ => false,
-            };
-            if change_direction {
-                let velocity = motion.velocity;
-                if velocity.x > 0. {
-                    direction.x = Directions::Left;
-                    collider.next_position.x -= 45. * 2.;
+                CollisionTarget::Collidee(CollisionTargetCollidee{name, ..}) if name == "Collision" => {
+                    change_pincer_movement_direction(collider, motion, direction);
                 }
-                if velocity.x < 0. {
-                    direction.x = Directions::Right;
-                    collider.next_position.x += 45. * 2.;
-                }
-                motion.velocity.x = -1. * velocity.x;
+                _ => {}
             }
             if collidee.is_hit {
                 match collidee.collider_name.as_ref() {
@@ -308,4 +296,17 @@ impl<'s> System<'s> for PincerCollisionSystem {
             }
         }
     }
+}
+
+fn change_pincer_movement_direction(collider: &mut Collider, motion: &mut Motion, direction: &mut Direction){
+    let velocity = motion.velocity;
+    if velocity.x > 0. {
+        direction.x = Directions::Left;
+        collider.next_position.x -= 45. * 2.;
+    }
+    if velocity.x < 0. {
+        direction.x = Directions::Right;
+        collider.next_position.x += 45. * 2.;
+    }
+    motion.velocity.x = -1. * velocity.x;
 }
