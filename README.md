@@ -26,7 +26,7 @@ If you are on Windows or Linux, you will have to set that default to `vulkan`:
 
 [features]
 default = ["vulkan"]
-...
+# ...
 ```
 
 ## Running the game
