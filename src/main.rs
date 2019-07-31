@@ -11,18 +11,17 @@ use amethyst::{
     core::transform::TransformBundle,
     input::{InputBundle, StringBindings},
     renderer::{
-        sprite::{SpriteRender, SpriteSheet},
+        plugins::{RenderFlat2D, RenderToWindow},
+        sprite::SpriteRender,
         types::DefaultBackend,
-        RenderingSystem,
+        RenderingBundle,
     },
     utils::application_root_dir,
-    window::WindowBundle,
     Application, GameDataBuilder,
 };
 
 mod components;
 mod entities;
-mod graph_creator;
 mod resources;
 mod states;
 mod systems;
@@ -41,7 +40,6 @@ fn main() -> amethyst::Result<()> {
         .with_bindings_from_file(root.join("resources/bindings_config.ron"))?;
 
     let game_data = GameDataBuilder::default()
-        .with_bundle(WindowBundle::from_config_path(display_config_path))?
         .with(
             PrefabLoaderSystem::<AnimationPrefabData>::default(),
             "scene_loader",
@@ -56,11 +54,6 @@ fn main() -> amethyst::Result<()> {
                 .with_dep(&["sprite_animation_control", "sprite_sampler_interpolation"]),
         )?
         .with_bundle(input_bundle)?
-        .with(
-            Processor::<SpriteSheet>::new(),
-            "sprite_sheet_processor",
-            &[],
-        )
         .with(Processor::<Map>::new(), "map_processor", &[])
         .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
         .with(
@@ -112,9 +105,15 @@ fn main() -> amethyst::Result<()> {
             "camera_motion_system",
             &["collision_system"],
         )
-        .with_thread_local(RenderingSystem::<DefaultBackend, _>::new(
-            graph_creator::GameGraphCreator::default(),
-        ));
+        .with_bundle(
+            RenderingBundle::<DefaultBackend>::new()
+                // The RenderToWindow plugin provides all the scaffolding for opening a window and drawing on it
+                .with_plugin(
+                    RenderToWindow::from_config_path(display_config_path)
+                        .with_clear([0.008, 0.043, 0.067, 1.0]),
+                )
+                .with_plugin(RenderFlat2D::default()),
+        )?;
     let mut game =
         Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
 

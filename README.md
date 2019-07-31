@@ -37,12 +37,12 @@ Use the `left arrow` key and `right arrow` key to move the player and the `up ar
 - [x] Animation using prefabs (Main character run, jump, shoot, etc.)
 - [x] Basic 2D physics (gravity, velocity, collision detection, etc.)
 - [x] Lazy spawning of entities
+- [x] Parallax
 - [ ] One complete level (enemies, full map, etc.)
-- [ ] Parallax
 - [ ] Start, Pause and Game Over screens
 - [ ] Game mechanics / rules (points, lives, etc.)
 - [ ] Audio
-- [ ] [nphysics](https://nphysics.org/) integration (using [specs-physics](https://github.com/amethyst/specs-physics/))
+- [ ] Consider [nphysics](https://nphysics.org/) integration (using [specs-physics](https://github.com/amethyst/specs-physics/))
 - [ ] Documentation
 - [ ] Tests
 
