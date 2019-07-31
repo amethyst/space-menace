@@ -39,8 +39,13 @@ impl<'s> System<'s> for CollisionSystem {
                 for (two_dim_obj_b, motion_b, name_b, dir, collidee) in
                     (&two_dim_objs, &motions, &names, &directions, &mut collidees).join()
                 {
-                    let (x, has_changed) =
-                        two_dim_obj_a.get_next_right(two_dim_obj_b, old_x, possible_new_x);
+                    let velocity_b = motion_b.velocity;
+                    let (x, has_changed) = two_dim_obj_a.get_next_right(
+                        two_dim_obj_b,
+                        old_x,
+                        possible_new_x,
+                        velocity_b.x,
+                    );
                     if has_changed {
                         collision_target = CollisionTarget::Collidee(CollisionTargetCollidee {
                             name: name_b.name.to_string(),
@@ -77,8 +82,13 @@ impl<'s> System<'s> for CollisionSystem {
                 for (two_dim_obj_b, motion_b, name, dir, collidee) in
                     (&two_dim_objs, &motions, &names, &directions, &mut collidees).join()
                 {
-                    let (x, has_changed) =
-                        two_dim_obj_a.get_next_left(two_dim_obj_b, old_x, possible_new_x);
+                    let velocity_b = motion_b.velocity;
+                    let (x, has_changed) = two_dim_obj_a.get_next_left(
+                        two_dim_obj_b,
+                        old_x,
+                        possible_new_x,
+                        velocity_b.x,
+                    );
                     if has_changed {
                         collision_target = CollisionTarget::Collidee(CollisionTargetCollidee {
                             name: name.name.to_string(),
@@ -288,8 +298,8 @@ impl<'s> System<'s> for PincerCollisionSystem {
                             show_explosion(
                                 &entities,
                                 small_explosion_prefab_handle,
-                                pincer_translation.x.as_f32(),
-                                pincer_translation.y.as_f32(),
+                                pincer_translation.x,
+                                pincer_translation.y,
                                 &lazy_update,
                                 &ctx,
                             );

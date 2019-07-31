@@ -57,7 +57,7 @@ impl<'s> System<'s> for CameraMotionSystem {
         let background_width = ctx.bg_width;
 
         for (_marine, transform) in (&marines, &transforms).join() {
-            marine_x = transform.translation().x.as_f32();
+            marine_x = transform.translation().x;
         }
 
         for (_subject_tag, transform) in (&subject_tags, &mut transforms).join() {

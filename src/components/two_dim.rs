@@ -85,16 +85,19 @@ impl TwoDimObject {
         two_dim_object: &TwoDimObject,
         old_x: f32,
         mut possible_new_x: f32,
+        velocity_b_x: f32,
     ) -> (f32, bool) {
         let mut has_changed = false;
         if self.overlapping_y(two_dim_object)
             && old_x <= two_dim_object.left()
-            && possible_new_x >= two_dim_object.left()
+            && possible_new_x >= two_dim_object.left() + velocity_b_x
         {
             // Can't early return here, because we need to consider collision with
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act
-            possible_new_x = two_dim_object.left();
+            possible_new_x = two_dim_object.left()
+                + velocity_b_x * (two_dim_object.left() - old_x)
+                    / ((possible_new_x - old_x) - velocity_b_x);
             has_changed = true;
         }
         (possible_new_x, has_changed)
@@ -105,16 +108,19 @@ impl TwoDimObject {
         two_dim_object: &TwoDimObject,
         old_x: f32,
         mut possible_new_x: f32,
+        velocity_b_x: f32,
     ) -> (f32, bool) {
         let mut has_changed = false;
         if self.overlapping_y(two_dim_object)
             && old_x >= two_dim_object.right()
-            && possible_new_x <= two_dim_object.right()
+            && possible_new_x <= two_dim_object.right() + velocity_b_x
         {
             // Can't early return here, because we need to consider collision with
             // more than one other object. Don't need to set velocity back to zero here,
             // but could depending on how we want the marine animation to act
-            possible_new_x = two_dim_object.right();
+            possible_new_x = two_dim_object.right()
+                + velocity_b_x * (old_x - two_dim_object.right())
+                    / ((old_x - possible_new_x) + velocity_b_x);
             has_changed = true;
         }
         (possible_new_x, has_changed)
