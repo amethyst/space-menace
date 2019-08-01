@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Collider, Marine, Motion, Subject, TwoDimObject},
+    components::{Collider, Marine, Motion, Subject, BoundingBox},
     resources::Context,
 };
 
@@ -13,30 +13,30 @@ pub struct MotionSystem;
 
 impl<'s> System<'s> for MotionSystem {
     type SystemData = (
-        WriteStorage<'s, TwoDimObject>,
+        WriteStorage<'s, BoundingBox>,
         ReadStorage<'s, Motion>,
         ReadStorage<'s, Collider>,
         WriteStorage<'s, Transform>,
     );
     fn run(&mut self, data: Self::SystemData) {
-        let (mut two_dim_objs, motions, colliders, mut transforms) = data;
+        let (mut bbs, motions, colliders, mut transforms) = data;
 
-        for (two_dim_obj, motion, collider, mut transform) in
-            (&mut two_dim_objs, &motions, &colliders, &mut transforms).join()
+        for (bb, motion, collider, mut transform) in
+            (&mut bbs, &motions, &colliders, &mut transforms).join()
         {
             if motion.velocity.x > 0. {
-                two_dim_obj.set_right(collider.next_position.x);
+                bb.set_right(collider.next_position.x);
             }
             if motion.velocity.x < 0. {
-                two_dim_obj.set_left(collider.next_position.x);
+                bb.set_left(collider.next_position.x);
             }
             if motion.velocity.y > 0. {
-                two_dim_obj.set_top(collider.next_position.y);
+                bb.set_top(collider.next_position.y);
             }
             if motion.velocity.y < 0. {
-                two_dim_obj.set_bottom(collider.next_position.y);
+                bb.set_bottom(collider.next_position.y);
             }
-            two_dim_obj.update_transform_position(&mut transform);
+            bb.update_transform_position(&mut transform);
         }
     }
 }

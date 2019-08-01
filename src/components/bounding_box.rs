@@ -1,75 +1,66 @@
 use amethyst::{
-    core::Transform,
+    core::{math::Vector2, Transform},
     ecs::{Component, DenseVecStorage},
 };
 
-#[derive(Default)]
-pub struct TwoDimVector<T> {
-    pub x: T,
-    pub y: T,
-}
-
 #[derive(Component)]
 #[storage(DenseVecStorage)]
-pub struct TwoDimObject {
-    pub size: TwoDimVector<f32>,
-    pub position: TwoDimVector<f32>,
+pub struct BoundingBox {
+    pub half_size: Vector2<f32>,
+    pub center: Vector2<f32>,
     pub hit_box_offset_front: f32,
     pub hit_box_offset_back: f32,
 }
 
-impl TwoDimObject {
+impl BoundingBox {
     pub fn new(width: f32, height: f32) -> Self {
-        TwoDimObject {
-            size: TwoDimVector {
-                x: width,
-                y: height,
-            },
-            position: TwoDimVector { x: 0., y: 0. },
+        BoundingBox {
+            half_size: Vector2::new(width / 2., height  / 2.),
+            center: Vector2::new(0., 0.),
             hit_box_offset_front: 0.,
             hit_box_offset_back: 0.,
         }
     }
 
     pub fn set_position(&mut self, x: f32, y: f32) {
-        self.position = TwoDimVector { x, y };
+        self.center = Vector2::new(x, y);
     }
 
     pub fn update_transform_position(&self, transform: &mut Transform) {
-        transform.set_translation_x(self.position.x);
-        transform.set_translation_y(self.position.y);
+        transform.set_translation_x(self.center.x);
+        transform.set_translation_y(self.center.y);
     }
 
     pub fn top(&self) -> f32 {
-        self.position.y + self.size.y / 2.
+        self.center.y + self.half_size.y
     }
 
     pub fn set_top(&mut self, top: f32) {
-        self.position.y = top - self.size.y / 2.;
+        self.center.y = top - self.half_size.y
     }
 
     pub fn bottom(&self) -> f32 {
-        self.position.y - self.size.y / 2.
+        self.center.y - self.half_size.y
     }
 
     pub fn set_bottom(&mut self, bottom: f32) {
-        self.position.y = bottom + self.size.y / 2.;
+        self.center.y = bottom + self.half_size.y
     }
 
     pub fn left(&self) -> f32 {
-        self.position.x - self.size.x / 2.
+        self.center.x - self.half_size.x
     }
 
     pub fn set_left(&mut self, left: f32) {
-        self.position.x = left + self.size.x / 2.;
+        self.center.x = left + self.half_size.x
     }
 
     pub fn right(&self) -> f32 {
-        self.position.x + self.size.x / 2.
+        self.center.x + self.half_size.x
     }
 
     pub fn set_right(&mut self, right: f32) {
-        self.position.x = right - self.size.x / 2.;
+        self.center.x = right - self.half_size.x
     }
 
     pub fn overlapping_x(&self, other: &Self) -> bool {
@@ -82,7 +73,7 @@ impl TwoDimObject {
 
     pub fn get_next_right(
         &self,
-        two_dim_object: &TwoDimObject,
+        two_dim_object: &BoundingBox,
         old_x: f32,
         mut possible_new_x: f32,
         velocity_b_x: f32,
@@ -105,7 +96,7 @@ impl TwoDimObject {
 
     pub fn get_next_left(
         &self,
-        two_dim_object: &TwoDimObject,
+        two_dim_object: &BoundingBox,
         old_x: f32,
         mut possible_new_x: f32,
         velocity_b_x: f32,
@@ -128,7 +119,7 @@ impl TwoDimObject {
 
     pub fn get_next_top(
         &self,
-        two_dim_object: &TwoDimObject,
+        two_dim_object: &BoundingBox,
         old_y: f32,
         mut possible_new_y: f32,
     ) -> f32 {
@@ -146,7 +137,7 @@ impl TwoDimObject {
 
     pub fn get_next_bottom(
         &self,
-        two_dim_object: &TwoDimObject,
+        two_dim_object: &BoundingBox,
         old_y: f32,
         mut possible_new_y: f32,
     ) -> f32 {

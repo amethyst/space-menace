@@ -1,6 +1,6 @@
 use crate::{
     components::collider::{CollisionTarget, CollisionTargetCollidee},
-    components::{Bullet, Collidee, Collider, Direction, Directions, Motion, Pincer, TwoDimObject},
+    components::{Bullet, Collidee, Collider, Direction, Directions, Motion, Pincer, BoundingBox},
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
 };
@@ -13,7 +13,7 @@ pub struct CollisionSystem;
 
 impl<'s> System<'s> for CollisionSystem {
     type SystemData = (
-        ReadStorage<'s, TwoDimObject>,
+        ReadStorage<'s, BoundingBox>,
         ReadStorage<'s, Motion>,
         WriteStorage<'s, Collider>,
         WriteStorage<'s, Collidee>,
@@ -22,26 +22,26 @@ impl<'s> System<'s> for CollisionSystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (two_dim_objs, motions, mut colliders, mut collidees, names, directions) = data;
+        let (bbs, motions, mut colliders, mut collidees, names, directions) = data;
 
-        for (motion_a, two_dim_obj_a, collider, name_a) in
-            (&motions, &two_dim_objs, &mut colliders, &names).join()
+        for (motion_a, bb_a, collider, name_a) in
+            (&motions, &bbs, &mut colliders, &names).join()
         {
             let velocity_a = motion_a.velocity;
             let bounding_rect = collider.bounding_rect;
 
             if velocity_a.x > 0. {
                 let mut collision_target = CollisionTarget::None;
-                let old_x = two_dim_obj_a.right();
+                let old_x = bb_a.right();
                 let mut possible_new_x = old_x + velocity_a.x;
                 let mut collidee_component = &mut Collidee::default();
 
-                for (two_dim_obj_b, motion_b, name_b, dir, collidee) in
-                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join()
+                for (bb_b, motion_b, name_b, dir, collidee) in
+                    (&bbs, &motions, &names, &directions, &mut collidees).join()
                 {
                     let velocity_b = motion_b.velocity;
-                    let (x, has_changed) = two_dim_obj_a.get_next_right(
-                        two_dim_obj_b,
+                    let (x, has_changed) = bb_a.get_next_right(
+                        bb_b,
                         old_x,
                         possible_new_x,
                         velocity_b.x,
@@ -75,16 +75,16 @@ impl<'s> System<'s> for CollisionSystem {
                 collider.collision = collision_target;
             } else if velocity_a.x < 0. {
                 let mut collision_target = CollisionTarget::None;
-                let old_x = two_dim_obj_a.left();
+                let old_x = bb_a.left();
                 let mut possible_new_x = old_x + velocity_a.x;
                 let mut collidee_component = &mut Collidee::default();
 
-                for (two_dim_obj_b, motion_b, name, dir, collidee) in
-                    (&two_dim_objs, &motions, &names, &directions, &mut collidees).join()
+                for (bb_b, motion_b, name, dir, collidee) in
+                    (&bbs, &motions, &names, &directions, &mut collidees).join()
                 {
                     let velocity_b = motion_b.velocity;
-                    let (x, has_changed) = two_dim_obj_a.get_next_left(
-                        two_dim_obj_b,
+                    let (x, has_changed) = bb_a.get_next_left(
+                        bb_b,
                         old_x,
                         possible_new_x,
                         velocity_b.x,
@@ -118,22 +118,22 @@ impl<'s> System<'s> for CollisionSystem {
             }
 
             if velocity_a.y > 0. {
-                let old_y = two_dim_obj_a.top();
-                let mut possible_new_y = two_dim_obj_a.top() + velocity_a.y;
+                let old_y = bb_a.top();
+                let mut possible_new_y = bb_a.top() + velocity_a.y;
 
-                for two_dim_obj_b in (&two_dim_objs).join() {
+                for bb_b in (&bbs).join() {
                     possible_new_y =
-                        two_dim_obj_a.get_next_top(two_dim_obj_b, old_y, possible_new_y);
+                        bb_a.get_next_top(bb_b, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
                 collider.next_position.y = new_y;
             } else if velocity_a.y < 0. {
-                let old_y = two_dim_obj_a.bottom();
-                let mut possible_new_y = two_dim_obj_a.bottom() + velocity_a.y;
+                let old_y = bb_a.bottom();
+                let mut possible_new_y = bb_a.bottom() + velocity_a.y;
 
-                for two_dim_obj_b in (&two_dim_objs).join() {
+                for bb_b in (&bbs).join() {
                     possible_new_y =
-                        two_dim_obj_a.get_next_bottom(two_dim_obj_b, old_y, possible_new_y);
+                        bb_a.get_next_bottom(bb_b, old_y, possible_new_y);
                 }
                 let new_y = possible_new_y;
                 collider.next_position.y = new_y;
@@ -148,7 +148,7 @@ impl<'s> System<'s> for BulletCollisionSystem {
     type SystemData = (
         Entities<'s>,
         WriteStorage<'s, Bullet>,
-        ReadStorage<'s, TwoDimObject>,
+        ReadStorage<'s, BoundingBox>,
         WriteStorage<'s, Collider>,
         WriteStorage<'s, Motion>,
         ReadStorage<'s, Direction>,
@@ -161,7 +161,7 @@ impl<'s> System<'s> for BulletCollisionSystem {
         let (
             entities,
             mut bullets,
-            two_dim_objs,
+            bbs,
             mut colliders,
             mut motions,
             directions,
@@ -169,10 +169,10 @@ impl<'s> System<'s> for BulletCollisionSystem {
             lazy_update,
             ctx,
         ) = data;
-        for (entity, _bullet, two_dim_obj, collider, motion, dir) in (
+        for (entity, _bullet, bb, collider, motion, dir) in (
             &*entities,
             &mut bullets,
-            &two_dim_objs,
+            &bbs,
             &mut colliders,
             &mut motions,
             &directions,
@@ -193,7 +193,7 @@ impl<'s> System<'s> for BulletCollisionSystem {
                                 &entities,
                                 bullet_impact_prefab_handle,
                                 collider.next_position.x + offset,
-                                two_dim_obj.bottom(),
+                                bb.bottom(),
                                 velocity.x,
                                 &lazy_update,
                                 &ctx,

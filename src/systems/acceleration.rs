@@ -1,8 +1,9 @@
-use crate::components::{Direction, Directions, Marine, MarineState, Motion, TwoDimObject};
 use amethyst::{
     ecs::{Entities, Join, Read, ReadStorage, System, WriteStorage},
     input::{InputHandler, StringBindings},
 };
+
+use crate::components::{Direction, Directions, Marine, MarineState, Motion, BoundingBox};
 
 pub struct MarineAccelerationSystem;
 
@@ -10,21 +11,21 @@ impl<'s> System<'s> for MarineAccelerationSystem {
     type SystemData = (
         Entities<'s>,
         ReadStorage<'s, Marine>,
-        ReadStorage<'s, TwoDimObject>,
+        ReadStorage<'s, BoundingBox>,
         WriteStorage<'s, Motion>,
         WriteStorage<'s, Direction>,
         Read<'s, InputHandler<StringBindings>>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, marines, two_dim_objs, mut motions, mut directions, input) = data;
+        let (entities, marines, bbs, mut motions, mut directions, input) = data;
         // calculate this so we know if the character should be able to jump
         let mut marine_entities_on_ground = vec![];
 
-        for (_marine, marine_2d_obj, entity) in (&marines, &two_dim_objs, &entities).join() {
-            for two_dim_obj in (&two_dim_objs).join() {
-                if marine_2d_obj.bottom() == two_dim_obj.top()
-                    && marine_2d_obj.overlapping_x(two_dim_obj)
+        for (_marine, marine_bb, entity) in (&marines, &bbs, &entities).join() {
+            for bb in (&bbs).join() {
+                if marine_bb.bottom() == bb.top()
+                    && marine_bb.overlapping_x(bb)
                 {
                     marine_entities_on_ground.push(entity);
                 }

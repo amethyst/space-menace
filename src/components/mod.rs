@@ -8,7 +8,7 @@ mod motion;
 mod parallax;
 mod pincer;
 mod subject;
-mod two_dim;
+mod bounding_box;
 
 pub use self::animation::Animation;
 pub use self::animation::AnimationId;
@@ -28,4 +28,4 @@ pub use self::parallax::Parallax;
 pub use self::pincer::Pincer;
 pub use self::pincer::PincerState;
 pub use self::subject::Subject;
-pub use self::two_dim::TwoDimObject;
+pub use self::bounding_box::BoundingBox;

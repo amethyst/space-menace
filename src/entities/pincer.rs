@@ -12,7 +12,7 @@ use amethyst::{
 use crate::{
     components::{
         Animation, AnimationId, AnimationPrefabData, BoundingRect, Collidee, Collider, Direction,
-        Directions, Motion, Pincer, TwoDimObject,
+        Directions, Motion, Pincer, BoundingBox,
     },
     resources::Context,
 };
@@ -22,10 +22,10 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     let scale = ctx.scale;
     transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut two_dim_object = TwoDimObject::new(45. * scale, 30. * scale);
-    two_dim_object.hit_box_offset_back = 30.;
-    two_dim_object.set_position(1040., 16.);
-    two_dim_object.update_transform_position(&mut transform);
+    let mut bb = BoundingBox::new(45. * scale, 30. * scale);
+    bb.hit_box_offset_back = 30.;
+    bb.set_position(1040., 16.);
+    bb.update_transform_position(&mut transform);
 
     let mut motion = Motion::new();
     motion.velocity.x = -3.;
@@ -37,7 +37,7 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
         .create_entity()
         .with(Pincer::new())
         .named("Pincer")
-        .with(two_dim_object)
+        .with(bb)
         .with(Collider::new(
             Vector2::new(1040., 16.),
             BoundingRect::new(800., 1832., 352., 0.),

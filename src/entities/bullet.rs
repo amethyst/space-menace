@@ -11,7 +11,7 @@ use amethyst::{
 use crate::{
     components::{
         Animation, AnimationId, AnimationPrefabData, BoundingRect, Bullet, BulletImpact, Collidee,
-        Collider, Direction, Directions, Motion, TwoDimObject,
+        Collider, Direction, Directions, Motion, BoundingBox,
     },
     resources::Context,
 };
@@ -31,9 +31,9 @@ pub fn spawn_bullet(
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut two_dim_object = TwoDimObject::new(22. * scale, 4. * scale);
-    two_dim_object.set_position(shoot_start_position, marine_bottom + 48.);
-    two_dim_object.update_transform_position(&mut transform);
+    let mut bb = BoundingBox::new(22. * scale, 4. * scale);
+    bb.set_position(shoot_start_position, marine_bottom + 48.);
+    bb.update_transform_position(&mut transform);
 
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet_handle,
@@ -57,7 +57,7 @@ pub fn spawn_bullet(
 
     lazy_update.insert(bullet_entity, Bullet::default());
     lazy_update.insert(bullet_entity, Named::new("Bullet"));
-    lazy_update.insert(bullet_entity, two_dim_object);
+    lazy_update.insert(bullet_entity, bb);
     lazy_update.insert(
         bullet_entity,
         Collider::new(
@@ -104,9 +104,9 @@ pub fn show_bullet_impact(
         impact_position_x = impact_position + (8. * scale);
     }
 
-    let mut two_dim_object = TwoDimObject::new(16. * scale, 24. * scale);
-    two_dim_object.set_position(impact_position_x, bullet_bottom + 2.);
-    two_dim_object.update_transform_position(&mut transform);
+    let mut bb = BoundingBox::new(16. * scale, 24. * scale);
+    bb.set_position(impact_position_x, bullet_bottom + 2.);
+    bb.update_transform_position(&mut transform);
 
     lazy_update.insert(bullet_impact_entity, BulletImpact::default());
     lazy_update.insert(
