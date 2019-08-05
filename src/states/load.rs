@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    entities::{load_camera, load_camera_subject, load_marine, load_pincer},
+    entities::{load_camera, load_marine, load_pincer},
     resources::{load_assets, AssetType, Context, Map, PrefabList},
 };
 
@@ -43,8 +43,7 @@ impl SimpleState for LoadState {
             ))
         };
 
-        let camera_subject = load_camera_subject(world);
-        load_camera(world, camera_subject);
+        load_camera(world);
     }
 
     fn update(&mut self, data: &mut StateData<'_, GameData<'_, '_>>) -> SimpleTrans {

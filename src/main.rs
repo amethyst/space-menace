@@ -87,11 +87,11 @@ fn main() -> amethyst::Result<()> {
             &["pincer_collision_system"],
         )
         .with(ExplosionAnimationSystem, "explosion_animation_system", &[])
-        .with(ParallaxSystem, "parallax_system", &[])
+        //.with(ParallaxSystem, "parallax_system", &[])
         .with(
             MotionSystem,
             "motion_system",
-            &["collision_system", "parallax_system"],
+            &["collision_system"],
         )
         .with(
             MarineAnimationSystem,

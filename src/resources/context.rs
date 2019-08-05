@@ -21,7 +21,7 @@ impl Context {
             y_correction: -176.,                // (background_height / 2.) * -1.
             bg_z_translation: -50.,
             truss_z_translation: -40.,
-            platform_z_translation: -10.,
+            platform_z_translation: 0.,
             scale: 2.,
         }
     }

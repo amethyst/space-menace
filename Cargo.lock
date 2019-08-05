@@ -3535,6 +3535,7 @@ version = "0.1.0"
 dependencies = [
  "amethyst 0.12.0 (git+https://github.com/amethyst/amethyst)",
  "log 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nalgebra 0.18.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.98 (registry+https://github.com/rust-lang/crates.io-index)",
  "specs-derive 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

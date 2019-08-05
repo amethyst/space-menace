@@ -10,7 +10,7 @@ use amethyst::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    components::{Collidee, Direction, Motion, Parallax, TwoDimObject},
+    components::{Collidee, Direction, Motion, TwoDimObject},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -82,7 +82,7 @@ impl Map {
 
         for obj in layer.objects.iter() {
             let mut transform = Transform::default();
-            transform.set_translation_z(-10.);
+            //transform.set_translation_z(0.);
 
             let mut two_dim_object = TwoDimObject::new(obj.width * scale, obj.height * scale);
             two_dim_object.set_left(obj.x * scale + ctx.x_correction);
@@ -165,7 +165,6 @@ impl Map {
                             .with(transform)
                             .with(sprite)
                             .with(Transparent)
-                            .with(Parallax::default())
                             .build();
                     }
                     "platform" => {

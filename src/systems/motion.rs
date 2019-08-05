@@ -1,12 +1,14 @@
 use amethyst::{
     core::Transform,
     ecs::{Join, ReadExpect, ReadStorage, System, WriteStorage},
+    renderer::Camera,
 };
 
 use crate::{
-    components::{Collider, Marine, Motion, Subject, TwoDimObject},
+    components::{Collider, Marine, Motion, TwoDimObject},
     resources::Context,
 };
+use crate::entities::set_paralax_offset;
 
 #[derive(Default)]
 pub struct MotionSystem;
@@ -46,12 +48,12 @@ pub struct CameraMotionSystem;
 impl<'s> System<'s> for CameraMotionSystem {
     type SystemData = (
         ReadStorage<'s, Marine>,
-        ReadStorage<'s, Subject>,
+        WriteStorage<'s, Camera>,
         WriteStorage<'s, Transform>,
         ReadExpect<'s, Context>,
     );
 
-    fn run(&mut self, (marines, subject_tags, mut transforms, ctx): Self::SystemData) {
+    fn run(&mut self, (marines, mut camera, mut transforms, ctx): Self::SystemData) {
         let mut marine_x = 0.;
         let map_width = ctx.map_width;
         let background_width = ctx.bg_width;
@@ -60,9 +62,10 @@ impl<'s> System<'s> for CameraMotionSystem {
             marine_x = transform.translation().x;
         }
 
-        for (_subject_tag, transform) in (&subject_tags, &mut transforms).join() {
+        for (camera, transform) in (&mut camera, &mut transforms).join() {
             if marine_x >= background_width && marine_x <= map_width - background_width {
                 transform.set_translation_x(marine_x);
+                set_paralax_offset(camera, marine_x, 0.0);
             }
         }
     }
