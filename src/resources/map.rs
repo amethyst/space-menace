@@ -155,8 +155,8 @@ impl Map {
                 match layer.name.as_ref() {
                     "background" | "truss" => {
                         transform.set_translation_xyz(
-                            (obj.x + obj.width / 2.) * scale + x_correction,
-                            ctx.bg_height * 2. - (obj.y + obj.height / 2.),
+                            (layer.x + obj.x + obj.width / 2.) * scale + x_correction,
+                            ctx.bg_height * 2. - (layer.y + obj.y + obj.height / 2.),
                             z_translation,
                         );
                         transform.set_scale(Vector3::new(4., 4., 4.));

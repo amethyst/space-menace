@@ -125,7 +125,7 @@
             "opacity": 1,
             "type": "objectgroup",
             "visible": true,
-            "x": 0,
+            "x": -100,
             "y": 0
         },
         {
@@ -163,7 +163,7 @@
             "opacity": 1,
             "type": "objectgroup",
             "visible": true,
-            "x": 0,
+            "x": -100,
             "y": 0
         },
         {
