@@ -1,11 +1,11 @@
 use amethyst::{
     core::Transform,
+    core::math::Matrix4,
     ecs::prelude::World,
     prelude::Builder,
     renderer::camera::Camera,
     window::ScreenDimensions,
 };
-use nalgebra::Matrix4;
 
 pub fn load_camera(world: &mut World) {
     let (width, height) = {

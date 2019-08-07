@@ -9,7 +9,6 @@ amethyst = { git = "https://github.com/amethyst/amethyst", features = ["nightly"
 serde = "*"
 log = "*"
 specs-derive = "*"
-nalgebra = "0.18.0"
 
 [features]
 default = ["metal"]
