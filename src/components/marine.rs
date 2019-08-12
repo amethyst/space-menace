@@ -21,6 +21,8 @@ pub struct Marine {
     pub state: MarineState,
     pub is_shooting: bool,
     pub has_shot: bool,
+    pub max_ground_speed: f32,
+    pub max_air_speed: f32,
 }
 
 impl Marine {
@@ -29,6 +31,8 @@ impl Marine {
             state: MarineState::Idling,
             is_shooting: false,
             has_shot: false,
+            max_ground_speed: 6.,
+            max_air_speed: 12.,
         }
     }
 }

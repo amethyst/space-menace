@@ -3,13 +3,32 @@ use amethyst::{
     ecs::{Component, DenseVecStorage},
 };
 
-#[derive(Component)]
+// use crate::components::Side;
+
+#[derive(Clone, Component)]
 #[storage(DenseVecStorage)]
 pub struct BoundingBox {
     pub half_size: Vector2<f32>,
     pub center: Vector2<f32>,
+    pub position: Vector2<f32>,
+    pub old_position: Vector2<f32>,
+    pub on_ground: bool,
     pub hit_box_offset_front: f32,
     pub hit_box_offset_back: f32,
+}
+
+impl Default for BoundingBox {
+    fn default() -> Self {
+        Self {
+            half_size: Vector2::new(0., 0.),
+            center: Vector2::new(0., 0.),
+            position: Vector2::new(0., 0.),
+            old_position: Vector2::new(0., 0.),
+            on_ground: false,
+            hit_box_offset_front: 0.,
+            hit_box_offset_back: 0.,
+        }
+    }
 }
 
 impl BoundingBox {
@@ -17,50 +36,53 @@ impl BoundingBox {
         BoundingBox {
             half_size: Vector2::new(width / 2., height  / 2.),
             center: Vector2::new(0., 0.),
+            position: Vector2::new(0., 0.),
+            old_position: Vector2::new(0., 0.),
+            on_ground: false,
             hit_box_offset_front: 0.,
             hit_box_offset_back: 0.,
         }
     }
 
     pub fn set_position(&mut self, x: f32, y: f32) {
-        self.center = Vector2::new(x, y);
+        self.position = Vector2::new(x, y);
     }
 
     pub fn update_transform_position(&self, transform: &mut Transform) {
-        transform.set_translation_x(self.center.x);
-        transform.set_translation_y(self.center.y);
+        transform.set_translation_x(self.position.x);
+        transform.set_translation_y(self.position.y);
     }
 
     pub fn top(&self) -> f32 {
-        self.center.y + self.half_size.y
+        self.position.y + self.half_size.y
     }
 
     pub fn set_top(&mut self, top: f32) {
-        self.center.y = top - self.half_size.y
+        self.position.y = top - self.half_size.y
     }
 
     pub fn bottom(&self) -> f32 {
-        self.center.y - self.half_size.y
+        self.position.y - self.half_size.y
     }
 
     pub fn set_bottom(&mut self, bottom: f32) {
-        self.center.y = bottom + self.half_size.y
+        self.position.y = bottom + self.half_size.y
     }
 
     pub fn left(&self) -> f32 {
-        self.center.x - self.half_size.x
+        self.position.x - self.half_size.x
     }
 
     pub fn set_left(&mut self, left: f32) {
-        self.center.x = left + self.half_size.x
+        self.position.x = left + self.half_size.x
     }
 
     pub fn right(&self) -> f32 {
-        self.center.x + self.half_size.x
+        self.position.x + self.half_size.x
     }
 
     pub fn set_right(&mut self, right: f32) {
-        self.center.x = right - self.half_size.x
+        self.position.x = right - self.half_size.x
     }
 
     pub fn overlapping_x(&self, other: &Self) -> bool {
@@ -152,4 +174,80 @@ impl BoundingBox {
         }
         possible_new_y
     }
+
+    pub fn is_overlapping_with(&self, other: &BoundingBox) -> bool {
+        if (self.position.x - other.position.x).abs() >= (self.half_size.x + other.half_size.x).abs() {
+            false
+        } else if (self.position.y - other.position.y).abs() >= (self.half_size.y + other.half_size.y).abs() {
+            false
+        } else {
+            true
+        }
+    }
+
+    // pub fn get_collision_side(&self, other: &BoundingBox) -> Side {
+    //     let x_distance = self.center.x - other.center.x;
+    //     let y_distance = self.center.y - other.center.y;
+    //     if x_distance.abs() > y_distance.abs() {
+    //         if x_distance > 0. {
+    //             Side::Right
+    //         } else {
+    //             Side::Left
+    //         }
+    //     } else {
+    //         if y_distance > 0. {
+    //             Side::Top
+    //         } else {
+    //             Side::Bottom
+    //         }
+    //     }
+    // }
+
+    // pub fn get_collidee_side(
+    //     &mut self, other: &BoundingBox,
+    //     self_velocity: Vector2<f32>,
+    //     other_velocity: Vector2<f32>,
+    // ) -> Side {
+    //     let mut correction = 0.;
+    //     let speed_sum = Vector2::new((self_velocity.x - other_velocity.x).abs(), (self_velocity.y - other_velocity.y).abs());
+    //     let min_safe_distance = Vector2::new(self.half_size.x + other.half_size.x, self.half_size.y + other.half_size.y);
+    //     let speed_ratio = Vector2::new(self_velocity.x / speed_sum.x, self_velocity.y / speed_sum.y);
+    //     // let overlap = Vector2::new(speed_sum.x - min_safe_distance.x, speed_sum.y - min_safe_distance.y);
+    //     let overlap = Vector2::new(min_safe_distance.x - (self.position.x - other.position.x).abs(), min_safe_distance.y - (self.position.y - other.position.y).abs());
+
+    //     // TODO: Reuse is_overlapping_with logic?
+    //     let x_overlapped = (self.old_position.x - other.old_position.x).abs() < self.half_size.x + other.half_size.x;
+    //     let y_overlapped = (self.old_position.y - other.old_position.y).abs() < self.half_size.y + other.half_size.y;
+
+    //     if !x_overlapped && y_overlapped || (!x_overlapped && !y_overlapped && overlap.x.abs() <= overlap.y.abs()) {
+    //         correction = overlap.x * speed_ratio.x;
+    //         if self_velocity.x > 0. {
+    //             self.position.x += correction;
+    //             Side::Left
+    //         } else {
+    //             self.position.x -= correction;
+    //             Side::Right
+    //         }
+    //     } else {
+    //         println!("collision ***********");
+    //         correction = overlap.y * speed_ratio.y;
+    //         // println!("self.half_size.y = {}", self.half_size.y);
+    //         // println!("other.half_size.y = {}", other.half_size.y);
+    //         // println!("self.half_size.y + other.half_size.y = {}", self.half_size.y + other.half_size.y);
+    //         // println!("other_velocity.y = {}", other_velocity.y);
+    //         // println!("self_velocity.y = {}", self_velocity.y);
+    //         // println!("(self_velocity.y - other_velocity.y).abs() = {}", (self_velocity.y - other_velocity.y).abs());
+    //         // println!("speed_ratio.y = {}", speed_ratio.y);
+    //         // println!("overlap.y = {}", overlap.y);
+    //         // println!("correction = {}", correction);
+    //         println!("self.position.y before= {}", self.position.y);
+    //         if self_velocity.y > 0. {
+    //             self.position.y += correction;
+    //             Side::Bottom
+    //         } else {
+    //             self.position.y -= correction;
+    //             Side::Top
+    //         }
+    //     }
+    // }
 }

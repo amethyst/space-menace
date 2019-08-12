@@ -10,7 +10,7 @@ use amethyst::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    components::{Collidee, Direction, Motion, Parallax, BoundingBox},
+    components::{Collidee, ColliderNew, Direction, Motion, Parallax, BoundingBox},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -68,7 +68,7 @@ impl Map {
         for layer in self.layers.iter() {
             match layer.name.as_ref() {
                 "collision" => {
-                    self.collision_layer(world, layer, ctx);
+                    self.load_collision_layer(world, layer, ctx);
                 }
                 _ => {
                     self.load_non_collision_layer(world, layer, ctx);
@@ -77,7 +77,7 @@ impl Map {
         }
     }
 
-    fn collision_layer(&self, world: &mut World, layer: &Layer, ctx: &Context) {
+    fn load_collision_layer(&self, world: &mut World, layer: &Layer, ctx: &Context) {
         let scale = ctx.scale;
 
         for obj in layer.objects.iter() {
@@ -88,6 +88,8 @@ impl Map {
             bb.set_left(obj.x * scale + ctx.x_correction);
             bb.set_top(ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction);
             bb.update_transform_position(&mut transform);
+            bb.old_position.x = bb.position.x;
+            bb.old_position.y = bb.position.y;
 
             world
                 .create_entity()
@@ -96,6 +98,7 @@ impl Map {
                 .with(transform)
                 .with(bb)
                 .with(Collidee::default())
+                .with(ColliderNew::default())
                 .with(Direction::default())
                 .build();
         }
