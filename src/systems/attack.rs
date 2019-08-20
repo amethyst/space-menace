@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Direction, Directions, Marine, Motion, BoundingBox},
+    components::{Direction, Directions, Marine, MarineState, Motion, BoundingBox},
     entities::spawn_bullet,
     resources::{AssetType, Context, SpriteSheetList},
 };
@@ -36,38 +36,26 @@ impl<'s> System<'s> for AttackSystem {
             input,
             ctx,
         ) = data;
-        let mut marine_entities_on_ground = vec![];
 
-        for (_marine, marine_bb, entity) in (&marines, &bbs, &entities).join() {
-            for bb in (&bbs).join() {
-                if marine_bb.bottom() == bb.top() {
-                    marine_entities_on_ground.push(entity);
-                }
-            }
-        }
-
-        for (mut marine, motion, bb, direction, entity) in (
+        for (mut marine, motion, bb, direction) in (
             &mut marines,
             &motions,
             &bbs,
             &directions,
-            &entities,
         )
             .join()
         {
-            let marine_on_ground = marine_entities_on_ground.contains(&entity);
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
             // Currently shooting is possible only when marine is static
-            if shoot_input && marine_on_ground && motion.velocity.x == 0. && !marine.is_shooting {
+            if marine.state == MarineState::Shooting && bb.on_ground && motion.velocity.x == 0. && !marine.is_shooting {
                 marine.is_shooting = true;
-                marine.has_shot = true;
 
                 let mut shoot_start_position = 0.;
                 if direction.x == Directions::Left {
-                    shoot_start_position = bb.left();
+                    shoot_start_position = bb.position.x - 64.;
                 } else if direction.x == Directions::Right {
-                    shoot_start_position = bb.right();
+                    shoot_start_position = bb.position.x + 64.;
                 }
 
                 let bullet_sprite_sheet_handle =
@@ -77,7 +65,7 @@ impl<'s> System<'s> for AttackSystem {
                     bullet_sprite_sheet_handle,
                     shoot_start_position,
                     direction,
-                    bb.bottom(),
+                    bb.position.y - bb.half_size.y,
                     &lazy_update,
                     &ctx,
                 );

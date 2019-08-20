@@ -5,7 +5,8 @@ use amethyst::{
 
 use crate::components::BoundingBox;
 
-#[derive(Copy, Clone, Default)]
+#[derive(Component)]
+#[storage(DenseVecStorage)]
 pub struct Boundary {
     pub left: f32,
     pub right: f32,
@@ -56,9 +57,10 @@ impl CollideeNew {
         velocity_a: Vector2<f32>,
         velocity_b: Vector2<f32>,
     ) {
-        let correction;
+        let mut correction = Vector2::new(0., 0.);
         let speed_sum = Vector2::new((velocity_a.x - velocity_b.x).abs(), (velocity_a.y - velocity_b.y).abs());
-        let speed_ratio = Vector2::new(velocity_a.x / speed_sum.x, velocity_a.y / speed_sum.y);
+        let speed_ratio_a = Vector2::new(velocity_a.x / speed_sum.x, velocity_a.y / speed_sum.y);
+        let speed_ratio_b = Vector2::new(velocity_b.x / speed_sum.x, velocity_b.y / speed_sum.y);
         let min_safe_distance = Vector2::new(bb_a.half_size.x + bb_b.half_size.x, bb_a.half_size.y + bb_b.half_size.y);
         let overlap = Vector2::new(min_safe_distance.x - (bb_a.position.x - bb_b.position.x).abs(), min_safe_distance.y - (bb_a.position.y - bb_b.position.y).abs());
 
@@ -70,25 +72,42 @@ impl CollideeNew {
 
         println!("x_overlapped = {}", x_overlapped);
         println!("y_overlapped = {}", y_overlapped);
+        let same_direction = velocity_a.x * velocity_b.x > 0.;
+        let faster = speed_ratio_a.x.abs() > speed_ratio_b.x.abs();
         if !x_overlapped && y_overlapped || (!x_overlapped && !y_overlapped && overlap.x.abs() <= overlap.y.abs()) {
-            println!("overlap.x = {}", overlap.x);
-            println!("speed_ratio.x = {}", speed_ratio.x);
-            correction = overlap.x * speed_ratio.x;
+            if !same_direction || same_direction && faster {
+                println!("overlap.x = {}", overlap.x);
+                println!("speed_ratio_a.x = {}", speed_ratio_a.x);
+                correction.x = overlap.x * speed_ratio_a.x;
+                println!("correction = {}", correction);
+                self.horizontal = Some(CollideeDetails {
+                    name,
+                    velocity: velocity_b,
+                    bounding_box: bb_b.clone(),
+                    correction: correction.x,
+                });
+            }
+        } else if x_overlapped && y_overlapped { // Might happen when an entity is added at run time.
+            if speed_sum.x != 0. {
+                correction.x = overlap.x * speed_ratio_a.x;
+            } else {
+                correction.x = overlap.x;
+            }
             self.horizontal = Some(CollideeDetails {
-                name,
+                name: name.clone(),
                 velocity: velocity_b,
                 bounding_box: bb_b.clone(),
-                correction,
+                correction: correction.x,
             });
         } else {
             println!("overlap.y = {}", overlap.y);
-            println!("speed_ratio.y = {}", speed_ratio.y);
-            correction = overlap.y * speed_ratio.y;
+            println!("speed_ratio_a.y = {}", speed_ratio_a.y);
+            correction.y = overlap.y * speed_ratio_a.y;
             self.vertical = Some(CollideeDetails {
                 name,
                 velocity: velocity_b,
                 bounding_box: bb_b.clone(),
-                correction,
+                correction: correction.y,
             });
         }
     }

@@ -58,18 +58,21 @@ fn main() -> amethyst::Result<()> {
         // .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
         .with(MarineInputSystem, "marine_input_system", &[])
         .with(MarineKinematicsSystem, "marine_kinematics_system", &["marine_input_system"])
+        .with(KinematicsSystem, "kinematics_system", &["marine_kinematics_system"])
         .with(
             AttackSystem,
             "attack_system",
-            &["marine_kinematics_system"],
+            &["kinematics_system"],
         )
         .with(
             CollisionSystem,
             "collision_system",
             &["marine_kinematics_system"],
         )
-        .with(CollisionNewSystem, "collision_new_system", &["marine_kinematics_system"])
-        .with(MotionNewSystem, "motion_new_system", &["collision_new_system"])
+        .with(CollisionNewSystem, "collision_new_system", &["kinematics_system"])
+        .with(BulletCollisionNewSystem, "bullet_collision_new_system", &["collision_new_system"])
+        .with(PincerCollisionNewSystem, "pincer_collision_new_system", &["collision_new_system"])
+        .with(TransformationSystem, "transformation_system", &["pincer_collision_new_system", "bullet_collision_new_system"])
         .with(
             BulletCollisionSystem,
             "bullet_collision_system",
@@ -103,7 +106,7 @@ fn main() -> amethyst::Result<()> {
             &["collision_new_system"],
         )
         .with(AnimationControlSystem, "animation_control_system", &[])
-        .with(DirectionSystem, "direction_system", &[])
+        .with(DirectionSystem, "direction_system", &["transformation_system"])
         .with(
             CameraMotionSystem,
             "camera_motion_system",

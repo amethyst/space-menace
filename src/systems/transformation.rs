@@ -4,12 +4,12 @@ use amethyst::{
 };
 
 use crate::{
-    components::{BoundingBox, CollideeNew, ColliderNew, Motion},
+    components::{BoundingBox, CollideeNew, Direction, Directions, Motion, Pincer},
 };
 
-pub struct MotionNewSystem;
+pub struct TransformationSystem;
 
-impl<'s> System<'s> for MotionNewSystem {
+impl<'s> System<'s> for TransformationSystem {
     type SystemData = (
         WriteStorage<'s, BoundingBox>,
         WriteStorage<'s, CollideeNew>,
@@ -24,22 +24,21 @@ impl<'s> System<'s> for MotionNewSystem {
             (&mut bbs, &mut collidees, &mut motions, &mut transforms).join()
         {
             if collidee.horizontal.is_some() {
-                let horizontal_collidee = collidee.horizontal.take().unwrap();
-                println!("horizontal_collidee.correction = {}", horizontal_collidee.correction);
-                bb.position.x -= horizontal_collidee.correction;
+                let collidee_horizontal = collidee.horizontal.take().unwrap();
+                bb.position.x -= collidee_horizontal.correction;
             }
             if collidee.vertical.is_some() {
-                let vertical_collidee = collidee.vertical.take().unwrap();
-                println!("vertical_collidee.correction = {}", vertical_collidee.correction);
-                bb.position.y -= vertical_collidee.correction;
+                let collidee_vertical = collidee.vertical.take().unwrap();
+                bb.position.y -= collidee_vertical.correction;
                 motion.velocity.y = 0.;
-                println!("ground collision");
-                if vertical_collidee.correction < 0. {
+                if collidee_vertical.correction < 0. {
                     bb.on_ground = true;
                 }
             }
+            if collidee.vertical.is_none() && motion.velocity.y != 0. {
+                bb.on_ground = false;
+            }
             transform.set_translation_x(bb.position.x);
-            println!("transform.set_translation_y(bb_a.position.y) = {}", bb.position.y);
             transform.set_translation_y(bb.position.y);
         }
     }

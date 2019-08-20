@@ -6,7 +6,7 @@ use amethyst::{
     renderer::SpriteRender,
 };
 
-use crate::components::{Animation, AnimationId, BulletImpact, Explosion, Marine, Motion, Pincer};
+use crate::components::{Animation, AnimationId, BulletImpact, Explosion, Marine, MarineState, Motion, Pincer};
 
 pub struct BulletImpactAnimationSystem;
 
@@ -144,18 +144,18 @@ pub struct MarineAnimationSystem;
 impl<'s> System<'s> for MarineAnimationSystem {
     type SystemData = (
         Entities<'s>,
-        WriteStorage<'s, Marine>,
+        ReadStorage<'s, Marine>,
         ReadStorage<'s, Motion>,
         WriteStorage<'s, Animation>,
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, mut marines, motions, mut animations, mut animation_control_sets) = data;
+        let (entities, marines, motions, mut animations, mut animation_control_sets) = data;
 
-        for (entity, mut marine, motion, mut animation, animation_control_set) in (
+        for (entity, marine, motion, mut animation, animation_control_set) in (
             &entities,
-            &mut marines,
+            &marines,
             &motions,
             &mut animations,
             &mut animation_control_sets,
@@ -163,16 +163,22 @@ impl<'s> System<'s> for MarineAnimationSystem {
             .join()
         {
             let marine_velocity = motion.velocity;
-            let new_animation_id = if marine_velocity.y != 0. {
-                AnimationId::Jump
-            } else if marine_velocity.x != 0. {
-                AnimationId::Move
-            } else if marine.has_shot {
-                AnimationId::Shoot
-            } else {
-                AnimationId::Idle
+            // let new_animation_id = if marine_velocity.y != 0. {
+            //     AnimationId::Jump
+            // } else if marine_velocity.x != 0. {
+            //     AnimationId::Move
+            // // } else if marine.has_shot {
+            // } else if marine.state == MarineState::Shooting {
+            //     AnimationId::Shoot
+            // } else {
+            //     AnimationId::Idle
+            // };
+            let new_animation_id = match marine.state {
+                MarineState::Jumping => AnimationId::Jump,
+                MarineState::Running => AnimationId::Move,
+                MarineState::Shooting => AnimationId::Shoot,
+                _ => AnimationId::Idle,
             };
-            marine.has_shot = false;
 
             // If the new AnimationId is different to the current one, abort the
             // current animation and start the new one

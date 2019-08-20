@@ -10,8 +10,8 @@ use amethyst::{
 
 use crate::{
     components::{
-        Animation, AnimationId, AnimationPrefabData, BoundingRect, Bullet, BulletImpact, Collidee,
-        Collider, Direction, Directions, Motion, BoundingBox,
+        Animation, AnimationId, AnimationPrefabData, Boundary, BoundingRect, Bullet, BulletImpact, CollideeNew,
+        ColliderNew, Direction, Directions, Motion, BoundingBox,
     },
     resources::Context,
 };
@@ -31,10 +31,6 @@ pub fn spawn_bullet(
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut bb = BoundingBox::new(22. * scale, 4. * scale);
-    bb.set_position(shoot_start_position, marine_bottom + 48.);
-    bb.update_transform_position(&mut transform);
-
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet_handle,
         sprite_number: 0,
@@ -47,25 +43,39 @@ pub fn spawn_bullet(
         Directions::Neutral,
         Directions::Neutral,
     );
+    
+    let mut bullet_start_position = 0.;
     if marine_dir.x == Directions::Right {
         motion.velocity.x = 20.;
         direction.x = Directions::Right;
+        bullet_start_position = shoot_start_position + 22.;
     } else if marine_dir.x == Directions::Left {
         motion.velocity.x = -20.;
         direction.x = Directions::Left;
+        bullet_start_position = shoot_start_position - 22.;
     }
+
+    let mut bb = BoundingBox::new(22. * scale, 4. * scale);
+    bb.set_position(bullet_start_position, marine_bottom + 48.);
+    bb.old_position.x = bullet_start_position;
+    bb.old_position.y = marine_bottom + 48.;
+    // bb.update_transform_position(&mut transform);
+    transform.set_translation_x(bullet_start_position);
+    transform.set_translation_y(marine_bottom + 48.);
 
     lazy_update.insert(bullet_entity, Bullet::default());
     lazy_update.insert(bullet_entity, Named::new("Bullet"));
     lazy_update.insert(bullet_entity, bb);
-    lazy_update.insert(
-        bullet_entity,
-        Collider::new(
-            Vector2::new(shoot_start_position, marine_bottom + 48.),
-            BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
-        ),
-    );
-    lazy_update.insert(bullet_entity, Collidee::default());
+    // lazy_update.insert(
+    //     bullet_entity,
+    //     Collider::new(
+    //         Vector2::new(shoot_start_position, marine_bottom + 48.),
+    //         BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
+    //     ),
+    // );
+    lazy_update.insert(bullet_entity, Boundary::new(ctx.x_correction, ctx.map_width, 352., 0.));
+    lazy_update.insert(bullet_entity, ColliderNew::default());
+    lazy_update.insert(bullet_entity, CollideeNew::default());
     lazy_update.insert(bullet_entity, sprite_render);
     lazy_update.insert(bullet_entity, motion);
     lazy_update.insert(bullet_entity, transform);
@@ -77,17 +87,18 @@ pub fn show_bullet_impact(
     entities: &Entities,
     prefab_handle: Handle<Prefab<AnimationPrefabData>>,
     impact_position: f32,
-    bullet_bottom: f32,
+    bullet_position_y: f32,
     bullet_velocity: f32,
     lazy_update: &ReadExpect<LazyUpdate>,
     ctx: &Context,
 ) {
+    println!("bullet impact");
     let bullet_impact_entity: Entity = entities.create();
     let scale = ctx.scale;
 
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
-    transform.set_translation_z(0.);
+    transform.set_translation_z(-15.);
 
     let mut direction = Direction::new(
         Directions::Right,
@@ -105,8 +116,10 @@ pub fn show_bullet_impact(
     }
 
     let mut bb = BoundingBox::new(16. * scale, 24. * scale);
-    bb.set_position(impact_position_x, bullet_bottom + 2.);
-    bb.update_transform_position(&mut transform);
+    bb.set_position(impact_position_x, bullet_position_y);
+    // bb.update_transform_position(&mut transform);
+    transform.set_translation_x(impact_position_x);
+    transform.set_translation_y(bullet_position_y);
 
     lazy_update.insert(bullet_impact_entity, BulletImpact::default());
     lazy_update.insert(

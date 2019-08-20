@@ -24,7 +24,7 @@ impl<'s> System<'s> for MarineInputSystem {
             let shoot_input = input.action_is_down("shoot").expect("Shoot action exists");
 
             // TODO: check simultaneous button press
-            marine.state = if jump_input && bb.on_ground {
+            marine.state = if jump_input || !bb.on_ground {
                 MarineState::Jumping
             } else if run_input > 0. {
                 dir.x = Directions::Right;

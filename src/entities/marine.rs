@@ -11,7 +11,7 @@ use amethyst::{
 
 use crate::{
     components::{
-        Animation, AnimationId, AnimationPrefabData, BoundingRect, Collidee, Collider, ColliderNew, CollideeNew, Direction,
+        Animation, AnimationId, AnimationPrefabData, BoundingRect, Boundary, Collidee, Collider, ColliderNew, CollideeNew, Direction,
         Directions, Marine, Motion, BoundingBox,
     },
     resources::Context,
@@ -40,6 +40,7 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
         //     BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
         // ))
         // .with(Collidee::default())
+        .with(Boundary::new(ctx.x_correction, ctx.map_width, 352., 0.))
         .with(ColliderNew::default())
         .with(CollideeNew::default())
         .with(transform)
