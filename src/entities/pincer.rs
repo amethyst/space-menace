@@ -11,8 +11,8 @@ use amethyst::{
 
 use crate::{
     components::{
-        Animation, AnimationId, AnimationPrefabData, BoundingRect, Collidee, Collider, Direction,
-        Directions, Motion, Pincer, TwoDimObject,
+        Animation, AnimationId, AnimationPrefabData, Boundary, Collidee, Collider, Direction,
+        Directions, GenericBox, Motion, Pincer,
     },
     resources::Context,
 };
@@ -22,27 +22,36 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     let scale = ctx.scale;
     transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut two_dim_object = TwoDimObject::new(45. * scale, 30. * scale);
-    two_dim_object.hit_box_offset_back = 30.;
-    two_dim_object.set_position(1040., 16.);
-    two_dim_object.update_transform_position(&mut transform);
+    let mut collider = Collider::new(40. * scale, 30. * scale);
+
+    collider.hit_box = GenericBox::new(40. * scale - 30., 30. * scale);
+    collider.hit_box_offset.x = 15.;
+
+    let bbox = &mut collider.bounding_box;
+    bbox.position = Vector2::new(1040., 16.);
+    bbox.old_position = bbox.position.clone();
+
+    transform.set_translation_x(1040.);
+    transform.set_translation_y(16.);
 
     let mut motion = Motion::new();
     motion.velocity.x = -3.;
+    collider.set_hit_box_position(&motion.velocity);
 
-    let mut collidee = Collidee::default();
-    collidee.hitbox_offset_back = 35.;
+    let direction = Direction::new(
+        Directions::Left,
+        Directions::Neutral,
+        Directions::Left,
+        Directions::Neutral,
+    );
 
     world
         .create_entity()
         .with(Pincer::new())
         .named("Pincer")
-        .with(two_dim_object)
-        .with(Collider::new(
-            Vector2::new(1040., 16.),
-            BoundingRect::new(800., 1832., 352., 0.),
-        ))
-        .with(collidee)
+        .with(collider)
+        .with(Boundary::new(800., 1832., 352., 0.))
+        .with(Collidee::default())
         .with(transform)
         .with(motion)
         .with(Animation::new(
@@ -50,12 +59,7 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
             vec![AnimationId::Idle, AnimationId::Walk],
         ))
         .with(prefab)
-        .with(Direction::new(
-            Directions::Left,
-            Directions::Neutral,
-            Directions::Left,
-            Directions::Neutral,
-        ))
+        .with(direction)
         .with(Transparent) // Necessary for ordered layering
         .build();
 }

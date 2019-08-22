@@ -21,18 +21,10 @@ impl<'s> System<'s> for ParallaxSystem {
         let mut marine_velocity_x = 0.;
         let mut marine_moved = false;
 
-        for (_, motion, transform, collider) in (&marines, &motions, &transforms, &colliders).join()
-        {
+        for (_, motion, collider) in (&marines, &motions, &colliders).join() {
             marine_velocity_x = motion.velocity.x;
-            let marine_x = transform.translation().x;
-            let collider_edge_x = collider.next_position.x;
-            marine_moved = if marine_velocity_x > 0. {
-                ((collider_edge_x - 32.) - marine_x) != 0.
-            } else if marine_velocity_x < 0. {
-                ((collider_edge_x + 32.) - marine_x) != 0.
-            } else {
-                false
-            }
+            let bbox = &collider.bounding_box;
+            marine_moved = bbox.position.x != bbox.old_position.x;
         }
 
         for (_, transform) in (&parallaxes, &mut transforms).join() {

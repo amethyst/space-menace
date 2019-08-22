@@ -17,12 +17,14 @@ impl Default for PincerState {
 #[storage(DenseVecStorage)]
 pub struct Pincer {
     pub state: PincerState,
+    pub hit_count: u32,
 }
 
 impl Pincer {
     pub fn new() -> Self {
         Pincer {
             state: PincerState::Idling,
+            hit_count: 0,
         }
     }
 }

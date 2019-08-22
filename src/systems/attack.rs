@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Direction, Directions, Marine, Motion, TwoDimObject},
+    components::{Collider, Direction, Directions, Marine, MarineState, Motion},
     entities::spawn_bullet,
     resources::{AssetType, Context, SpriteSheetList},
 };
@@ -14,7 +14,7 @@ pub struct AttackSystem;
 impl<'s> System<'s> for AttackSystem {
     type SystemData = (
         Entities<'s>,
-        ReadStorage<'s, TwoDimObject>,
+        ReadStorage<'s, Collider>,
         WriteStorage<'s, Marine>,
         ReadStorage<'s, Motion>,
         ReadStorage<'s, Direction>,
@@ -27,7 +27,7 @@ impl<'s> System<'s> for AttackSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (
             entities,
-            two_dim_objs,
+            colliders,
             mut marines,
             motions,
             directions,
@@ -36,38 +36,26 @@ impl<'s> System<'s> for AttackSystem {
             input,
             ctx,
         ) = data;
-        let mut marine_entities_on_ground = vec![];
 
-        for (_marine, marine_2d_obj, entity) in (&marines, &two_dim_objs, &entities).join() {
-            for two_dim_obj in (&two_dim_objs).join() {
-                if marine_2d_obj.bottom() == two_dim_obj.top() {
-                    marine_entities_on_ground.push(entity);
-                }
-            }
-        }
-
-        for (mut marine, motion, two_dim_obj, direction, marine_entity) in (
-            &mut marines,
-            &motions,
-            &two_dim_objs,
-            &directions,
-            &entities,
-        )
-            .join()
+        for (mut marine, motion, collider, direction) in
+            (&mut marines, &motions, &colliders, &directions).join()
         {
-            let marine_on_ground = marine_entities_on_ground.contains(&marine_entity);
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
             // Currently shooting is possible only when marine is static
-            if shoot_input && marine_on_ground && motion.velocity.x == 0. && !marine.is_shooting {
+            if marine.state == MarineState::Shooting
+                && collider.on_ground
+                && motion.velocity.x == 0.
+                && !marine.is_shooting
+            {
                 marine.is_shooting = true;
-                marine.has_shot = true;
 
                 let mut shoot_start_position = 0.;
+                let bbox = &collider.bounding_box;
                 if direction.x == Directions::Left {
-                    shoot_start_position = two_dim_obj.left();
+                    shoot_start_position = bbox.position.x - 64.;
                 } else if direction.x == Directions::Right {
-                    shoot_start_position = two_dim_obj.right();
+                    shoot_start_position = bbox.position.x + 64.;
                 }
 
                 let bullet_sprite_sheet_handle =
@@ -77,7 +65,7 @@ impl<'s> System<'s> for AttackSystem {
                     bullet_sprite_sheet_handle,
                     shoot_start_position,
                     direction,
-                    two_dim_obj.bottom(),
+                    bbox.position.y - bbox.half_size.y,
                     &lazy_update,
                     &ctx,
                 );

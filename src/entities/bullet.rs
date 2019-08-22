@@ -10,8 +10,8 @@ use amethyst::{
 
 use crate::{
     components::{
-        Animation, AnimationId, AnimationPrefabData, BoundingRect, Bullet, BulletImpact, Collidee,
-        Collider, Direction, Directions, Motion, TwoDimObject,
+        Animation, AnimationId, AnimationPrefabData, Boundary, Bullet, BulletImpact, Collidee,
+        Collider, Direction, Directions, Motion,
     },
     resources::Context,
 };
@@ -31,10 +31,6 @@ pub fn spawn_bullet(
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut two_dim_object = TwoDimObject::new(22. * scale, 4. * scale);
-    two_dim_object.set_position(shoot_start_position, marine_bottom + 48.);
-    two_dim_object.update_transform_position(&mut transform);
-
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet_handle,
         sprite_number: 0,
@@ -47,23 +43,36 @@ pub fn spawn_bullet(
         Directions::Neutral,
         Directions::Neutral,
     );
+
+    let mut bullet_start_position = 0.;
     if marine_dir.x == Directions::Right {
         motion.velocity.x = 20.;
         direction.x = Directions::Right;
+        bullet_start_position = shoot_start_position + 22.;
     } else if marine_dir.x == Directions::Left {
         motion.velocity.x = -20.;
         direction.x = Directions::Left;
+        bullet_start_position = shoot_start_position - 22.;
     }
+
+    let mut collider = Collider::new(22. * scale, 4. * scale);
+    let bbox = &mut collider.bounding_box;
+    bbox.position = Vector2::new(bullet_start_position, marine_bottom + 48.);
+    bbox.old_position = bbox.position.clone();
+
+    transform.set_translation_x(bullet_start_position);
+    transform.set_translation_y(marine_bottom + 48.);
+    // bullet should be shown only after making sure that there is no collision at the spawn position
+    transform.set_translation_z(-60.);
+
+    collider.set_hit_box_position(&motion.velocity);
 
     lazy_update.insert(bullet_entity, Bullet::default());
     lazy_update.insert(bullet_entity, Named::new("Bullet"));
-    lazy_update.insert(bullet_entity, two_dim_object);
+    lazy_update.insert(bullet_entity, collider);
     lazy_update.insert(
         bullet_entity,
-        Collider::new(
-            Vector2::new(shoot_start_position, marine_bottom + 48.),
-            BoundingRect::new(ctx.x_correction, ctx.map_width, 352., 0.),
-        ),
+        Boundary::new(ctx.x_correction, ctx.map_width, 352., 0.),
     );
     lazy_update.insert(bullet_entity, Collidee::default());
     lazy_update.insert(bullet_entity, sprite_render);
@@ -77,7 +86,7 @@ pub fn show_bullet_impact(
     entities: &Entities,
     prefab_handle: Handle<Prefab<AnimationPrefabData>>,
     impact_position: f32,
-    bullet_bottom: f32,
+    bullet_position_y: f32,
     bullet_velocity: f32,
     lazy_update: &ReadExpect<LazyUpdate>,
     ctx: &Context,
@@ -85,16 +94,13 @@ pub fn show_bullet_impact(
     let bullet_impact_entity: Entity = entities.create();
     let scale = ctx.scale;
 
-    let mut transform = Transform::default();
-    transform.set_scale(Vector3::new(scale, scale, scale));
-    transform.set_translation_z(0.);
-
     let mut direction = Direction::new(
         Directions::Right,
         Directions::Neutral,
         Directions::Neutral,
         Directions::Neutral,
     );
+
     let impact_position_x;
     if bullet_velocity > 0. {
         direction.x = Directions::Right;
@@ -104,9 +110,11 @@ pub fn show_bullet_impact(
         impact_position_x = impact_position + (8. * scale);
     }
 
-    let mut two_dim_object = TwoDimObject::new(16. * scale, 24. * scale);
-    two_dim_object.set_position(impact_position_x, bullet_bottom + 2.);
-    two_dim_object.update_transform_position(&mut transform);
+    let mut transform = Transform::default();
+    transform.set_scale(Vector3::new(scale, scale, scale));
+    transform.set_translation_x(impact_position_x);
+    transform.set_translation_y(bullet_position_y);
+    transform.set_translation_z(-10.);
 
     lazy_update.insert(bullet_impact_entity, BulletImpact::default());
     lazy_update.insert(

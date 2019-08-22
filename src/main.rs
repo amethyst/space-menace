@@ -55,26 +55,23 @@ fn main() -> amethyst::Result<()> {
         )?
         .with_bundle(input_bundle)?
         .with(Processor::<Map>::new(), "map_processor", &[])
-        .with(MarineAccelerationSystem, "marine_acceleration_system", &[])
+        .with(MarineInputSystem, "marine_input_system", &[])
         .with(
-            AttackSystem,
-            "attack_system",
-            &["marine_acceleration_system"],
+            MarineKinematicsSystem,
+            "marine_kinematics_system",
+            &["marine_input_system"],
         )
         .with(
-            CollisionSystem,
-            "collision_system",
-            &["marine_acceleration_system"],
+            KinematicsSystem,
+            "kinematics_system",
+            &["marine_kinematics_system"],
         )
+        .with(AttackSystem, "attack_system", &["kinematics_system"])
+        .with(CollisionSystem, "collision_system", &["attack_system"])
         .with(
             BulletCollisionSystem,
             "bullet_collision_system",
             &["collision_system"],
-        )
-        .with(
-            BulletImpactAnimationSystem,
-            "bullet_impact_animation_system",
-            &["bullet_collision_system"],
         )
         .with(
             PincerCollisionSystem,
@@ -82,28 +79,50 @@ fn main() -> amethyst::Result<()> {
             &["collision_system"],
         )
         .with(
+            TransformationSystem,
+            "transformation_system",
+            &["pincer_collision_system", "bullet_collision_system"],
+        )
+        .with(
+            BulletTransformationSystem,
+            "bullet_transformation_system",
+            &["transformation_system"],
+        )
+        .with(
+            BulletImpactAnimationSystem,
+            "bullet_impact_animation_system",
+            &["bullet_transformation_system"],
+        )
+        .with(
             PincerAnimationSystem,
             "pincer_animation_system",
-            &["pincer_collision_system"],
+            &["transformation_system"],
         )
         .with(ExplosionAnimationSystem, "explosion_animation_system", &[])
         .with(ParallaxSystem, "parallax_system", &[])
         .with(
-            MotionSystem,
-            "motion_system",
-            &["collision_system", "parallax_system"],
-        )
-        .with(
             MarineAnimationSystem,
             "marine_animation_system",
-            &["collision_system"],
+            &["transformation_system"],
         )
-        .with(AnimationControlSystem, "animation_control_system", &[])
-        .with(DirectionSystem, "direction_system", &[])
         .with(
-            CameraMotionSystem,
-            "camera_motion_system",
-            &["collision_system"],
+            AnimationControlSystem,
+            "animation_control_system",
+            &[
+                "marine_animation_system",
+                "pincer_animation_system",
+                "bullet_impact_animation_system",
+            ],
+        )
+        .with(
+            DirectionSystem,
+            "direction_system",
+            &["transformation_system"],
+        )
+        .with(
+            CameraTransformationSystem,
+            "camera_transformation_system",
+            &["transformation_system"],
         )
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()

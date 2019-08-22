@@ -1,6 +1,9 @@
 use amethyst::{
     assets::{Asset, Handle, ProcessingState},
-    core::{math::Vector3, Transform, WithNamed},
+    core::{
+        math::{Vector2, Vector3},
+        Transform, WithNamed,
+    },
     ecs::{prelude::World, VecStorage},
     error::Error,
     prelude::Builder,
@@ -10,7 +13,7 @@ use amethyst::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    components::{Collidee, Direction, Motion, Parallax, TwoDimObject},
+    components::{Collider, Direction, Motion, Parallax},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -68,7 +71,7 @@ impl Map {
         for layer in self.layers.iter() {
             match layer.name.as_ref() {
                 "collision" => {
-                    self.collision_layer(world, layer, ctx);
+                    self.load_collision_layer(world, layer, ctx);
                 }
                 _ => {
                     self.load_non_collision_layer(world, layer, ctx);
@@ -77,25 +80,27 @@ impl Map {
         }
     }
 
-    fn collision_layer(&self, world: &mut World, layer: &Layer, ctx: &Context) {
+    fn load_collision_layer(&self, world: &mut World, layer: &Layer, ctx: &Context) {
         let scale = ctx.scale;
 
         for obj in layer.objects.iter() {
             let mut transform = Transform::default();
             transform.set_translation_z(-10.);
 
-            let mut two_dim_object = TwoDimObject::new(obj.width * scale, obj.height * scale);
-            two_dim_object.set_left(obj.x * scale + ctx.x_correction);
-            two_dim_object.set_top(ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction);
-            two_dim_object.update_transform_position(&mut transform);
+            let mut collider = Collider::new(obj.width * scale, obj.height * scale);
+            let bbox = &mut collider.bounding_box;
+            bbox.position = Vector2::new(
+                obj.x * scale + ctx.x_correction + bbox.half_size.x,
+                ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction - bbox.half_size.y,
+            );
+            bbox.old_position = bbox.position.clone();
 
             world
                 .create_entity()
                 .named("Collision")
                 .with(Motion::new())
                 .with(transform)
-                .with(two_dim_object)
-                .with(Collidee::default())
+                .with(collider)
                 .with(Direction::default())
                 .build();
         }
