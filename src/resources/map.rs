@@ -1,6 +1,9 @@
 use amethyst::{
     assets::{Asset, Handle, ProcessingState},
-    core::{math::Vector3, Transform, WithNamed},
+    core::{
+        math::{Vector2, Vector3},
+        Transform, WithNamed,
+    },
     ecs::{prelude::World, VecStorage},
     error::Error,
     prelude::Builder,
@@ -10,7 +13,7 @@ use amethyst::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    components::{ColliderNew, Direction, Motion, Parallax},
+    components::{Collider, Direction, Motion, Parallax},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -84,13 +87,13 @@ impl Map {
             let mut transform = Transform::default();
             transform.set_translation_z(-10.);
 
-            let mut collider = ColliderNew::new(obj.width * scale, obj.height * scale);
-            // bb.set_left(obj.x * scale + ctx.x_correction);
-            // bb.set_top(ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction);
-            // bb.update_transform_position(&mut transform);
-            collider.set_position(obj.x * scale + ctx.x_correction + collider.half_size.x, ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction - collider.half_size.y);
-            collider.old_position.x = collider.position.x;
-            collider.old_position.y = collider.position.y;
+            let mut collider = Collider::new(obj.width * scale, obj.height * scale);
+            let bbox = &mut collider.bounding_box;
+            bbox.position = Vector2::new(
+                obj.x * scale + ctx.x_correction + bbox.half_size.x,
+                ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction - bbox.half_size.y,
+            );
+            bbox.old_position = bbox.position.clone();
 
             world
                 .create_entity()
@@ -98,8 +101,6 @@ impl Map {
                 .with(Motion::new())
                 .with(transform)
                 .with(collider)
-                // .with(Collidee::default())
-                // .with(ColliderNew::default())
                 .with(Direction::default())
                 .build();
         }

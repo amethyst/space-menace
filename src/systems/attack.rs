@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{ColliderNew, Direction, Directions, Marine, MarineState, Motion},
+    components::{Collider, Direction, Directions, Marine, MarineState, Motion},
     entities::spawn_bullet,
     resources::{AssetType, Context, SpriteSheetList},
 };
@@ -14,7 +14,7 @@ pub struct AttackSystem;
 impl<'s> System<'s> for AttackSystem {
     type SystemData = (
         Entities<'s>,
-        ReadStorage<'s, ColliderNew>,
+        ReadStorage<'s, Collider>,
         WriteStorage<'s, Marine>,
         ReadStorage<'s, Motion>,
         ReadStorage<'s, Direction>,
@@ -37,25 +37,25 @@ impl<'s> System<'s> for AttackSystem {
             ctx,
         ) = data;
 
-        for (mut marine, motion, collider, direction) in (
-            &mut marines,
-            &motions,
-            &colliders,
-            &directions,
-        )
-            .join()
+        for (mut marine, motion, collider, direction) in
+            (&mut marines, &motions, &colliders, &directions).join()
         {
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
             // Currently shooting is possible only when marine is static
-            if marine.state == MarineState::Shooting && collider.on_ground && motion.velocity.x == 0. && !marine.is_shooting {
+            if marine.state == MarineState::Shooting
+                && collider.on_ground
+                && motion.velocity.x == 0.
+                && !marine.is_shooting
+            {
                 marine.is_shooting = true;
 
                 let mut shoot_start_position = 0.;
+                let bbox = &collider.bounding_box;
                 if direction.x == Directions::Left {
-                    shoot_start_position = collider.position.x - 64.;
+                    shoot_start_position = bbox.position.x - 64.;
                 } else if direction.x == Directions::Right {
-                    shoot_start_position = collider.position.x + 64.;
+                    shoot_start_position = bbox.position.x + 64.;
                 }
 
                 let bullet_sprite_sheet_handle =
@@ -65,7 +65,7 @@ impl<'s> System<'s> for AttackSystem {
                     bullet_sprite_sheet_handle,
                     shoot_start_position,
                     direction,
-                    collider.position.y - collider.half_size.y,
+                    bbox.position.y - bbox.half_size.y,
                     &lazy_update,
                     &ctx,
                 );

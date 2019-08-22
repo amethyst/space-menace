@@ -6,7 +6,9 @@ use amethyst::{
     renderer::SpriteRender,
 };
 
-use crate::components::{Animation, AnimationId, BulletImpact, Explosion, Marine, MarineState, Motion, Pincer};
+use crate::components::{
+    Animation, AnimationId, BulletImpact, Explosion, Marine, MarineState, Motion, Pincer,
+};
 
 pub struct BulletImpactAnimationSystem;
 
@@ -163,16 +165,6 @@ impl<'s> System<'s> for MarineAnimationSystem {
             .join()
         {
             let marine_velocity = motion.velocity;
-            // let new_animation_id = if marine_velocity.y != 0. {
-            //     AnimationId::Jump
-            // } else if marine_velocity.x != 0. {
-            //     AnimationId::Move
-            // // } else if marine.has_shot {
-            // } else if marine.state == MarineState::Shooting {
-            //     AnimationId::Shoot
-            // } else {
-            //     AnimationId::Idle
-            // };
             let new_animation_id = match marine.state {
                 MarineState::Jumping => AnimationId::Jump,
                 MarineState::Running => AnimationId::Move,

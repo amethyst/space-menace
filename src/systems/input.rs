@@ -3,7 +3,7 @@ use amethyst::{
     input::{InputHandler, StringBindings},
 };
 
-use crate::components::{ColliderNew, Direction, Directions, Marine, MarineState};
+use crate::components::{Collider, Direction, Directions, Marine, MarineState};
 
 pub struct MarineInputSystem;
 
@@ -11,7 +11,7 @@ impl<'s> System<'s> for MarineInputSystem {
     type SystemData = (
         WriteStorage<'s, Direction>,
         WriteStorage<'s, Marine>,
-        WriteStorage<'s, ColliderNew>,
+        WriteStorage<'s, Collider>,
         Read<'s, InputHandler<StringBindings>>,
     );
 
@@ -34,7 +34,7 @@ impl<'s> System<'s> for MarineInputSystem {
                 MarineState::Running
             } else if shoot_input {
                 MarineState::Shooting
-            }  else {
+            } else {
                 MarineState::Idling
             }
         }
