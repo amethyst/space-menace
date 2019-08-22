@@ -12,7 +12,7 @@ use amethyst::{
 use crate::{
     components::{
         Animation, AnimationId, AnimationPrefabData, Boundary, BoundingRect, CollideeNew, ColliderNew, Direction,
-        Directions, Motion, Pincer, BoundingBox,
+        Directions, Motion, Pincer,
     },
     resources::Context,
 };
@@ -22,11 +22,11 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     let scale = ctx.scale;
     transform.set_scale(Vector3::new(scale, scale, scale));
 
-    let mut bb = BoundingBox::new(45. * scale, 30. * scale);
-    bb.hit_box_offset_back = 30.;
-    bb.set_position(1040., 16.);
-    bb.old_position.x = 1040.;
-    bb.old_position.y = 16.;
+    let mut collider = ColliderNew::new(45. * scale, 30. * scale);
+    collider.hit_box_offset_back = 30.;
+    collider.set_position(1040., 16.);
+    collider.old_position.x = 1040.;
+    collider.old_position.y = 16.;
     // bb.update_transform_position(&mut transform);
     transform.set_translation_x(1040.);
     transform.set_translation_y(16.);
@@ -41,14 +41,14 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
         .create_entity()
         .with(Pincer::new())
         .named("Pincer")
-        .with(bb)
+        .with(collider)
         // .with(Collider::new(
         //     Vector2::new(1040., 16.),
         //     BoundingRect::new(800., 1832., 352., 0.),
         // ))
         // .with(collidee)
         .with(Boundary::new(800., 1832., 352., 0.))
-        .with(ColliderNew::default())
+        // .with(ColliderNew::default())
         .with(CollideeNew::default())
         .with(transform)
         .with(motion)

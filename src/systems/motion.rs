@@ -4,42 +4,42 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Collider, Marine, Motion, Subject, BoundingBox},
+    components::{Marine, Motion, Subject},
     resources::Context,
 };
 
-#[derive(Default)]
-pub struct MotionSystem;
+// #[derive(Default)]
+// pub struct MotionSystem;
 
-impl<'s> System<'s> for MotionSystem {
-    type SystemData = (
-        WriteStorage<'s, BoundingBox>,
-        ReadStorage<'s, Motion>,
-        ReadStorage<'s, Collider>,
-        WriteStorage<'s, Transform>,
-    );
-    fn run(&mut self, data: Self::SystemData) {
-        let (mut bbs, motions, colliders, mut transforms) = data;
+// impl<'s> System<'s> for MotionSystem {
+//     type SystemData = (
+//         WriteStorage<'s, BoundingBox>,
+//         ReadStorage<'s, Motion>,
+//         ReadStorage<'s, Collider>,
+//         WriteStorage<'s, Transform>,
+//     );
+//     fn run(&mut self, data: Self::SystemData) {
+//         let (mut bbs, motions, colliders, mut transforms) = data;
 
-        for (bb, motion, collider, mut transform) in
-            (&mut bbs, &motions, &colliders, &mut transforms).join()
-        {
-            if motion.velocity.x > 0. {
-                bb.set_right(collider.next_position.x);
-            }
-            if motion.velocity.x < 0. {
-                bb.set_left(collider.next_position.x);
-            }
-            if motion.velocity.y > 0. {
-                bb.set_top(collider.next_position.y);
-            }
-            if motion.velocity.y < 0. {
-                bb.set_bottom(collider.next_position.y);
-            }
-            bb.update_transform_position(&mut transform);
-        }
-    }
-}
+//         for (bb, motion, collider, mut transform) in
+//             (&mut bbs, &motions, &colliders, &mut transforms).join()
+//         {
+//             if motion.velocity.x > 0. {
+//                 bb.set_right(collider.next_position.x);
+//             }
+//             if motion.velocity.x < 0. {
+//                 bb.set_left(collider.next_position.x);
+//             }
+//             if motion.velocity.y > 0. {
+//                 bb.set_top(collider.next_position.y);
+//             }
+//             if motion.velocity.y < 0. {
+//                 bb.set_bottom(collider.next_position.y);
+//             }
+//             bb.update_transform_position(&mut transform);
+//         }
+//     }
+// }
 
 pub struct CameraMotionSystem;
 

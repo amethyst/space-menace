@@ -4,7 +4,7 @@ use amethyst::{
 };
 
 use crate::{
-    components::{Direction, Directions, Marine, MarineState, Motion, BoundingBox},
+    components::{ColliderNew, Direction, Directions, Marine, MarineState, Motion},
     entities::spawn_bullet,
     resources::{AssetType, Context, SpriteSheetList},
 };
@@ -14,7 +14,7 @@ pub struct AttackSystem;
 impl<'s> System<'s> for AttackSystem {
     type SystemData = (
         Entities<'s>,
-        ReadStorage<'s, BoundingBox>,
+        ReadStorage<'s, ColliderNew>,
         WriteStorage<'s, Marine>,
         ReadStorage<'s, Motion>,
         ReadStorage<'s, Direction>,
@@ -27,7 +27,7 @@ impl<'s> System<'s> for AttackSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (
             entities,
-            bbs,
+            colliders,
             mut marines,
             motions,
             directions,
@@ -37,10 +37,10 @@ impl<'s> System<'s> for AttackSystem {
             ctx,
         ) = data;
 
-        for (mut marine, motion, bb, direction) in (
+        for (mut marine, motion, collider, direction) in (
             &mut marines,
             &motions,
-            &bbs,
+            &colliders,
             &directions,
         )
             .join()
@@ -48,14 +48,14 @@ impl<'s> System<'s> for AttackSystem {
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
             // Currently shooting is possible only when marine is static
-            if marine.state == MarineState::Shooting && bb.on_ground && motion.velocity.x == 0. && !marine.is_shooting {
+            if marine.state == MarineState::Shooting && collider.on_ground && motion.velocity.x == 0. && !marine.is_shooting {
                 marine.is_shooting = true;
 
                 let mut shoot_start_position = 0.;
                 if direction.x == Directions::Left {
-                    shoot_start_position = bb.position.x - 64.;
+                    shoot_start_position = collider.position.x - 64.;
                 } else if direction.x == Directions::Right {
-                    shoot_start_position = bb.position.x + 64.;
+                    shoot_start_position = collider.position.x + 64.;
                 }
 
                 let bullet_sprite_sheet_handle =
@@ -65,7 +65,7 @@ impl<'s> System<'s> for AttackSystem {
                     bullet_sprite_sheet_handle,
                     shoot_start_position,
                     direction,
-                    bb.position.y - bb.half_size.y,
+                    collider.position.y - collider.half_size.y,
                     &lazy_update,
                     &ctx,
                 );

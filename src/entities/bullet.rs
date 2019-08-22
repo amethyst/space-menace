@@ -11,7 +11,7 @@ use amethyst::{
 use crate::{
     components::{
         Animation, AnimationId, AnimationPrefabData, Boundary, BoundingRect, Bullet, BulletImpact, CollideeNew,
-        ColliderNew, Direction, Directions, Motion, BoundingBox,
+        ColliderNew, Direction, Directions, Motion,
     },
     resources::Context,
 };
@@ -55,17 +55,19 @@ pub fn spawn_bullet(
         bullet_start_position = shoot_start_position - 22.;
     }
 
-    let mut bb = BoundingBox::new(22. * scale, 4. * scale);
-    bb.set_position(bullet_start_position, marine_bottom + 48.);
-    bb.old_position.x = bullet_start_position;
-    bb.old_position.y = marine_bottom + 48.;
+    let mut collider = ColliderNew::new(22. * scale, 4. * scale);
+    collider.set_position(bullet_start_position, marine_bottom + 48.);
+    collider.old_position.x = bullet_start_position;
+    collider.old_position.y = marine_bottom + 48.;
     // bb.update_transform_position(&mut transform);
     transform.set_translation_x(bullet_start_position);
     transform.set_translation_y(marine_bottom + 48.);
+    // bullet should be shown only after making sure that there is no collision at the spawn position
+    transform.set_translation_z(-60.);
 
     lazy_update.insert(bullet_entity, Bullet::default());
     lazy_update.insert(bullet_entity, Named::new("Bullet"));
-    lazy_update.insert(bullet_entity, bb);
+    lazy_update.insert(bullet_entity, collider);
     // lazy_update.insert(
     //     bullet_entity,
     //     Collider::new(
@@ -74,7 +76,7 @@ pub fn spawn_bullet(
     //     ),
     // );
     lazy_update.insert(bullet_entity, Boundary::new(ctx.x_correction, ctx.map_width, 352., 0.));
-    lazy_update.insert(bullet_entity, ColliderNew::default());
+    // lazy_update.insert(bullet_entity, ColliderNew::default());
     lazy_update.insert(bullet_entity, CollideeNew::default());
     lazy_update.insert(bullet_entity, sprite_render);
     lazy_update.insert(bullet_entity, motion);
@@ -98,7 +100,7 @@ pub fn show_bullet_impact(
 
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
-    transform.set_translation_z(-15.);
+    transform.set_translation_z(-10.);
 
     let mut direction = Direction::new(
         Directions::Right,
@@ -114,9 +116,11 @@ pub fn show_bullet_impact(
         direction.x = Directions::Left;
         impact_position_x = impact_position + (8. * scale);
     }
+    println!("impact_position = {}", impact_position);
+    println!("impact_position_x = {}", impact_position_x);
 
-    let mut bb = BoundingBox::new(16. * scale, 24. * scale);
-    bb.set_position(impact_position_x, bullet_position_y);
+    // let mut bb = BoundingBox::new(16. * scale, 24. * scale);
+    // bb.set_position(impact_position_x, bullet_position_y);
     // bb.update_transform_position(&mut transform);
     transform.set_translation_x(impact_position_x);
     transform.set_translation_y(bullet_position_y);

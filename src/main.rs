@@ -64,42 +64,43 @@ fn main() -> amethyst::Result<()> {
             "attack_system",
             &["kinematics_system"],
         )
-        .with(
-            CollisionSystem,
-            "collision_system",
-            &["marine_kinematics_system"],
-        )
-        .with(CollisionNewSystem, "collision_new_system", &["kinematics_system"])
+        // .with(
+        //     CollisionSystem,
+        //     "collision_system",
+        //     &["marine_kinematics_system"],
+        // )
+        .with(CollisionNewSystem, "collision_new_system", &["attack_system"])
         .with(BulletCollisionNewSystem, "bullet_collision_new_system", &["collision_new_system"])
         .with(PincerCollisionNewSystem, "pincer_collision_new_system", &["collision_new_system"])
         .with(TransformationSystem, "transformation_system", &["pincer_collision_new_system", "bullet_collision_new_system"])
-        .with(
-            BulletCollisionSystem,
-            "bullet_collision_system",
-            &["collision_system"],
-        )
+        .with(BulletTransformationSystem, "bullet_transformation_system", &["transformation_system"])
+        // .with(
+        //     BulletCollisionSystem,
+        //     "bullet_collision_system",
+        //     &["collision_system"],
+        // )
         .with(
             BulletImpactAnimationSystem,
             "bullet_impact_animation_system",
-            &["bullet_collision_system"],
+            &["bullet_collision_new_system"],
         )
-        .with(
-            PincerCollisionSystem,
-            "pincer_collision_system",
-            &["collision_system"],
-        )
+        // .with(
+        //     PincerCollisionSystem,
+        //     "pincer_collision_system",
+        //     &["collision_system"],
+        // )
         .with(
             PincerAnimationSystem,
             "pincer_animation_system",
-            &["pincer_collision_system"],
+            &["pincer_collision_new_system"],
         )
         .with(ExplosionAnimationSystem, "explosion_animation_system", &[])
         .with(ParallaxSystem, "parallax_system", &[])
-        .with(
-            MotionSystem,
-            "motion_system",
-            &["collision_system", "parallax_system"],
-        )
+        // .with(
+        //     MotionSystem,
+        //     "motion_system",
+        //     &["collision_system", "parallax_system"],
+        // )
         .with(
             MarineAnimationSystem,
             "marine_animation_system",

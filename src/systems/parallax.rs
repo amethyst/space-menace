@@ -3,7 +3,7 @@ use amethyst::{
     ecs::{Join, ReadStorage, System, WriteStorage},
 };
 
-use crate::components::{Collider, Marine, Motion, Parallax};
+use crate::components::{ColliderNew, Marine, Motion, Parallax};
 
 #[derive(Default)]
 pub struct ParallaxSystem;
@@ -13,7 +13,7 @@ impl<'s> System<'s> for ParallaxSystem {
         ReadStorage<'s, Parallax>,
         ReadStorage<'s, Marine>,
         ReadStorage<'s, Motion>,
-        ReadStorage<'s, Collider>,
+        ReadStorage<'s, ColliderNew>,
         WriteStorage<'s, Transform>,
     );
     fn run(&mut self, data: Self::SystemData) {
@@ -25,14 +25,15 @@ impl<'s> System<'s> for ParallaxSystem {
         {
             marine_velocity_x = motion.velocity.x;
             let marine_x = transform.translation().x;
-            let collider_edge_x = collider.next_position.x;
-            marine_moved = if marine_velocity_x > 0. {
-                ((collider_edge_x - 32.) - marine_x) != 0.
-            } else if marine_velocity_x < 0. {
-                ((collider_edge_x + 32.) - marine_x) != 0.
-            } else {
-                false
-            }
+            // let collider_edge_x = collider.next_position.x;
+            // marine_moved = if marine_velocity_x > 0. {
+            //     ((collider_edge_x - 32.) - marine_x) != 0.
+            // } else if marine_velocity_x < 0. {
+            //     ((collider_edge_x + 32.) - marine_x) != 0.
+            // } else {
+            //     false
+            // }
+            marine_moved = collider.position.x != collider.old_position.x;
         }
 
         for (_, transform) in (&parallaxes, &mut transforms).join() {

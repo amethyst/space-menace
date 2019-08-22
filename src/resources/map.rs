@@ -10,7 +10,7 @@ use amethyst::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    components::{Collidee, ColliderNew, Direction, Motion, Parallax, BoundingBox},
+    components::{ColliderNew, Direction, Motion, Parallax},
     resources::{AssetType, Context, SpriteSheetList},
 };
 
@@ -84,21 +84,22 @@ impl Map {
             let mut transform = Transform::default();
             transform.set_translation_z(-10.);
 
-            let mut bb = BoundingBox::new(obj.width * scale, obj.height * scale);
-            bb.set_left(obj.x * scale + ctx.x_correction);
-            bb.set_top(ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction);
-            bb.update_transform_position(&mut transform);
-            bb.old_position.x = bb.position.x;
-            bb.old_position.y = bb.position.y;
+            let mut collider = ColliderNew::new(obj.width * scale, obj.height * scale);
+            // bb.set_left(obj.x * scale + ctx.x_correction);
+            // bb.set_top(ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction);
+            // bb.update_transform_position(&mut transform);
+            collider.set_position(obj.x * scale + ctx.x_correction + collider.half_size.x, ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction - collider.half_size.y);
+            collider.old_position.x = collider.position.x;
+            collider.old_position.y = collider.position.y;
 
             world
                 .create_entity()
                 .named("Collision")
                 .with(Motion::new())
                 .with(transform)
-                .with(bb)
-                .with(Collidee::default())
-                .with(ColliderNew::default())
+                .with(collider)
+                // .with(Collidee::default())
+                // .with(ColliderNew::default())
                 .with(Direction::default())
                 .build();
         }
