@@ -15,6 +15,7 @@ pub use self::animation::PincerAnimationSystem;
 pub use self::attack::AttackSystem;
 pub use self::collision::BulletCollisionSystem;
 pub use self::collision::CollisionSystem;
+pub use self::collision::MarineCollisionSystem;
 pub use self::collision::PincerCollisionSystem;
 pub use self::direction::DirectionSystem;
 pub use self::input::MarineInputSystem;

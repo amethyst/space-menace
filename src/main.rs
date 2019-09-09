@@ -79,6 +79,11 @@ fn main() -> amethyst::Result<()> {
             &["collision_system"],
         )
         .with(
+            MarineCollisionSystem,
+            "marine_collision_system",
+            &["collision_system"],
+        )
+        .with(
             TransformationSystem,
             "transformation_system",
             &["pincer_collision_system", "bullet_collision_system"],
