@@ -120,6 +120,7 @@ impl<'s> System<'s> for AnimationControlSystem {
                         let end = match animation_id {
                             AnimationId::Shoot
                             | AnimationId::Explode
+                            | AnimationId::Die
                             | AnimationId::BulletImpact => EndControl::Stay,
                             _ => EndControl::Loop(None),
                         };
@@ -147,28 +148,26 @@ impl<'s> System<'s> for MarineAnimationSystem {
     type SystemData = (
         Entities<'s>,
         ReadStorage<'s, Marine>,
-        ReadStorage<'s, Motion>,
         WriteStorage<'s, Animation>,
         WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (entities, marines, motions, mut animations, mut animation_control_sets) = data;
+        let (entities, marines, mut animations, mut animation_control_sets) = data;
 
-        for (entity, marine, motion, mut animation, animation_control_set) in (
+        for (entity, marine, mut animation, animation_control_set) in (
             &entities,
             &marines,
-            &motions,
             &mut animations,
             &mut animation_control_sets,
         )
             .join()
         {
-            let marine_velocity = motion.velocity;
             let new_animation_id = match marine.state {
                 MarineState::Jumping => AnimationId::Jump,
                 MarineState::Running => AnimationId::Move,
                 MarineState::Shooting => AnimationId::Shoot,
+                MarineState::Dying => AnimationId::Die,
                 _ => AnimationId::Idle,
             };
 
@@ -186,6 +185,10 @@ impl<'s> System<'s> for MarineAnimationSystem {
                 animation_control_set.start(new_animation_id);
 
                 animation.current = new_animation_id;
+            } else {
+                if new_animation_id == AnimationId::Die {
+                    animation.show = false;
+                }
             }
         }
     }

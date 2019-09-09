@@ -60,6 +60,14 @@ impl<'s> System<'s> for MarineKinematicsSystem {
                     let acceleration_x = if motion.velocity.x != 0. { -0.06 } else { 0. };
                     acceleration = Vector2::new(acceleration_x, -0.6);
                 }
+                MarineState::Dying => {
+                    if collider.on_ground {
+                        motion.velocity.x = 0.;
+                        motion.velocity.y = 8.;
+                        collider.on_ground = false;
+                    }
+                    acceleration = Vector2::new(0., -0.6);
+                }
                 _ => {}
             }
             motion.update_velocity(acceleration, dir, 0., marine.max_ground_speed);

@@ -160,6 +160,7 @@ pub struct Collider {
     pub on_ground: bool,
     pub hit_box_offset_front: f32,
     pub hit_box_offset_back: f32,
+    pub is_collidable: bool,
 }
 
 impl Default for Collider {
@@ -171,6 +172,7 @@ impl Default for Collider {
             on_ground: false,
             hit_box_offset_front: 0.,
             hit_box_offset_back: 0.,
+            is_collidable: true,
         }
     }
 }
@@ -184,6 +186,7 @@ impl Collider {
             on_ground: false,
             hit_box_offset_front: 0.,
             hit_box_offset_back: 0.,
+            is_collidable: true,
         }
     }
 

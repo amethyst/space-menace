@@ -5,7 +5,7 @@ use amethyst::{
 
 use crate::{
     components::{
-        Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Motion,
+        Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Marine, MarineState, Motion,
         Pincer,
     },
     entities::{show_bullet_impact, show_explosion},
@@ -36,7 +36,7 @@ impl<'s> System<'s> for CollisionSystem {
             let half_size_a_x = bbox_a.half_size.x;
             let correction;
 
-            if velocity_a.x != 0. || velocity_a.y != 0. {
+            if velocity_a.x != 0. || velocity_a.y != 0. && collider_a.is_collidable {
                 for (entity_b, collider_b, motion_b, name_b) in
                     (&entities, &colliders, &motions, &names).join()
                 {
@@ -223,6 +223,31 @@ impl<'s> System<'s> for BulletCollisionSystem {
                     }
                 }
                 let _ = entities.delete(entity);
+            }
+        }
+    }
+}
+
+pub struct MarineCollisionSystem;
+
+impl<'s> System<'s> for MarineCollisionSystem {
+    type SystemData = (
+        ReadStorage<'s, Marine>,
+        WriteStorage<'s, Collider>,
+        ReadStorage<'s, Collidee>,
+    );
+    
+    fn run(&mut self, data: Self::SystemData) {
+        let (marines, mut colliders, collidees) = data;
+
+        for (marine, collider, collidee) in (&marines, &mut colliders, &collidees,).join() {
+            if let Some(collidee_horizontal) = &collidee.horizontal {
+                match collidee_horizontal.name.as_ref() {
+                    "Pincer" => {
+                        collider.is_collidable = false;
+                    }
+                    _ => {}
+                }
             }
         }
     }
