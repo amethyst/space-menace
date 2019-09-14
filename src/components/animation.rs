@@ -34,12 +34,15 @@ pub struct AnimationPrefabData {
     animation_set: AnimationSetPrefab<AnimationId, SpriteRender>,
 }
 
-#[derive(Component, Debug)]
-#[storage(DenseVecStorage)]
+#[derive(Debug)]
 pub struct Animation {
     pub current: AnimationId,
     pub types: Vec<AnimationId>,
     pub show: bool,
+}
+
+impl Component for Animation {
+    type Storage = DenseVecStorage<Self>;
 }
 
 impl Animation {

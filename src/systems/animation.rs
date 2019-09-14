@@ -9,6 +9,7 @@ use amethyst::{
 use crate::components::{
     Animation, AnimationId, BulletImpact, Explosion, Marine, MarineState, Motion, Pincer,
 };
+use log::trace;
 
 pub struct BulletImpactAnimationSystem;
 

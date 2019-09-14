@@ -3,13 +3,15 @@ use amethyst::{
     ecs::{Component, DenseVecStorage},
 };
 
-#[derive(Component)]
-#[storage(DenseVecStorage)]
 pub struct Boundary {
     pub left: f32,
     pub right: f32,
     pub top: f32,
     pub bottom: f32,
+}
+
+impl Component for Boundary {
+    type Storage = DenseVecStorage<Self>;
 }
 
 impl Boundary {
@@ -57,11 +59,13 @@ pub struct CollideeDetails {
     pub correction: f32,
 }
 
-#[derive(Component)]
-#[storage(DenseVecStorage)]
 pub struct Collidee {
     pub horizontal: Option<CollideeDetails>,
     pub vertical: Option<CollideeDetails>,
+}
+
+impl Component for Collidee {
+    type Storage = DenseVecStorage<Self>;
 }
 
 impl Default for Collidee {
@@ -151,8 +155,7 @@ impl Collidee {
     }
 }
 
-#[derive(Clone, Component)]
-#[storage(DenseVecStorage)]
+#[derive(Clone)]
 pub struct Collider {
     pub bounding_box: GenericBox,
     pub hit_box: GenericBox,
@@ -160,6 +163,10 @@ pub struct Collider {
     pub on_ground: bool,
     pub hit_box_offset_front: f32,
     pub hit_box_offset_back: f32,
+}
+
+impl Component for Collider {
+    type Storage = DenseVecStorage<Self>;
 }
 
 impl Default for Collider {

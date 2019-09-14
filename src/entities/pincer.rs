@@ -4,7 +4,7 @@ use amethyst::{
         math::{Vector2, Vector3},
         Transform, WithNamed,
     },
-    ecs::prelude::World,
+    ecs::prelude::{World, WorldExt},
     prelude::Builder,
     renderer::transparent::Transparent,
 };
@@ -17,7 +17,7 @@ use crate::{
     resources::Context,
 };
 
-pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
+pub fn load_pincer(world: &mut World, prefab: &Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
     let mut transform = Transform::default();
     let scale = ctx.scale;
     transform.set_scale(Vector3::new(scale, scale, scale));
@@ -58,7 +58,7 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
             AnimationId::Idle,
             vec![AnimationId::Idle, AnimationId::Walk],
         ))
-        .with(prefab)
+        .with(prefab.clone())
         .with(direction)
         .with(Transparent) // Necessary for ordered layering
         .build();

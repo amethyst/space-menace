@@ -13,11 +13,13 @@ impl Default for PincerState {
     }
 }
 
-#[derive(Component)]
-#[storage(DenseVecStorage)]
 pub struct Pincer {
     pub state: PincerState,
     pub hit_count: u32,
+}
+
+impl Component for Pincer {
+    type Storage = DenseVecStorage<Self>;
 }
 
 impl Pincer {

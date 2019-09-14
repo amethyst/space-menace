@@ -9,13 +9,15 @@ pub enum Directions {
     Neutral,
 }
 
-#[derive(Component)]
-#[storage(DenseVecStorage)]
 pub struct Direction {
     pub default_x: Directions,
     pub default_y: Directions,
     pub x: Directions,
     pub y: Directions,
+}
+
+impl Component for Direction {
+    type Storage = DenseVecStorage<Self>;
 }
 
 impl Default for Direction {

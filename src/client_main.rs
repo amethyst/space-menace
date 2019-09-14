@@ -1,18 +1,12 @@
-extern crate amethyst;
-
-#[macro_use]
-extern crate log;
-#[macro_use]
-extern crate specs_derive;
-
 use amethyst::{
     animation::AnimationBundle,
-    assets::{PrefabLoaderSystem, Processor},
+    assets::{PrefabLoaderSystemDesc, Processor},
     core::transform::TransformBundle,
     input::{InputBundle, StringBindings},
-    network::{
+    network::simulation::{
+        NetworkSimulationResource,
         NetworkSimulationTimeSystem,
-        laminar::{LaminarNetworkBundle, LaminarNetworkResource}
+        udp::UdpNetworkBundle
     },
     renderer::{
         plugins::{RenderFlat2D, RenderToWindow},
@@ -46,8 +40,8 @@ fn main() -> amethyst::Result<()> {
         .with_bindings_from_file(root.join("resources/bindings_config.ron"))?;
 
     let game_data = GameDataBuilder::default()
-        .with(
-            PrefabLoaderSystem::<AnimationPrefabData>::default(),
+        .with_system_desc(
+            PrefabLoaderSystemDesc::<AnimationPrefabData>::default(),
             "scene_loader",
             &[],
         )

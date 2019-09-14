@@ -4,7 +4,7 @@ use amethyst::{
         math::{Vector2, Vector3},
         Transform, WithNamed,
     },
-    ecs::prelude::World,
+    ecs::prelude::{World, WorldExt},
     prelude::Builder,
     renderer::transparent::Transparent,
 };
@@ -17,7 +17,7 @@ use crate::{
     resources::Context,
 };
 
-pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
+pub fn load_marine(world: &mut World, prefab: &Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
     let scale = ctx.scale;
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
@@ -51,7 +51,7 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
                 AnimationId::Shoot,
             ],
         ))
-        .with(prefab)
+        .with(prefab.clone())
         .with(Direction::new(
             Directions::Right,
             Directions::Neutral,

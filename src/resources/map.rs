@@ -4,7 +4,7 @@ use amethyst::{
         math::{Vector2, Vector3},
         Transform, WithNamed,
     },
-    ecs::{prelude::World, VecStorage},
+    ecs::{prelude::{World, WorldExt}, VecStorage},
     error::Error,
     prelude::Builder,
     renderer::{sprite::SpriteRender, transparent::Transparent},

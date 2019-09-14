@@ -1,6 +1,6 @@
 use amethyst::{
     assets::{AssetStorage, Handle, JsonFormat, Loader, ProgressCounter},
-    prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
+    prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans, WorldExt},
 };
 
 use crate::{
@@ -53,7 +53,7 @@ impl SimpleState for LoadState {
             if progress_counter.is_complete() {
                 // Get the map, which is loaded in the on_start function of load state.
                 let map = {
-                    let map_storage = &data.world.read_resource::<AssetStorage<Map>>();
+                    let map_storage = data.world.read_resource::<AssetStorage<Map>>();
                     let map_handle = &self.map_handle.take().unwrap();
                     map_storage.get(map_handle).unwrap().clone()
                 };
@@ -63,13 +63,13 @@ impl SimpleState for LoadState {
 
                 let marine_prefab_handle = {
                     let prefab_list = data.world.read_resource::<PrefabList>();
-                    prefab_list.get(AssetType::Marine).unwrap().clone()
+                    prefab_list.get(AssetType::Marine).unwrap()
                 };
                 load_marine(data.world, marine_prefab_handle, &ctx);
 
                 let pincer_prefab_handle = {
                     let prefab_list = data.world.read_resource::<PrefabList>();
-                    prefab_list.get(AssetType::Pincer).unwrap().clone()
+                    prefab_list.get(AssetType::Pincer).unwrap()
                 };
                 load_pincer(data.world, pincer_prefab_handle, &ctx);
                 self.progress_counter = None;

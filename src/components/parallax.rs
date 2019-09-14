@@ -1,5 +1,8 @@
 use amethyst::ecs::{Component, NullStorage};
 
-#[derive(Component, Default)]
-#[storage(NullStorage)]
+#[derive(Default)]
 pub struct Parallax;
+
+impl Component for Parallax {
+    type Storage = NullStorage<Self>;
+}

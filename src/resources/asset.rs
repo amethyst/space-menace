@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use amethyst::{
     assets::{AssetStorage, Handle, Loader, Prefab, PrefabLoader, ProgressCounter, RonFormat},
-    ecs::prelude::World,
+    ecs::prelude::{World, WorldExt},
     renderer::{
         formats::texture::ImageFormat,
         sprite::{SpriteSheetFormat, SpriteSheetHandle},

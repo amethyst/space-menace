@@ -1,5 +1,8 @@
 use amethyst::ecs::{Component, NullStorage};
 
-#[derive(Component, Default)]
-#[storage(NullStorage)]
+#[derive(Default)]
 pub struct Subject;
+
+impl Component for Subject {
+    type Storage = NullStorage<Self>;
+}
