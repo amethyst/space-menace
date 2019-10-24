@@ -6,7 +6,7 @@ use amethyst::{
     },
     ecs::prelude::World,
     prelude::Builder,
-    renderer::transparent::Transparent,
+    renderer::{palette::Srgba, resources::Tint, transparent::Transparent},
 };
 
 use crate::{
@@ -45,11 +45,16 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
         Directions::Neutral,
     );
 
+    // White shows the sprite as normal.
+    // You can change the color at any point to modify the sprite's tint.
+    let tint = Tint(Srgba::new(1.0, 1.0, 1.0, 1.0));
+
     world
         .create_entity()
         .with(Pincer::new())
         .named("Pincer")
         .with(collider)
+        .with(tint)
         .with(Boundary::new(800., 1832., 352., 0.))
         .with(Collidee::default())
         .with(transform)
