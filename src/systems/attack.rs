@@ -44,10 +44,7 @@ impl<'s> System<'s> for AttackSystem {
 
             // Currently shooting is possible only when marine is static
             if marine.state == MarineState::Shooting
-                && collider.on_ground
-                && motion.velocity.x == 0.
-                && !marine.is_shooting
-            {
+                && !marine.is_shooting {
                 marine.is_shooting = true;
 
                 let mut shoot_start_position = 0.;
