@@ -24,7 +24,7 @@ impl<'s> System<'s> for ParallaxSystem {
         for (_, motion, collider) in (&marines, &motions, &colliders).join() {
             marine_velocity_x = motion.velocity.x;
             let bbox = &collider.bounding_box;
-            marine_moved = bbox.position.x != bbox.old_position.x;
+            marine_moved = (bbox.position.x - bbox.old_position.x).abs() > std::f32::EPSILON;
         }
 
         for (_, transform) in (&parallaxes, &mut transforms).join() {
