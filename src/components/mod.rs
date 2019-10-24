@@ -27,5 +27,6 @@ pub use self::marine::MarineState;
 pub use self::motion::Motion;
 pub use self::parallax::Parallax;
 pub use self::pincer::Pincer;
+pub use self::pincer::PincerAi;
 pub use self::pincer::PincerState;
 pub use self::subject::Subject;

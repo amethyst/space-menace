@@ -6,7 +6,7 @@ use amethyst::{
 use crate::{
     components::{
         Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Marine,
-        MarineState, Motion, Pincer,
+        MarineState, Motion, Pincer, PincerAi,
     },
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
@@ -83,6 +83,7 @@ pub struct PincerCollisionSystem;
 impl<'s> System<'s> for PincerCollisionSystem {
     type SystemData = (
         Entities<'s>,
+        ReadStorage<'s, Marine>,
         WriteStorage<'s, Pincer>,
         ReadStorage<'s, Collidee>,
         WriteStorage<'s, Direction>,
@@ -96,6 +97,7 @@ impl<'s> System<'s> for PincerCollisionSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (
             entities,
+            marines,
             mut pincers,
             collidees,
             mut dirs,
@@ -105,6 +107,15 @@ impl<'s> System<'s> for PincerCollisionSystem {
             lazy_update,
             ctx,
         ) = data;
+
+        // We need to set a target for the pincer to attack.
+        // For now, assume there is only one marine and if the pincer gets shot that marine is
+        // always the one who did it.
+        // Perhaps, later, the shooter could be attached to the bullet/collider entity somehow.
+        let marine_opt = (&entities, &marines)
+            .join()
+            .map(|(entity, _)| entity)
+            .next();
 
         for (entity, pincer, collidee, dir, motion, transform) in (
             &*entities,
@@ -119,18 +130,14 @@ impl<'s> System<'s> for PincerCollisionSystem {
             if let Some(collidee_horizontal) = &collidee.horizontal {
                 match collidee_horizontal.name.as_ref() {
                     "Boundary" => {
-                        match dir.x {
-                            Directions::Left => {
-                                dir.x = Directions::Right;
-                            }
-                            Directions::Right => {
-                                dir.x = Directions::Left;
-                            }
-                            _ => {}
-                        }
-                        motion.velocity.x = -motion.velocity.x;
+                        pincer.ai = PincerAi::Patrolling;
+                        motion.velocity.x *= -1.;
+                        dir.set_x_velocity(motion.velocity.x);
                     }
                     "Bullet" => {
+                        if let Some(marine) = marine_opt {
+                            pincer.ai = PincerAi::Attacking { target: marine };
+                        }
                         pincer.hit_count += 1;
                         if pincer.hit_count == 4 {
                             let small_explosion_prefab_handle =
@@ -199,18 +206,15 @@ impl<'s> System<'s> for BulletCollisionSystem {
                     _ => {
                         let bullet_impact_prefab_handle =
                             { prefab_list.get(AssetType::BulletImpact).unwrap().clone() };
-                        let mut impact_position_x = 0.;
-                        match dir.x {
+                        let impact_position_x = match dir.x {
                             Directions::Right => {
-                                impact_position_x = collidee_horizontal.position.x
-                                    - collidee_horizontal.half_size.x;
+                                collidee_horizontal.position.x - collidee_horizontal.half_size.x
                             }
                             Directions::Left => {
-                                impact_position_x = collidee_horizontal.position.x
-                                    + collidee_horizontal.half_size.x;
+                                collidee_horizontal.position.x + collidee_horizontal.half_size.x
                             }
-                            _ => {}
-                        }
+                            _ => 0.,
+                        };
                         show_bullet_impact(
                             &entities,
                             bullet_impact_prefab_handle,
