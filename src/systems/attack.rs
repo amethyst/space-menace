@@ -43,8 +43,7 @@ impl<'s> System<'s> for AttackSystem {
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");
 
             // Currently shooting is possible only when marine is static
-            if marine.state == MarineState::Shooting
-                && !marine.is_shooting {
+            if marine.state == MarineState::Shooting && !marine.is_shooting {
                 marine.is_shooting = true;
 
                 let mut shoot_start_position = 0.;

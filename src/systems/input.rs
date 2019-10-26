@@ -34,9 +34,7 @@ impl<'s> System<'s> for MarineInputSystem {
             } else if run_input < 0. {
                 dir.x = Directions::Left;
                 MarineState::Running
-            } else if shoot_input
-                && marine.state != MarineState::Shooting
-                && !marine.is_shooting {
+            } else if shoot_input && marine.state != MarineState::Shooting && !marine.is_shooting {
                 MarineState::Shooting
             } else {
                 MarineState::Idling

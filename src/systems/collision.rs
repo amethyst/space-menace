@@ -5,8 +5,8 @@ use amethyst::{
 
 use crate::{
     components::{
-        Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Marine, MarineState, Motion,
-        Pincer,
+        Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Marine,
+        MarineState, Motion, Pincer,
     },
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
@@ -236,11 +236,11 @@ impl<'s> System<'s> for MarineCollisionSystem {
         WriteStorage<'s, Collider>,
         ReadStorage<'s, Collidee>,
     );
-    
+
     fn run(&mut self, data: Self::SystemData) {
         let (marines, mut colliders, collidees) = data;
 
-        for (marine, collider, collidee) in (&marines, &mut colliders, &collidees,).join() {
+        for (marine, collider, collidee) in (&marines, &mut colliders, &collidees).join() {
             if let Some(collidee_horizontal) = &collidee.horizontal {
                 match collidee_horizontal.name.as_ref() {
                     "Pincer" => {
