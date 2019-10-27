@@ -68,7 +68,7 @@ impl<'s> System<'s> for PincerAiSystem {
 
             // Give pincer a red tint if they are attacking, or no tint if they're not.
             tint.0 = match pincer.ai {
-                PincerAi::Attacking { target: _ } => Srgba::new(1.0, 0.0, 0.0, 1.0),
+                PincerAi::Attacking { .. } => Srgba::new(1.0, 0.0, 0.0, 1.0),
                 _ => Srgba::new(1.0, 1.0, 1.0, 1.0),
             };
         }

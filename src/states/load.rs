@@ -57,7 +57,7 @@ impl SimpleState for LoadState {
                     let map_handle = &self.map_handle.take().unwrap();
                     map_storage.get(map_handle).unwrap().clone()
                 };
-                let ctx = data.world.read_resource::<Context>().clone();
+                let ctx = *data.world.read_resource::<Context>();
 
                 map.load_layers(data.world, &ctx);
 

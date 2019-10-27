@@ -58,14 +58,14 @@ pub fn spawn_bullet(
     let mut collider = Collider::new(22. * scale, 4. * scale);
     let bbox = &mut collider.bounding_box;
     bbox.position = Vector2::new(bullet_start_position, marine_bottom + 48.);
-    bbox.old_position = bbox.position.clone();
+    bbox.old_position = bbox.position;
 
     transform.set_translation_x(bullet_start_position);
     transform.set_translation_y(marine_bottom + 48.);
     // bullet should be shown only after making sure that there is no collision at the spawn position
     transform.set_translation_z(-60.);
 
-    collider.set_hit_box_position(&motion.velocity);
+    collider.set_hit_box_position(motion.velocity);
 
     lazy_update.insert(bullet_entity, Bullet::default());
     lazy_update.insert(bullet_entity, Named::new("Bullet"));
@@ -101,14 +101,13 @@ pub fn show_bullet_impact(
         Directions::Neutral,
     );
 
-    let impact_position_x;
-    if bullet_velocity > 0. {
+    let impact_position_x = if bullet_velocity > 0. {
         direction.x = Directions::Right;
-        impact_position_x = impact_position - (8. * scale);
+        scale.mul_add(-8., impact_position)
     } else {
         direction.x = Directions::Left;
-        impact_position_x = impact_position + (8. * scale);
-    }
+        scale.mul_add(8., impact_position)
+    };
 
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));

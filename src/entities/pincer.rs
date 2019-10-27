@@ -29,14 +29,14 @@ pub fn load_pincer(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
 
     let bbox = &mut collider.bounding_box;
     bbox.position = Vector2::new(1040., 16.);
-    bbox.old_position = bbox.position.clone();
+    bbox.old_position = bbox.position;
 
     transform.set_translation_x(1040.);
     transform.set_translation_y(16.);
 
     let mut motion = Motion::new();
     motion.velocity.x = -3.;
-    collider.set_hit_box_position(&motion.velocity);
+    collider.set_hit_box_position(motion.velocity);
 
     let direction = Direction::new(
         Directions::Left,

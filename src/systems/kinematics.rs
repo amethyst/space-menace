@@ -1,6 +1,6 @@
 use amethyst::{
-    core::{math::Vector2, timing::Time},
-    ecs::{Join, Read, ReadStorage, System, WriteStorage},
+    core::math::Vector2,
+    ecs::{Join, ReadStorage, System, WriteStorage},
 };
 
 use crate::components::{Collider, Direction, Marine, MarineState, Motion};
@@ -15,13 +15,13 @@ impl<'s> System<'s> for KinematicsSystem {
 
         for (collider, motion) in (&mut colliders, &motions).join() {
             let bbox = &mut collider.bounding_box;
-            bbox.old_position = bbox.position.clone();
+            bbox.old_position = bbox.position;
             bbox.position.x += motion.velocity.x;
             bbox.position.y += motion.velocity.y;
 
             let hbox = &mut collider.hit_box;
-            hbox.old_position = hbox.position.clone();
-            collider.set_hit_box_position(&motion.velocity);
+            hbox.old_position = hbox.position;
+            collider.set_hit_box_position(motion.velocity);
         }
     }
 }
@@ -34,7 +34,6 @@ impl<'s> System<'s> for MarineKinematicsSystem {
         ReadStorage<'s, Direction>,
         ReadStorage<'s, Marine>,
         WriteStorage<'s, Motion>,
-        // Read<'s, Time>,
     );
 
     fn run(&mut self, data: Self::SystemData) {

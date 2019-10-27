@@ -6,7 +6,7 @@ use amethyst::{
 use crate::{
     components::{
         Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Marine,
-        MarineState, Motion, Pincer, PincerAi,
+        Motion, Pincer, PincerAi,
     },
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
@@ -71,7 +71,7 @@ impl<'s> System<'s> for CollisionSystem {
                     name: String::from("Boundary"),
                     position: Vector2::new(0., 0.),
                     half_size: Vector2::new(0., 0.),
-                    correction: correction,
+                    correction,
                 });
             }
         }
@@ -244,13 +244,10 @@ impl<'s> System<'s> for MarineCollisionSystem {
     fn run(&mut self, data: Self::SystemData) {
         let (marines, mut colliders, collidees) = data;
 
-        for (marine, collider, collidee) in (&marines, &mut colliders, &collidees).join() {
+        for (_, collider, collidee) in (&marines, &mut colliders, &collidees).join() {
             if let Some(collidee_horizontal) = &collidee.horizontal {
-                match collidee_horizontal.name.as_ref() {
-                    "Pincer" => {
-                        collider.is_collidable = false;
-                    }
-                    _ => {}
+                if let "Pincer" = collidee_horizontal.name.as_ref() {
+                    collider.is_collidable = false;
                 }
             }
         }

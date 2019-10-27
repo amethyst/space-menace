@@ -27,10 +27,10 @@ pub fn load_marine(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>
     let mut collider = Collider::new(32. * scale, 36. * scale);
     let bbox = &mut collider.bounding_box;
     bbox.position = Vector2::new(384., 176.);
-    bbox.old_position = bbox.position.clone();
+    bbox.old_position = bbox.position;
 
     let motion = Motion::new();
-    collider.set_hit_box_position(&motion.velocity);
+    collider.set_hit_box_position(motion.velocity);
 
     world
         .create_entity()

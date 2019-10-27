@@ -1,3 +1,5 @@
+// Nearly every Amethyst system triggers this warning, better ignore it:
+#![allow(clippy::type_complexity)]
 extern crate amethyst;
 
 #[macro_use]
