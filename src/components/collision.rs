@@ -213,10 +213,8 @@ impl Collider {
         };
         if (self_box.position.x - other_box.position.x).abs()
             >= (self_box.half_size.x + other_box.half_size.x).abs()
-        {
-            false
-        } else if (self_box.position.y - other_box.position.y).abs()
-            >= (self_box.half_size.y + other_box.half_size.y).abs()
+            || (self_box.position.y - other_box.position.y).abs()
+                >= (self_box.half_size.y + other_box.half_size.y).abs()
         {
             false
         } else {

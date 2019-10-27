@@ -67,6 +67,7 @@ fn main() -> amethyst::Result<()> {
             &["marine_kinematics_system"],
         )
         .with(AttackSystem, "attack_system", &["kinematics_system"])
+        .with(PincerAiSystem, "pincer_ai_system", &[])
         .with(CollisionSystem, "collision_system", &["attack_system"])
         .with(
             BulletCollisionSystem,

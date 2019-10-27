@@ -38,4 +38,15 @@ impl Direction {
             y,
         }
     }
+
+    /// Changes the horizontal direction based on the x velocity.
+    pub fn set_x_velocity(&mut self, x_velocity: f32) {
+        self.x = if x_velocity.abs() < std::f32::EPSILON {
+            Directions::Neutral
+        } else if x_velocity > 0. {
+            Directions::Right
+        } else {
+            Directions::Left
+        };
+    }
 }

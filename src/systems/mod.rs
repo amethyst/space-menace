@@ -5,6 +5,7 @@ mod direction;
 mod input;
 mod kinematics;
 mod parallax;
+mod pincer;
 mod transformation;
 
 pub use self::animation::AnimationControlSystem;
@@ -22,6 +23,7 @@ pub use self::input::MarineInputSystem;
 pub use self::kinematics::KinematicsSystem;
 pub use self::kinematics::MarineKinematicsSystem;
 pub use self::parallax::ParallaxSystem;
+pub use self::pincer::PincerAiSystem;
 pub use self::transformation::BulletTransformationSystem;
 pub use self::transformation::CameraTransformationSystem;
 pub use self::transformation::TransformationSystem;
