@@ -115,10 +115,8 @@ impl Collidee {
 
         let same_direction = velocity_a.x * velocity_b.x > 0.;
         let faster = speed_ratio_a.x.abs() > speed_ratio_b.x.abs();
-        if !x_overlapped && y_overlapped
-            || (!x_overlapped && !y_overlapped && overlap.x.abs() <= overlap.y.abs())
-        {
-            if !same_direction || same_direction && faster {
+        if (y_overlapped || overlap.x.abs() <= overlap.y.abs()) && !x_overlapped {
+            if faster || !same_direction {
                 correction.x = overlap.x * speed_ratio_a.x;
             }
             // No correction (correction = 0.) is required if collider is slower
@@ -134,7 +132,7 @@ impl Collidee {
             // As per the current game design, no correction (correction = 0.) is required for this scenario
             // This might have to be changed in future
             self.horizontal = Some(CollideeDetails {
-                name: name.clone(),
+                name,
                 position: box_b.position,
                 half_size: box_b.half_size,
                 correction: correction.x,
@@ -190,7 +188,7 @@ impl Collider {
         }
     }
 
-    pub fn set_hit_box_position(&mut self, velocity: &Vector2<f32>) {
+    pub fn set_hit_box_position(&mut self, velocity: Vector2<f32>) {
         let hbox_position = &mut self.hit_box.position;
         let bbox_position = self.bounding_box.position;
         hbox_position.x = if velocity.x >= 0. {
@@ -211,14 +209,9 @@ impl Collider {
         } else {
             (&self.bounding_box, &other.bounding_box)
         };
-        if (self_box.position.x - other_box.position.x).abs()
+        !((self_box.position.x - other_box.position.x).abs()
             >= (self_box.half_size.x + other_box.half_size.x).abs()
             || (self_box.position.y - other_box.position.y).abs()
-                >= (self_box.half_size.y + other_box.half_size.y).abs()
-        {
-            false
-        } else {
-            true
-        }
+                >= (self_box.half_size.y + other_box.half_size.y).abs())
     }
 }

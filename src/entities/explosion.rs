@@ -23,7 +23,7 @@ pub fn show_explosion(
 
     let mut transform = Transform::default();
     transform.set_scale(Vector3::new(scale, scale, scale));
-    transform.set_translation_xyz(transform_x, transform_y + (32. - 15.) * scale, 0.);
+    transform.set_translation_xyz(transform_x, scale.mul_add(32. - 15., transform_y), 0.);
 
     lazy_update.insert(exposion_entity, Explosion::default());
     lazy_update.insert(

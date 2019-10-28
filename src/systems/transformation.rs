@@ -32,24 +32,24 @@ impl<'s> System<'s> for TransformationSystem {
             let bbox = &mut collider.bounding_box;
             let velocity = &mut motion.velocity;
 
-            if collidee.horizontal.is_some() {
-                let collidee_horizontal = collidee.horizontal.take().unwrap();
+            if let Some(collidee_horizontal) = collidee.horizontal.take() {
                 bbox.position.x -= collidee_horizontal.correction;
             }
-            if collidee.vertical.is_some() {
-                let collidee_vertical = collidee.vertical.take().unwrap();
+            if let Some(collidee_vertical) = collidee.vertical.take() {
                 bbox.position.y -= collidee_vertical.correction;
                 velocity.y = 0.;
                 if collidee_vertical.correction < 0. {
                     collider.on_ground = true;
                 }
             }
+            // FIXME: Due to the take() operation above, collidee.vertical will always be NONE.
+            // Might indicate a bug.
             if collidee.vertical.is_none() && velocity.y != 0. {
                 collider.on_ground = false;
             }
             transform.set_translation_x(bbox.position.x);
             transform.set_translation_y(bbox.position.y);
-            collider.set_hit_box_position(velocity);
+            collider.set_hit_box_position(*velocity);
         }
     }
 }

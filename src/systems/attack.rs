@@ -37,7 +37,7 @@ impl<'s> System<'s> for AttackSystem {
             ctx,
         ) = data;
 
-        for (mut marine, motion, collider, direction) in
+        for (mut marine, _, collider, direction) in
             (&mut marines, &motions, &colliders, &directions).join()
         {
             let shoot_input = input.action_is_down("shoot").expect("shoot action exists");

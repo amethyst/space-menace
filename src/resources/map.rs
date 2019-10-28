@@ -90,10 +90,10 @@ impl Map {
             let mut collider = Collider::new(obj.width * scale, obj.height * scale);
             let bbox = &mut collider.bounding_box;
             bbox.position = Vector2::new(
-                obj.x * scale + ctx.x_correction + bbox.half_size.x,
+                scale.mul_add(obj.x, ctx.x_correction + bbox.half_size.x),
                 ctx.bg_height * 2. - (obj.y * scale) + ctx.y_correction - bbox.half_size.y,
             );
-            bbox.old_position = bbox.position.clone();
+            bbox.old_position = bbox.position;
 
             world
                 .create_entity()
@@ -147,20 +147,17 @@ impl Map {
                     sprite_number: 0,
                 };
 
-                match sprite_index_prop {
-                    Some(prop) => {
-                        sprite = SpriteRender {
-                            sprite_sheet: sprite_sheet_handle.clone(),
-                            sprite_number: prop.value,
-                        };
-                    }
-                    None => {}
+                if let Some(prop) = sprite_index_prop {
+                    sprite = SpriteRender {
+                        sprite_sheet: sprite_sheet_handle.clone(),
+                        sprite_number: prop.value,
+                    };
                 }
 
                 match layer.name.as_ref() {
                     "background" | "truss" => {
                         transform.set_translation_xyz(
-                            (obj.x + obj.width / 2.) * scale + x_correction,
+                            (obj.x + obj.width / 2.).mul_add(scale, x_correction),
                             ctx.bg_height * 2. - (obj.y + obj.height / 2.),
                             z_translation,
                         );
@@ -175,7 +172,7 @@ impl Map {
                     }
                     "platform" => {
                         transform.set_translation_xyz(
-                            (obj.x + obj.width / 2.) * scale + x_correction,
+                            (obj.x + obj.width / 2.).mul_add(scale, x_correction),
                             ctx.bg_height * 2. - (obj.y + obj.height / 2.) * scale
                                 + ctx.y_correction,
                             z_translation,

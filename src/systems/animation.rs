@@ -185,10 +185,8 @@ impl<'s> System<'s> for MarineAnimationSystem {
                 animation_control_set.start(new_animation_id);
 
                 animation.current = new_animation_id;
-            } else {
-                if new_animation_id == AnimationId::Die {
-                    animation.show = false;
-                }
+            } else if new_animation_id == AnimationId::Die {
+                animation.show = false;
             }
         }
     }
