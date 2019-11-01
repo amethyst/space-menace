@@ -1,6 +1,7 @@
 use amethyst::{
     assets::{AssetStorage, Handle, JsonFormat, Loader, ProgressCounter},
     prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
+    ui::UiCreator,
 };
 
 use crate::{
@@ -33,6 +34,8 @@ impl SimpleState for LoadState {
                 AssetType::Truss,
             ],
         ));
+        let mut progress = ProgressCounter::default();
+        world.exec(|mut creator: UiCreator<'_>| creator.create("ui/fps.ron", &mut progress));
         self.map_handle = {
             let loader = world.read_resource::<Loader>();
             Some(loader.load(
