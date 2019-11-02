@@ -7,6 +7,7 @@ mod kinematics;
 mod parallax;
 mod pincer;
 mod transformation;
+mod ui;
 
 pub use self::animation::AnimationControlSystem;
 pub use self::animation::BulletImpactAnimationSystem;
@@ -27,3 +28,4 @@ pub use self::pincer::PincerAiSystem;
 pub use self::transformation::BulletTransformationSystem;
 pub use self::transformation::CameraTransformationSystem;
 pub use self::transformation::TransformationSystem;
+pub use self::ui::*;

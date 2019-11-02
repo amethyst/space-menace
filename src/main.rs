@@ -18,7 +18,8 @@ use amethyst::{
         types::DefaultBackend,
         RenderingBundle,
     },
-    utils::application_root_dir,
+    ui::{RenderUi, UiBundle},
+    utils::{application_root_dir, fps_counter::FpsCounterBundle},
     Application, GameDataBuilder,
 };
 
@@ -56,7 +57,10 @@ fn main() -> amethyst::Result<()> {
                 .with_dep(&["sprite_animation_control", "sprite_sampler_interpolation"]),
         )?
         .with_bundle(input_bundle)?
+        .with_bundle(FpsCounterBundle {})?
+        .with_bundle(UiBundle::<StringBindings>::new())?
         .with(Processor::<Map>::new(), "map_processor", &[])
+        .with(UiFpsSystem::default(), "ui_fps_system", &[])
         .with(MarineInputSystem, "marine_input_system", &[])
         .with(
             MarineKinematicsSystem,
@@ -139,7 +143,8 @@ fn main() -> amethyst::Result<()> {
                     RenderToWindow::from_config_path(display_config_path)
                         .with_clear([0.008, 0.043, 0.067, 1.0]),
                 )
-                .with_plugin(RenderFlat2D::default()),
+                .with_plugin(RenderFlat2D::default())
+                .with_plugin(RenderUi::default()),
         )?;
     let mut game =
         Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
