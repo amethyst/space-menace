@@ -64,10 +64,12 @@ Use the `left arrow` key and `right arrow` key to move the player and the `up ar
 - [ ] Documentation
 - [ ] Tests
 
+More details about the features, **roadmap** and the game in general can be found [here on Amethyst's discourse](https://community.amethyst.rs/c/showcase/space-menace).
+
 ## Contributions:
 Any and all kinds of contributions are more than welcome, whether it be feature implementation, bug fix, art assets creation, documentation, issue logging or simply ideas, suggestions and feedback.
 
-If you are new to Rust or Game Development and are looking for issues to get started, I have added few [good first issues](https://github.com/amethyst/space-menace/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+If you are new to Rust or Game Development and are looking for issues to get started, I have added few [good first issues](https://github.com/amethyst/space-menace/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 In case you have any doubts or have an idea / feedback that you want to discuss, feel free to [log an issue](https://github.com/amethyst/space-menace/issues/new) or drop me a message on Discord. You can find me on the [Amethyst channel](https://discord.gg/amethyst).
 
