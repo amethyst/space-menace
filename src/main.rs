@@ -132,6 +132,11 @@ fn main() -> amethyst::Result<()> {
             &["transformation_system"],
         )
         .with(
+            MarineDeathSystem,
+            "marine_death_system",
+            &["transformation_system"],
+        )
+        .with(
             CameraTransformationSystem,
             "camera_transformation_system",
             &["transformation_system"],
