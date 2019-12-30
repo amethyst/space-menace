@@ -1,6 +1,7 @@
 mod animation;
 mod attack;
 mod collision;
+mod death;
 mod direction;
 mod input;
 mod kinematics;
@@ -19,6 +20,7 @@ pub use self::collision::BulletCollisionSystem;
 pub use self::collision::CollisionSystem;
 pub use self::collision::MarineCollisionSystem;
 pub use self::collision::PincerCollisionSystem;
+pub use self::death::MarineDeathSystem;
 pub use self::direction::DirectionSystem;
 pub use self::input::MarineInputSystem;
 pub use self::kinematics::KinematicsSystem;
