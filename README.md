@@ -38,11 +38,8 @@ default = ["vulkan"]
 git clone https://github.com/amethyst/space-menace.git
 cd space-menace
 
-# Set the toolchain to nightly for the current directory
-rustup override set nightly
-
 # Run
-cargo run —release
+cargo run --release
 ```
 
 ## Game controls
