@@ -1,5 +1,8 @@
 # Space Menace
 
+![](demo.gif)
+
+
 An action 2D platformer made with the [Amethyst](https://amethyst.rs/) game engine.
 
 This is my _firstish_ attempt at a game (I did write a basic snake game some time back). Through this project, I aim to get better at coding in [Rust](https://www.rust-lang.org/), get familiar with the Amethyst game engine and start learning game development in general. I also hope that this project will help other Amethyst and game dev beginners like me in some way or the other.
