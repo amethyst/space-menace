@@ -7,7 +7,7 @@ use amethyst::{
         formats::texture::ImageFormat,
         sprite::{SpriteSheetFormat, SpriteSheetHandle},
         SpriteSheet, Texture,
-    },
+    }, prelude::WorldExt,
 };
 
 use crate::components::AnimationPrefabData;

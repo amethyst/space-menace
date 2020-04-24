@@ -1,6 +1,6 @@
 use amethyst::{
     assets::{AssetStorage, Handle, JsonFormat, Loader, ProgressCounter},
-    prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans},
+    prelude::{GameData, SimpleState, SimpleTrans, StateData, Trans, WorldExt},
     ui::UiCreator,
 };
 

@@ -9,7 +9,7 @@ extern crate specs_derive;
 
 use amethyst::{
     animation::AnimationBundle,
-    assets::{PrefabLoaderSystem, Processor},
+    assets::{PrefabLoaderSystemDesc, Processor},
     core::transform::TransformBundle,
     input::{InputBundle, StringBindings},
     renderer::{
@@ -42,9 +42,12 @@ fn main() -> amethyst::Result<()> {
     let input_bundle = InputBundle::<StringBindings>::new()
         .with_bindings_from_file(root.join("resources/bindings_config.ron"))?;
 
+    let prefab_loader_system_desc = PrefabLoaderSystemDesc::<AnimationPrefabData>::default();
+
+
     let game_data = GameDataBuilder::default()
-        .with(
-            PrefabLoaderSystem::<AnimationPrefabData>::default(),
+        .with_system_desc(
+            prefab_loader_system_desc,
             "scene_loader",
             &[],
         )
@@ -145,14 +148,28 @@ fn main() -> amethyst::Result<()> {
             RenderingBundle::<DefaultBackend>::new()
                 // The RenderToWindow plugin provides all the scaffolding for opening a window and drawing on it
                 .with_plugin(
-                    RenderToWindow::from_config_path(display_config_path)
+                    RenderToWindow::from_config_path(display_config_path)?
                         .with_clear([0.008, 0.043, 0.067, 1.0]),
                 )
                 .with_plugin(RenderFlat2D::default())
                 .with_plugin(RenderUi::default()),
         )?;
-    let mut game =
-        Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
+
+
+
+    let appBuilder =
+        match Application::build(assets_path, states::LoadState::default()) {
+            Ok(game) => game,
+            Err(e)=> {
+                panic!("{}", e);
+            }
+        };
+    let mut game = match appBuilder.build(game_data) {
+        Ok(app) => app,
+        Err(e) => {
+            panic!("{}", e);
+        }
+    };
 
     game.run();
 

@@ -5,7 +5,7 @@ use amethyst::{
         Transform, WithNamed,
     },
     ecs::prelude::World,
-    prelude::Builder,
+    prelude::{WorldExt, Builder},
     renderer::transparent::Transparent,
 };
 
