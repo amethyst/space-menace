@@ -12,7 +12,7 @@ specs-derive = "*"
 [dependencies.amethyst]
 version = "0.15.0"
 default-features = false
-features = ["json", "animation"] # you can add more or replace those
+features = ["json", "animation"]
 
 [features]
 default = ["metal"]
