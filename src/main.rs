@@ -157,21 +157,10 @@ fn main() -> amethyst::Result<()> {
 
 
 
-    let appBuilder =
-        match Application::build(assets_path, states::LoadState::default()) {
-            Ok(game) => game,
-            Err(e)=> {
-                panic!("{}", e);
-            }
-        };
-    let mut game = match appBuilder.build(game_data) {
-        Ok(app) => app,
-        Err(e) => {
-            panic!("{}", e);
-        }
-    };
+    let game =
+         Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
 
-    game.run();
+         game.run();
 
     Ok(())
 }
