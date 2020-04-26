@@ -95,8 +95,8 @@ pub fn load_assets(world: &mut World, asset_type_list: Vec<AssetType>) -> Progre
             }
         };
     }
-    world.add_resource(sprite_sheet_list);
-    world.add_resource(prefab_list);
+    world.insert(sprite_sheet_list);
+    world.insert(prefab_list);
     progress_counter
 }
 

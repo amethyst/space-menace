@@ -4,7 +4,6 @@ extern crate amethyst;
 
 #[macro_use]
 extern crate log;
-#[macro_use]
 extern crate specs_derive;
 
 use amethyst::{

@@ -19,7 +19,7 @@ impl SimpleState for LoadState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
 
-        world.add_resource(Context::new());
+        world.insert(Context::new());
 
         self.progress_counter = Some(load_assets(
             world,
