@@ -157,10 +157,10 @@ fn main() -> amethyst::Result<()> {
 
 
 
-    let game =
+    let mut game =
          Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
 
-         game.run();
+    game.run();
 
     Ok(())
 }
