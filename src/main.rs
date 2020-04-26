@@ -43,13 +43,8 @@ fn main() -> amethyst::Result<()> {
 
     let prefab_loader_system_desc = PrefabLoaderSystemDesc::<AnimationPrefabData>::default();
 
-
     let game_data = GameDataBuilder::default()
-        .with_system_desc(
-            prefab_loader_system_desc,
-            "scene_loader",
-            &[],
-        )
+        .with_system_desc(prefab_loader_system_desc, "scene_loader", &[])
         .with_bundle(AnimationBundle::<AnimationId, SpriteRender>::new(
             "sprite_animation_control",
             "sprite_sampler_interpolation",
@@ -154,10 +149,8 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderUi::default()),
         )?;
 
-
-
     let mut game =
-         Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
+        Application::build(assets_path, states::LoadState::default())?.build(game_data)?;
 
     game.run();
 

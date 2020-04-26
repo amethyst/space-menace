@@ -1,7 +1,7 @@
 use amethyst::{
     core::{Parent, Transform},
     ecs::{prelude::World, Entity},
-    prelude::{WorldExt, Builder},
+    prelude::{Builder, WorldExt},
     renderer::camera::Camera,
     window::ScreenDimensions,
 };

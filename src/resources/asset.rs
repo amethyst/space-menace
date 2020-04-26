@@ -3,11 +3,12 @@ use std::collections::HashMap;
 use amethyst::{
     assets::{AssetStorage, Handle, Loader, Prefab, PrefabLoader, ProgressCounter, RonFormat},
     ecs::prelude::World,
+    prelude::WorldExt,
     renderer::{
         formats::texture::ImageFormat,
         sprite::{SpriteSheetFormat, SpriteSheetHandle},
         SpriteSheet, Texture,
-    }, prelude::WorldExt,
+    },
 };
 
 use crate::components::AnimationPrefabData;

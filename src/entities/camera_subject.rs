@@ -1,7 +1,7 @@
 use amethyst::{
     core::Transform,
     ecs::{prelude::World, Entity},
-    prelude::{WorldExt, Builder},
+    prelude::{Builder, WorldExt},
     renderer::transparent::Transparent,
 };
 
