@@ -2,5 +2,6 @@
   title: "space-menace",
   // dimensions: Some((768, 352)),
   // dimensions: Some((1536, 704)),
-  dimensions: Some((1200, 704)),
+  /* dimensions: Some((1200, 704)), */
+  dimensions: Some((600, 352)),
 )

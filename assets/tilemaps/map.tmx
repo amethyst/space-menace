@@ -9,9 +9,6 @@
   <object id="11" gid="2" x="1152" y="352" width="384" height="352"/>
   <object id="12" gid="2" x="1536" y="352" width="384" height="352"/>
   <object id="13" gid="2" x="1920" y="352" width="384" height="352"/>
-  <object id="23" x="1290.5" y="198" width="16" height="16"/>
-  <object id="24" x="1078.5" y="250.5"/>
-  <object id="27" x="1563" y="230" width="16" height="16"/>
  </objectgroup>
  <objectgroup id="4" name="truss">
   <object id="9" gid="1" x="0" y="352" width="832" height="352"/>
