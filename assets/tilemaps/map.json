@@ -84,42 +84,6 @@
                     "width": 384,
                     "x": 1920,
                     "y": 352
-                },
-                {
-                    "height": 16,
-                    "id": 23,
-                    "name": "",
-                    "properties": [],
-                    "rotation": 0,
-                    "type": "",
-                    "visible": true,
-                    "width": 16,
-                    "x": 1290.5,
-                    "y": 198
-                },
-                {
-                    "height": 0,
-                    "id": 24,
-                    "name": "",
-                    "properties": [],
-                    "rotation": 0,
-                    "type": "",
-                    "visible": true,
-                    "width": 0,
-                    "x": 1078.5,
-                    "y": 250.5
-                },
-                {
-                    "height": 16,
-                    "id": 27,
-                    "name": "",
-                    "properties": [],
-                    "rotation": 0,
-                    "type": "",
-                    "visible": true,
-                    "width": 16,
-                    "x": 1563,
-                    "y": 230
                 }
             ],
             "opacity": 1,
