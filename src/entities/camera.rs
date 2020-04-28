@@ -1,14 +1,14 @@
 use amethyst::{
     core::{Parent, Transform},
     ecs::{prelude::World, Entity},
-    prelude::Builder,
+    prelude::{Builder, WorldExt},
     renderer::camera::Camera,
     window::ScreenDimensions,
 };
 
 pub fn load_camera(world: &mut World, camera_subject: Entity) {
     let (width, height) = {
-        let dim = world.read_resource::<ScreenDimensions>();
+        let dim = world.fetch::<ScreenDimensions>();
         (dim.width(), dim.height())
     };
     let mut transform = Transform::default();

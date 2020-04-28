@@ -6,7 +6,7 @@ use amethyst::{
     },
     ecs::{prelude::World, VecStorage},
     error::Error,
-    prelude::Builder,
+    prelude::{Builder, WorldExt},
     renderer::{sprite::SpriteRender, transparent::Transparent},
 };
 

@@ -24,6 +24,7 @@ Prefab(
                                     comparison: None,
                                     border: (0),
                                     anisotropic: Off,
+                                    normalized: true,
                                 ),
                             ),
                         )),
