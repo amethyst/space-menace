@@ -1,5 +1,6 @@
 # Space Menace
 
+![](demo.gif)
 
 An action 2D platformer made with the [Amethyst](https://amethyst.rs/) game engine.
 
