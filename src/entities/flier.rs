@@ -18,11 +18,11 @@ use crate::{
 };
 
 pub fn load_flier(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
-    // TODO: There is a lot of padding in each sprite so the
-    // box size should be reshaped accordingly
+    // TODO: There is a lot of padding on each sprite frame.
+    // Should the collision/bounding boxes be reshaped accordingly?
     let flier_width = 83.;
     let flier_height = 64.;
-    let flier_sprite_x_offset = 23.;
+    let flier_sprite_x_offset = -5.;
 
     let flier_start_x_pos = 1800.;
     let flier_start_y_pos = 156.;
@@ -33,6 +33,7 @@ pub fn load_flier(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>
     let mut collider = Collider::new(flier_width * scale, flier_height * scale);
 
     collider.hit_box = GenericBox::new(flier_width * scale - flier_height, flier_height * scale);
+    // FIXME: Hit box looks good on the front but too far out on the back
     collider.hit_box_offset.x = flier_sprite_x_offset;
 
     let bbox = &mut collider.bounding_box;
