@@ -5,8 +5,8 @@ use amethyst::{
 
 use crate::{
     components::{
-        Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Marine,
-        Motion, Pincer, PincerAi,
+        Boundary, Bullet, Collidee, CollideeDetails, Collider, Direction, Directions, Flier,
+        FlierAi, Marine, Motion, Pincer, PincerAi,
     },
     entities::{show_bullet_impact, show_explosion},
     resources::{AssetType, Context, PrefabList},
@@ -148,6 +148,91 @@ impl<'s> System<'s> for PincerCollisionSystem {
                                 small_explosion_prefab_handle,
                                 pincer_translation.x,
                                 pincer_translation.y,
+                                &lazy_update,
+                                &ctx,
+                            );
+                            let _ = entities.delete(entity);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+}
+
+pub struct FlierCollisionSystem;
+
+impl<'s> System<'s> for FlierCollisionSystem {
+    type SystemData = (
+        Entities<'s>,
+        ReadStorage<'s, Marine>,
+        WriteStorage<'s, Flier>,
+        ReadStorage<'s, Collidee>,
+        WriteStorage<'s, Direction>,
+        WriteStorage<'s, Motion>,
+        ReadExpect<'s, PrefabList>,
+        ReadStorage<'s, Transform>,
+        ReadExpect<'s, LazyUpdate>,
+        ReadExpect<'s, Context>,
+    );
+
+    fn run(&mut self, data: Self::SystemData) {
+        let (
+            entities,
+            marines,
+            mut fliers,
+            collidees,
+            mut dirs,
+            mut motions,
+            prefab_list,
+            transforms,
+            lazy_update,
+            ctx,
+        ) = data;
+
+        // We need to set a target for the pincer to attack.
+        // For now, assume there is only one marine and if the pincer gets shot that marine is
+        // always the one who did it.
+        // Perhaps, later, the shooter could be attached to the bullet/collider entity somehow.
+        let marine_opt = (&entities, &marines)
+            .join()
+            .map(|(entity, _)| entity)
+            .next();
+
+        for (entity, flier, collidee, dir, motion, transform) in (
+            &*entities,
+            &mut fliers,
+            &collidees,
+            &mut dirs,
+            &mut motions,
+            &transforms,
+        )
+            .join()
+        {
+            if let Some(collidee_horizontal) = &collidee.horizontal {
+                match collidee_horizontal.name.as_ref() {
+                    // TODO: Enemies might collide with each other... what to do about that
+                    "Boundary" => {
+                        flier.ai = FlierAi::Patrolling;
+                        motion.velocity.x *= -1.;
+                        dir.set_x_velocity(motion.velocity.x);
+                    }
+                    "Bullet" => {
+                        if let Some(marine) = marine_opt {
+                            flier.ai = FlierAi::Attacking { target: marine };
+                        }
+                        flier.hit_count += 1;
+                        // FIXME: enemy max hit points should be stored alongside entity
+                        if flier.hit_count == 6 {
+                            let small_explosion_prefab_handle =
+                                { prefab_list.get(AssetType::SmallExplosion).unwrap().clone() };
+                            let flier_translation = transform.translation();
+                            show_explosion(
+                                &entities,
+                                small_explosion_prefab_handle,
+                                flier_translation.x,
+                                flier_translation.y,
                                 &lazy_update,
                                 &ctx,
                             );

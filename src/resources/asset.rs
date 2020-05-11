@@ -20,6 +20,7 @@ pub enum AssetType {
     BulletImpact,
     Marine,
     Pincer,
+    Flier,
     Platform,
     SmallExplosion,
     Truss,
@@ -72,6 +73,7 @@ pub fn load_assets(world: &mut World, asset_type_list: Vec<AssetType>) -> Progre
             AssetType::BulletImpact => ("", "prefabs/bullet_impact.ron"),
             AssetType::Marine => ("", "prefabs/marine.ron"),
             AssetType::Pincer => ("", "prefabs/pincer.ron"),
+            AssetType::Flier => ("", "prefabs/flier.ron"),
             AssetType::Platform => ("textures/platform.png", "prefabs/platform.ron"),
             AssetType::SmallExplosion => (
                 "textures/small_explosion.png",
@@ -89,6 +91,7 @@ pub fn load_assets(world: &mut World, asset_type_list: Vec<AssetType>) -> Progre
             AssetType::BulletImpact
             | AssetType::Marine
             | AssetType::Pincer
+            | AssetType::Flier
             | AssetType::SmallExplosion => {
                 let prefab_handle =
                     get_animation_prefab_handle(world, ron_path, &mut progress_counter);
