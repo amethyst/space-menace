@@ -18,22 +18,22 @@ use crate::{
 };
 
 pub fn load_flier(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>, ctx: &Context) {
-    // TODO: There is a lot of padding on each sprite frame.
-    // Should the collision/bounding boxes be reshaped accordingly?
-    let flier_width = 83.;
+    // wing offset
+    let flier_sprite_x_offset = 22.;
+    // reduce the width of the flier to compensate of the extra width of the wings
+    let flier_width = 54. - flier_sprite_x_offset;
     let flier_height = 64.;
-    let flier_sprite_x_offset = -5.;
 
     let flier_start_x_pos = 1800.;
     let flier_start_y_pos = 156.;
     let mut transform = Transform::default();
     let scale = ctx.scale;
+    println!("load_flier: scale = {}", scale);
     transform.set_scale(Vector3::new(scale, scale, scale));
 
     let mut collider = Collider::new(flier_width * scale, flier_height * scale);
 
-    collider.hit_box = GenericBox::new(flier_width * scale - flier_height, flier_height * scale);
-    // FIXME: Hit box looks good on the front but too far out on the back
+    // adjust the x offset to compensate for the reduction of width
     collider.hit_box_offset.x = flier_sprite_x_offset;
 
     let bbox = &mut collider.bounding_box;
@@ -41,11 +41,11 @@ pub fn load_flier(world: &mut World, prefab: Handle<Prefab<AnimationPrefabData>>
     bbox.old_position = bbox.position;
 
     transform.set_translation_x(flier_start_x_pos);
-    // TODO: Why 12 above and 16 below?
-    transform.set_translation_y(flier_start_y_pos + 4.);
+    transform.set_translation_y(flier_start_y_pos);
 
     let mut motion = Motion::new();
-    motion.velocity.x = -3.;
+    // Make the flier a teeny bit faster than the pincer since its easier to dodge
+    motion.velocity.x = -4.;
     collider.set_hit_box_position(motion.velocity);
 
     let direction = Direction::new(
