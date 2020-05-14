@@ -30,18 +30,18 @@ Prefab(
                         )),
                         sprites: [
                             List((
-                                texture_width: 664,
+                                texture_width: 432,
                                 texture_height: 64,
                                 sprites: [
                                     // Flying
-                                    (x: 0, y: 0, width: 83, height: 64), // 1
-                                    (x: 83, y: 0, width: 83, height: 64), // 2
-                                    (x: 166, y: 0, width: 83, height: 64), // 3
-                                    (x: 249, y: 0, width: 83, height: 64), // 4
-                                    (x: 332, y: 0, width: 83, height: 64), // 5
-                                    (x: 415, y: 0, width: 83, height: 64), // 6
-                                    (x: 498, y: 0, width: 83, height: 64), // 7
-                                    (x: 581, y: 0, width: 83, height: 64), // 8
+                                    (x: 0, y: 0, width: 54, height: 64), // 1
+                                    (x: 54, y: 0, width: 54, height: 64), // 2
+                                    (x: 108, y: 0, width: 54, height: 64), // 3
+                                    (x: 162, y: 0, width: 54, height: 64), // 4
+                                    (x: 216, y: 0, width: 54, height: 64), // 5
+                                    (x: 270, y: 0, width: 54, height: 64), // 6
+                                    (x: 324, y: 0, width: 54, height: 64), // 7
+                                    (x: 378, y: 0, width: 54, height: 64), // 8
 
                                 ],
                             )),
