@@ -34,7 +34,6 @@ impl<'a> System<'a> for UiPlayerSystem {
             if let Some(player_entity) = self.player_display {
                 if let Some(player_display) = ui_text.get_mut(player_entity) {
                     if time.frame_number() % 20 == 0 {
-                        // player_display.text = format!("Player: Happy Days");
                         player_display.text = format!(
                             "Player: x = {:.2}, y = {:.2}",
                             transform.translation().x,
