@@ -7,7 +7,7 @@ use amethyst::{
 };
 
 use crate::components::{
-    Animation, AnimationId, BulletImpact, Explosion, Marine, MarineState, Motion, Pincer,
+    Animation, AnimationId, BulletImpact, Explosion, Flier, Marine, MarineState, Motion, Pincer,
 };
 
 pub struct BulletImpactAnimationSystem;
@@ -222,6 +222,59 @@ impl<'s> System<'s> for PincerAnimationSystem {
             } else {
                 AnimationId::Idle
             };
+
+            // If the new AnimationId is different to the current one, abort the
+            // current animation and start the new one
+            if animation.current != new_animation_id {
+                trace!(
+                    "Updating animation for entity: {:?} from={:?}, to={:?}",
+                    entity,
+                    animation.current,
+                    new_animation_id
+                );
+
+                animation_control_set.abort(animation.current);
+                animation_control_set.start(new_animation_id);
+
+                animation.current = new_animation_id;
+            }
+        }
+    }
+}
+
+#[derive(Default)]
+pub struct FlierAnimationSystem;
+
+impl<'s> System<'s> for FlierAnimationSystem {
+    type SystemData = (
+        Entities<'s>,
+        ReadStorage<'s, Flier>,
+        ReadStorage<'s, Motion>,
+        WriteStorage<'s, Animation>,
+        WriteStorage<'s, AnimationControlSet<AnimationId, SpriteRender>>,
+    );
+
+    fn run(&mut self, data: Self::SystemData) {
+        let (entities, fliers, motions, mut animations, mut animation_control_sets) = data;
+
+        for (entity, _flier, _motion, mut animation, animation_control_set) in (
+            &entities,
+            &fliers,
+            &motions,
+            &mut animations,
+            &mut animation_control_sets,
+        )
+            .join()
+        {
+            // let flier_velocity = motion.velocity;
+            // let new_animation_id = if pincer_velocity.x != 0. {
+            //     AnimationId::Walk
+            // } else {
+            //     AnimationId::Idle
+            // };
+            // FIXME: Since the flier only has one animation type I'm not sure this function is
+            // necessary
+            let new_animation_id = AnimationId::Flying;
 
             // If the new AnimationId is different to the current one, abort the
             // current animation and start the new one

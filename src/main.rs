@@ -58,6 +58,7 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(UiBundle::<StringBindings>::new())?
         .with(Processor::<Map>::new(), "map_processor", &[])
         .with(UiFpsSystem::default(), "ui_fps_system", &[])
+        .with(UiPlayerSystem::default(), "ui_player_system", &[])
         .with(MarineInputSystem, "marine_input_system", &[])
         .with(
             MarineKinematicsSystem,
@@ -71,6 +72,7 @@ fn main() -> amethyst::Result<()> {
         )
         .with(AttackSystem, "attack_system", &["kinematics_system"])
         .with(PincerAiSystem, "pincer_ai_system", &[])
+        .with(FlierAiSystem, "flier_ai_system", &[])
         .with(CollisionSystem, "collision_system", &["attack_system"])
         .with(
             BulletCollisionSystem,
@@ -83,6 +85,11 @@ fn main() -> amethyst::Result<()> {
             &["collision_system"],
         )
         .with(
+            FlierCollisionSystem,
+            "flier_collision_system",
+            &["collision_system"],
+        )
+        .with(
             MarineCollisionSystem,
             "marine_collision_system",
             &["collision_system"],
@@ -90,7 +97,11 @@ fn main() -> amethyst::Result<()> {
         .with(
             TransformationSystem,
             "transformation_system",
-            &["pincer_collision_system", "bullet_collision_system"],
+            &[
+                "flier_collision_system",
+                "pincer_collision_system",
+                "bullet_collision_system",
+            ],
         )
         .with(
             BulletTransformationSystem,
@@ -107,6 +118,11 @@ fn main() -> amethyst::Result<()> {
             "pincer_animation_system",
             &["transformation_system"],
         )
+        .with(
+            FlierAnimationSystem,
+            "flier_animation_system",
+            &["transformation_system"],
+        )
         .with(ExplosionAnimationSystem, "explosion_animation_system", &[])
         .with(ParallaxSystem, "parallax_system", &[])
         .with(
@@ -120,6 +136,7 @@ fn main() -> amethyst::Result<()> {
             &[
                 "marine_animation_system",
                 "pincer_animation_system",
+                "flier_animation_system",
                 "bullet_impact_animation_system",
             ],
         )

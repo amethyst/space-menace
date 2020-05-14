@@ -5,7 +5,7 @@ use amethyst::{
 };
 
 use crate::{
-    entities::{load_camera, load_camera_subject, load_marine, load_pincer},
+    entities::{load_camera, load_camera_subject, load_flier, load_marine, load_pincer},
     resources::{load_assets, AssetType, Context, Map, PrefabList},
 };
 
@@ -29,6 +29,7 @@ impl SimpleState for LoadState {
                 AssetType::BulletImpact,
                 AssetType::Marine,
                 AssetType::Pincer,
+                AssetType::Flier,
                 AssetType::Platform,
                 AssetType::SmallExplosion,
                 AssetType::Truss,
@@ -36,6 +37,7 @@ impl SimpleState for LoadState {
         ));
         let mut progress = ProgressCounter::default();
         world.exec(|mut creator: UiCreator<'_>| creator.create("ui/fps.ron", &mut progress));
+        world.exec(|mut creator: UiCreator<'_>| creator.create("ui/player.ron", &mut progress));
         self.map_handle = {
             let loader = world.read_resource::<Loader>();
             Some(loader.load(
@@ -75,6 +77,12 @@ impl SimpleState for LoadState {
                     prefab_list.get(AssetType::Pincer).unwrap().clone()
                 };
                 load_pincer(data.world, pincer_prefab_handle, &ctx);
+
+                let flier_prefab_handle = {
+                    let prefab_list = data.world.read_resource::<PrefabList>();
+                    prefab_list.get(AssetType::Flier).unwrap().clone()
+                };
+                load_flier(data.world, flier_prefab_handle, &ctx);
                 self.progress_counter = None;
             }
         }

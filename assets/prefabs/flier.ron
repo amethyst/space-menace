@@ -1,0 +1,87 @@
+#![enable(implicit_some)]
+Prefab(
+    entities: [
+        // BulletImpact
+        PrefabEntity(
+            data: AnimationPrefabData(
+                // SpriteScenePrefab
+                sprite_scene: (
+                    // SpriteSheetPrefab with index 0
+                    sheet: Sheet(
+                        // TexturePrefab
+                        texture: File("textures/flier.png", (
+                            "IMAGE", (
+                                sampler_info: (
+                                    min_filter: Nearest,
+                                    mag_filter: Nearest,
+                                    mip_filter: Nearest,
+                                    wrap_mode: (Tile, Tile, Tile),
+                                    lod_bias: (0),
+                                    lod_range: (
+                                        start: ( 0 ),
+                                        end: ( 8000 ),
+                                    ),
+                                    comparison: None,
+                                    border: (0),
+                                    anisotropic: Off,
+                                    normalized: true,
+                                ),
+                            ),
+                        )),
+                        sprites: [
+                            List((
+                                texture_width: 432,
+                                texture_height: 64,
+                                sprites: [
+                                    // Flying
+                                    (x: 0, y: 0, width: 54, height: 64), // 1
+                                    (x: 54, y: 0, width: 54, height: 64), // 2
+                                    (x: 108, y: 0, width: 54, height: 64), // 3
+                                    (x: 162, y: 0, width: 54, height: 64), // 4
+                                    (x: 216, y: 0, width: 54, height: 64), // 5
+                                    (x: 270, y: 0, width: 54, height: 64), // 6
+                                    (x: 324, y: 0, width: 54, height: 64), // 7
+                                    (x: 378, y: 0, width: 54, height: 64), // 8
+
+                                ],
+                            )),
+                        ],
+                        // optional
+                        name: "flier",
+                    ),
+                    // SpriteRenderPrefab
+                    render: (
+                        sheet: "flier",
+                        sprite_number: 0,
+                    ),
+                ),
+                // AnimationSetPrefab
+                animation_set: (
+                    animations: [
+                        (
+                            // AnimationId
+                            Flying,
+                            (
+                                samplers: [
+                                    (
+                                        0,
+                                        // Only SpriteIndex channel allowed for SpriteRender in AnimationSetPrefab
+                                        SpriteIndex,
+                                        (
+                                            // Time of key frames
+                                            input: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+                                            // Sprite indexes from SpriteSheet for key frames
+                                            output: [0, 1, 2, 3, 4, 5, 6, 7],
+                                            // Sprites can only ever be animated with Step
+                                            function: Step,
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        ),
+    ],
+)
