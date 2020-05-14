@@ -224,7 +224,7 @@ impl<'s> System<'s> for FlierCollisionSystem {
                         }
                         flier.hit_count += 1;
                         // FIXME: enemy max hit points should be stored alongside entity
-                        if flier.hit_count == 6 {
+                        if flier.hit_count == 50 {
                             let small_explosion_prefab_handle =
                                 { prefab_list.get(AssetType::SmallExplosion).unwrap().clone() };
                             let flier_translation = transform.translation();
@@ -332,6 +332,9 @@ impl<'s> System<'s> for MarineCollisionSystem {
         for (_, collider, collidee) in (&marines, &mut colliders, &collidees).join() {
             if let Some(collidee_horizontal) = &collidee.horizontal {
                 if let "Pincer" = collidee_horizontal.name.as_ref() {
+                    collider.is_collidable = false;
+                }
+                if let "Flier" = collidee_horizontal.name.as_ref() {
                     collider.is_collidable = false;
                 }
             }
