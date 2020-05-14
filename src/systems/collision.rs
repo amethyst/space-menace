@@ -224,7 +224,7 @@ impl<'s> System<'s> for FlierCollisionSystem {
                         }
                         flier.hit_count += 1;
                         // FIXME: enemy max hit points should be stored alongside entity
-                        if flier.hit_count == 50 {
+                        if flier.hit_count == 6 {
                             let small_explosion_prefab_handle =
                                 { prefab_list.get(AssetType::SmallExplosion).unwrap().clone() };
                             let flier_translation = transform.translation();
