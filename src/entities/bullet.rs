@@ -17,12 +17,12 @@ use crate::{
 };
 
 pub fn spawn_bullet(
-    entities: &Entities,
+    entities: &Entities<'_>,
     sprite_sheet_handle: SpriteSheetHandle,
     shoot_start_position: f32,
     marine_dir: &Direction,
     marine_bottom: f32,
-    lazy_update: &ReadExpect<LazyUpdate>,
+    lazy_update: &ReadExpect<'_, LazyUpdate>,
     ctx: &Context,
 ) {
     let bullet_entity: Entity = entities.create();
@@ -83,12 +83,12 @@ pub fn spawn_bullet(
 }
 
 pub fn show_bullet_impact(
-    entities: &Entities,
+    entities: &Entities<'_>,
     prefab_handle: Handle<Prefab<AnimationPrefabData>>,
     impact_position: f32,
     bullet_position_y: f32,
     bullet_velocity: f32,
-    lazy_update: &ReadExpect<LazyUpdate>,
+    lazy_update: &ReadExpect<'_, LazyUpdate>,
     ctx: &Context,
 ) {
     let bullet_impact_entity: Entity = entities.create();

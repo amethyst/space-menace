@@ -118,7 +118,7 @@ pub fn get_sprite_sheet_handle(
     let texture_handle = {
         let loader = &world.read_resource::<Loader>();
         let texture_storage = &world.read_resource::<AssetStorage<Texture>>();
-        loader.load(texture_path, ImageFormat::default(), (), &texture_storage)
+        loader.load(texture_path, ImageFormat::default(), (), texture_storage)
     };
     let loader = &world.read_resource::<Loader>();
     let sprite_sheet_store = &world.read_resource::<AssetStorage<SpriteSheet>>();
@@ -126,7 +126,7 @@ pub fn get_sprite_sheet_handle(
         ron_path,
         SpriteSheetFormat(texture_handle),
         progress_counter,
-        &sprite_sheet_store,
+        sprite_sheet_store,
     )
 }
 

@@ -126,7 +126,7 @@ impl<'s> System<'s> for AnimationControlSystem {
                         };
                         animation_control_set.add_animation(
                             animation_id,
-                            &animation_set.get(&animation_id).unwrap(),
+                            animation_set.get(&animation_id).unwrap(),
                             end,
                             1.0,
                             AnimationCommand::Init,

@@ -12,7 +12,7 @@ use amethyst::{
 use crate::{
     components::{
         Animation, AnimationId, AnimationPrefabData, Boundary, Collidee, Collider, Direction,
-        Directions, Flier, GenericBox, Motion,
+        Directions, Flier, Motion,
     },
     resources::Context,
 };
