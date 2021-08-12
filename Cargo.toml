@@ -5,12 +5,12 @@ authors = ["Kumar Ankur <kmrankur@outlook.com>"]
 edition = "2018"
 
 [dependencies]
-serde = "*"
-log = "*"
-specs-derive = "*"
+serde = "1.0"
+log = "0.4"
+specs-derive = "0.4"
 
 [dependencies.amethyst]
-version = "0.15.0"
+version = "0.15.3"
 default-features = false
 features = ["json", "animation"]
 

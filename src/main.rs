@@ -1,10 +1,16 @@
+#![deny(
+    rust_2018_compatibility,
+    rust_2018_idioms,
+    future_incompatible,
+    unused,
+    nonstandard_style,
+    clippy::all
+)]
 // Nearly every Amethyst system triggers this warning, better ignore it:
 #![allow(clippy::type_complexity)]
-extern crate amethyst;
 
 #[macro_use]
 extern crate log;
-extern crate specs_derive;
 
 use amethyst::{
     animation::AnimationBundle,

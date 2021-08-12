@@ -11,11 +11,11 @@ use crate::{
 };
 
 pub fn show_explosion(
-    entities: &Entities,
+    entities: &Entities<'_>,
     prefab_handle: Handle<Prefab<AnimationPrefabData>>,
     transform_x: f32,
     transform_y: f32,
-    lazy_update: &ReadExpect<LazyUpdate>,
+    lazy_update: &ReadExpect<'_, LazyUpdate>,
     ctx: &Context,
 ) {
     let exposion_entity: Entity = entities.create();
