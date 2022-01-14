@@ -44,7 +44,7 @@ cd space-menace
 rustup override set nightly
 
 # Run
-cargo run —release
+cargo run -—release
 ```
 
 ## Game controls
